@@ -63,6 +63,9 @@ Source Code
 GitHub: https://github.com/jinzwu/ProjectMMW.git
 
 Game Assets
+Google Drive Data File
+https://drive.google.com/drive/folders/1IAeXF7u4frjrQvWNFAFoVIET_4PowFNP?usp=sharing
+
 Dropbox: 
 Public Read-Only
 https://www.dropbox.com/sh/ayaopiheo87rup5/AABZPFfII4Lv2pC9fF1Jwk7ga?dl=0
