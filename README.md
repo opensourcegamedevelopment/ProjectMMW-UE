@@ -59,8 +59,6 @@ For any clarification, please contact repo admin.
 ## Contribution Guide:
 Note: Please read and accept the license agreement before making any contributions.
 
-Unity Game Engine: Version 2018.3.0f2
-
 Source Code
 GitHub: https://github.com/jinzwu/ProjectMMW.git
 
@@ -81,10 +79,10 @@ Contribution instruction:
 
 FOR PROGRAMMERS:
 1. Download the project from the GitHub repo above. (Recommend to use sourceTree)
-2. Download the game assets from the Dropbox Public folder.
-3. Add the GameAssets folder to the Asset Directory.
-4. Make sure you are using the correct unity3D version. 
-5. Open Project in Unity3D. Make changes and test features.
+2. Download the Latest game assets (LargeData) Folder from the Dropbox/Google Drive Public folder.
+3. Add the LargeData folder to the Content Directory.
+4. Make sure you are using the correct Unreal Engine version. 
+5. Open Project in Unreal Engine. Make changes and test features.
 6. Commit in a new branch, push and submit a pull request when feature is completed.
 7. Contact Project Admin if there is any issues.
 
