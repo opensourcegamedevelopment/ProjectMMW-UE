@@ -59,6 +59,8 @@ For any clarification, please contact repo admin.
 ## Contribution Guide:
 Note: Please read and accept the license agreement before making any contributions.
 
+Discord Channel: https://discord.gg/A2tnTSH
+
 Source Code
 GitHub: https://github.com/jinzwu/ProjectMMW.git
 
