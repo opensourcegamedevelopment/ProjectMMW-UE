@@ -3,7 +3,7 @@ Free Source Game Development for Project MMW
 
 Game Engine: Unreal Engine v4.21.1
 
-Project MMW is a free source game development project inspired by multiplayer pvp game such as mobile suit gundam online, SD Gundam Capsule Fighter (SDGO).
+Project MMW is a Creative Common game development project inspired by multiplayer pvp game such as mobile suit gundam online, SD Gundam Capsule Fighter (SDGO).
 
 The game will be an online multiplayer pvp Mecha featuring 1v1 (duel) 2v2, 3v3, 5v5, 50v50 as well as a massive MMO eternal battleground experience (Think of GW2 mix with Dynasty Warriors). 
 
