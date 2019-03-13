@@ -29,7 +29,8 @@ Source Code
 GitHub: https://github.com/jinzwu/ProjectMMW.git
 
 Game Assets
-Google Drive Data File
+Google Drive Data File (Latest Only)
+(For different versions, eg. released version, use dropbox Public Read-Only folder)
 https://drive.google.com/drive/folders/1IAeXF7u4frjrQvWNFAFoVIET_4PowFNP?usp=sharing
 
 Dropbox: 
