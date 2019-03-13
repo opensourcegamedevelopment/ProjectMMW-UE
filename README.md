@@ -127,11 +127,12 @@ Feature branches are used when developing a new feature or enhancement which has
 
 During the lifespan of the feature development, the lead should watch the `master` branch (network tool or branch tool in GitHub) to see if there have been commits since the feature was branched. Any and all changes to `master` should be merged into the feature before merging back to `master`; this can be done at various times during the project or at the end, but time to handle merge conflicts should be accounted for.
 
-`<tbd number>` represents the project to which Project Management will be tracked.
+`<tbd number>`  represents the number to which Trello Card tracked.
+`<Description>` represents a short summary of the actual feature, words seperate by `-`, may be referenced using trello card title.
 
 * Must branch from: `master`
 * Must merge back into: `master`
-* Branch naming convention: `feature-<tbd number>`
+* Branch naming convention: `feature/<tbd number>-<description>`
 
 #### Working with a feature branch
 
@@ -163,11 +164,12 @@ Bug branches differ from feature branches only semantically. Bug branches will b
 
 Although likelihood will be less, during the lifespan of the bug development, the lead should watch the `master` branch (network tool or branch tool in GitHub) to see if there have been commits since the bug was branched. Any and all changes to `master` should be merged into the bug before merging back to `master`; this can be done at various times during the project or at the end, but time to handle merge conflicts should be accounted for.
 
-`<tbd number>` represents the Basecamp project to which Project Management will be tracked. 
+`<tbd number>`  represents the number to which Trello Card tracked.
+`<description>` represents a short summary of the actual feature, words seperate by `-`, may be referenced using trello card title.
 
 * Must branch from: `master`
 * Must merge back into: `master`
-* Branch naming convention: `bug-<tbd number>`
+* Branch naming convention: `bug-<tbd number>-<description>`
 
 #### Working with a bug branch
 
