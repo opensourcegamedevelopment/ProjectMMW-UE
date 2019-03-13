@@ -47,6 +47,8 @@ https://www.dropbox.com/sh/ml5p23mhjunezyr/AACZw9vSwAmhtYAYXuk-CBLua?dl=0
 
 Contribution instruction: 
 
+'I will be writing a tool for checking and grabbing latest Asset files, for now, we will download off cloud storage manually.'
+
 FOR PROGRAMMERS:
 1. Download the project from the GitHub repo above. (Recommend to use sourceTree)
 2. Download the Latest game assets (LargeData) Folder from the Dropbox/Google Drive Public folder.
@@ -104,7 +106,8 @@ The main repository will always hold two evergreen branches:
 * `master`
 * `stable`
 
-The main branch should be considered `origin/master` and will be the main branch where the source code of `HEAD` always reflects a state with the latest delivered development changes for the next release. For Programmers, you will be branching and merging from `master`. `Note: Only repo admin will be able to push directly to master directly, everyone else will be pushing to feature branch and submit a pull request when ready. Admin will deal with the merging`
+The main branch should be considered `origin/master` and will be the main branch where the source code of `HEAD` always reflects a state with the latest delivered development changes for the next release. For Programmers, you will be branching and merging from `master`. 
+Note: Only repo admin will be able to push directly to master directly, everyone else will be pushing to feature branch and submit a pull request when ready. Admin will deal with the merging
 
 Consider `origin/stable` to always represent the latest code deployed to production. During day to day development, the `stable` branch will not be interacted with. For non-programmer, you will be pulling the project off stable.
 
