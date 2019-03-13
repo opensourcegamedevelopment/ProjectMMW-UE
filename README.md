@@ -44,10 +44,9 @@ Uploaded Temp Folder
 (Only use for if developer need new assets that was uploaded but haven’t been organised into the public folder)
 https://www.dropbox.com/sh/ml5p23mhjunezyr/AACZw9vSwAmhtYAYXuk-CBLua?dl=0
 
+'I will be writing a tool for checking and grabbing latest Asset files, for now, we will download off cloud storage manually.'
 
 Contribution instruction: 
-
-'I will be writing a tool for checking and grabbing latest Asset files, for now, we will download off cloud storage manually.'
 
 FOR PROGRAMMERS:
 1. Download the project from the GitHub repo above. (Recommend to use sourceTree)
