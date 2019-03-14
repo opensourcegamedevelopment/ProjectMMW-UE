@@ -29,10 +29,6 @@ Source Code
 GitHub: https://github.com/jinzwu/ProjectMMW.git
 
 Game Assets
-Google Drive Data File (Latest Only)
-(For different versions, eg. released version, use dropbox Public Read-Only folder)
-https://drive.google.com/drive/folders/1IAeXF7u4frjrQvWNFAFoVIET_4PowFNP?usp=sharing
-
 Dropbox: 
 Public Read-Only
 https://www.dropbox.com/sh/ayaopiheo87rup5/AABZPFfII4Lv2pC9fF1Jwk7ga?dl=0
@@ -49,18 +45,34 @@ https://www.dropbox.com/sh/ml5p23mhjunezyr/AACZw9vSwAmhtYAYXuk-CBLua?dl=0
 Contribution instruction: 
 
 FOR PROGRAMMERS:
-1. Download the project from the GitHub repo above. (Recommend to use sourceTree)
-2. Download the Latest game assets (LargeData) Folder from the Dropbox/Google Drive Public folder.
-3. Add the LargeData folder to the Content Directory.
-4. Make sure you are using the correct Unreal Engine version. 
-5. Open Project in Unreal Engine. Make changes and test features.
-6. Commit in a new branch, push and submit a pull request when feature is completed.
-7. Contact Project Admin if there is any issues.
+1. Install Sourcetree(https://www.sourcetreeapp.com/) onto your computer (In-Depth Guide from Github: https://github.com/GSoft-SharePoint/Dynamite/wiki/Getting-started-with-SourceTree,-Git-and-git-flow
+2. Once in Sourcetree click Clone/New
+3. Click Clone Repository
+4. Under Repository Type paste in GitHub URL at the top of this page
+5. You now have the project on your local drive. Go to the saved location of the project. (You can do this in sourcetree by right clicking the project, and clicking Show in Explorer.
+6. Download the Latest game assets (LargeData) Folder from the Dropbox Public folder (See LargeAssetsData section below).
+7. Add the Large Assets fIles to the Content Directory.
+8. Make sure you are using the correct Unreal Engine version. (see above for the version we are currently using)
+9. In source tree, make sure you select/checkout master branch. (Right click -> checkout)
+10. Create a new branch by clicking on the branch button. (Refer to branching section for naming conventions). 
+11. Open Project in Unreal Engine. Make changes and test features.
+12. Commit in a new branch, push and submit a pull request when feature is completed.
+13. Contact Project Admin if there is any issues.
 
 For Artists / Designers / Audio Engineers:
 1. Check for existing appropriate files/assets in the Public folder for existing assets before contributing.
 2. Upload appropriate files. preferably zipped. I will check and reorganised to the public folder if the upload files are suitable for the game.
 3. Contact Project Admin if there are any issues. 
+
+#Large Assets Data / Timestamp tags
+Video game development is slightly different from software development in that we have alot of large binary data (such as 3D models, Textures, Material etc). While gitHub can handle Large binary files (LFS), however, there is a limit of storage space (Our large Assets could go upto gigabytes and terabytes!!).
+
+For this reason, we will store Large Assets Files/Data in a seperate location (dropbox).
+You might notice there are timestamp tags in some of the commits (eg. 20190314T1221). Those refer the the current Large Assets folder it is reference to. You might notice on dropbox there are corresponding zipped files (eg. 20190314T1221.rar). 
+Simple grab the same zipped for the commit you are working on. 
+If there are not timestamp on the commit you are working on, refer the timestamp on previous commits. 
+
+Later on when I have time, I will write an application to automatic this process to make it easier.
 
 # Branching
 
