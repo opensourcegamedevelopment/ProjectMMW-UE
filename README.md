@@ -64,13 +64,13 @@ For Artists / Designers / Audio Engineers:
 2. Upload appropriate files. preferably zipped. I will check and reorganised to the public folder if the upload files are suitable for the game.
 3. Contact Project Admin if there are any issues. 
 
-#Large Assets Data / Timestamp tags
+# Large Assets Data / Timestamp tags
 Video game development is slightly different from software development in that we have alot of large binary data (such as 3D models, Textures, Material etc). While gitHub can handle Large binary files (LFS), however, there is a limit of storage space (Our large Assets could go upto gigabytes and terabytes!!).
 
 For this reason, we will store Large Assets Files/Data in a seperate location (dropbox).
 You might notice there are timestamp tags in some of the commits (eg. 20190314T1221). Those refer the the current Large Assets folder it is reference to. You might notice on dropbox there are corresponding zipped files (eg. 20190314T1221.rar). 
 Simple grab the same zipped for the commit you are working on. 
-If there are not timestamp on the commit you are working on, refer the timestamp on previous commits. 
+If there are no timestamp on the commit you are working on, refer the timestamp on previous commits. 
 
 Later on when I have time, I will write an application to automatic this process to make it easier.
 
