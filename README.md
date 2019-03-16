@@ -56,8 +56,9 @@ FOR PROGRAMMERS:
 9. In source tree, make sure you select/checkout master branch. (Right click -> checkout)
 10. Create a new branch by clicking on the branch button. (Refer to branching section for naming conventions). 
 11. Open Project in Unreal Engine. Make changes and test features.
-12. Commit in a new branch, push and submit a pull request when feature is completed.
-13. Contact Project Admin if there is any issues.
+12. If you haven't done so, contact admin on discord to add you as a contibutor or member.
+13. Commit in a new branch, push and submit a pull request when feature is completed.
+14. Contact Project Admin if there is any issues.
 
 For Artists / Designers / Audio Engineers:
 1. Check for existing appropriate files/assets in the Public folder for existing assets before contributing.
