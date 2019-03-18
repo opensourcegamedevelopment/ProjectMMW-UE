@@ -60,8 +60,8 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectMMWCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectMMWCharacter::MoveRight);
 
-	PlayerInputComponent->BindAxis("LeftShift", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
-	PlayerInputComponent->BindAxis("LeftShift", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
+	PlayerInputComponent->BindAction("LeftShift", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
+	PlayerInputComponent->BindAction("LeftShift", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -109,6 +109,11 @@ void AProjectMMWCharacter::LookUpAtRate(float Rate)
 
 void AProjectMMWCharacter::MoveForward(float Value)
 {
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
+
+	UE_LOG(LogTemp, Log, TEXT("%s"), (isBoosting ? TEXT("True") : TEXT("False")));
+	isBoosting = true;
+	UE_LOG(LogTemp, Log, TEXT("%s"),  (isBoosting ? TEXT("True") : TEXT("False")));
 	CheckStats();
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
@@ -144,7 +149,7 @@ void AProjectMMWCharacter::ActivateBoost()
 	{
 		if( GetCharacterMovement()->IsFlying() == true )  
 		{  
-			GetCharacterMovement()->SetMovementMode(MOVE_FALLING);  
+			GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		}
 	}
 	else
@@ -155,7 +160,7 @@ void AProjectMMWCharacter::ActivateBoost()
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);  
 			if (currentEnergy <= 0)
 			{
-				GetCharacterMovement()->SetMovementMode(MOVE_FALLING);  
+				GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 			}
 		}  
 	}
@@ -165,13 +170,13 @@ void AProjectMMWCharacter::DeActivateBoost()
 {
 	if( GetCharacterMovement()->IsFlying() == false )  
 	{  
-		GetCharacterMovement()->SetMovementMode(MOVE_FALLING);  
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}  
 }
 
 void AProjectMMWCharacter::CheckStats()
 {
-	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(Character->GetCharacterMovement());
+	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(GetCharacterMovement());
 	if (isOverheat)
 	{
 		if (MovementPtr->MaxWalkSpeed != 600)
