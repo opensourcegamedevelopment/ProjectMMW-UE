@@ -60,6 +60,9 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectMMWCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectMMWCharacter::MoveRight);
 
+	PlayerInputComponent->BindAxis("LeftShift", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
+	PlayerInputComponent->BindAxis("LeftShift", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
+
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
@@ -106,6 +109,7 @@ void AProjectMMWCharacter::LookUpAtRate(float Rate)
 
 void AProjectMMWCharacter::MoveForward(float Value)
 {
+	CheckStats();
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -120,6 +124,7 @@ void AProjectMMWCharacter::MoveForward(float Value)
 
 void AProjectMMWCharacter::MoveRight(float Value)
 {
+	CheckStats();
 	if ( (Controller != NULL) && (Value != 0.0f) )
 	{
 		// find out which way is right
@@ -132,3 +137,62 @@ void AProjectMMWCharacter::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 	}
 }
+
+void AProjectMMWCharacter::ActivateBoost()
+{
+	if (isOverheat)
+	{
+		if( GetCharacterMovement()->IsFlying() == true )  
+		{  
+			GetCharacterMovement()->SetMovementMode(MOVE_FALLING);  
+		}
+	}
+	else
+	{
+		isBoosting = true;
+		if( GetCharacterMovement()->IsFlying() == false )  
+		{  
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);  
+			if (currentEnergy <= 0)
+			{
+				GetCharacterMovement()->SetMovementMode(MOVE_FALLING);  
+			}
+		}  
+	}
+}
+
+void AProjectMMWCharacter::DeActivateBoost()
+{
+	if( GetCharacterMovement()->IsFlying() == false )  
+	{  
+		GetCharacterMovement()->SetMovementMode(MOVE_FALLING);  
+	}  
+}
+
+void AProjectMMWCharacter::CheckStats()
+{
+	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(Character->GetCharacterMovement());
+	if (isOverheat)
+	{
+		if (MovementPtr->MaxWalkSpeed != 600)
+		{
+			MovementPtr->MaxWalkSpeed = 600;
+		}
+		if (MovementPtr->MaxFlySpeed != 600)
+		{
+			MovementPtr->MaxFlySpeed = 600;
+		}
+	}
+	else
+	{
+		if (MovementPtr->MaxWalkSpeed != 1000)
+		{
+			MovementPtr->MaxWalkSpeed = 1000;
+		}
+		if (MovementPtr->MaxFlySpeed != 1000)
+		{
+			MovementPtr->MaxFlySpeed = 1000;
+		}
+	}
+}
+

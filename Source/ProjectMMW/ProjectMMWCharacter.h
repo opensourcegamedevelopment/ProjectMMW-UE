@@ -29,6 +29,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
+	bool isOverheat;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
+	bool isBoosting;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
+	float MaxHp = 1000;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
+	float currentHp = 1000;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
+	float MaxEnergy = 1000;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
+	float currentEnergy = 1000;
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -39,6 +53,10 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	void CheckStats();
+	void ActivateBoost();
+	void DeActivateBoost();
 
 	/** 
 	 * Called via input to turn at a given rate. 
