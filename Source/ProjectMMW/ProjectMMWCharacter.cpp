@@ -1,13 +1,14 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "ProjectMMWCharacter.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AProjectMMWCharacter
@@ -47,6 +48,26 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
 
+void AProjectMMWCharacter::BeginPlay()
+{
+	// Call the base class  
+	Super::BeginPlay();
+
+	MaxHp = 1000;
+	CurrentHp = 1000;
+	HealthPercentage = 1.0f;
+	MaxEnergy = 1000;
+	CurrentEnergy = 1000;
+	EnergyPercentage = 1.0f;
+}
+
+void AProjectMMWCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	MyTimeline.TickTimeline(DeltaTime);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -70,29 +91,6 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAxis("TurnRate", this, &AProjectMMWCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectMMWCharacter::LookUpAtRate);
-
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AProjectMMWCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AProjectMMWCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AProjectMMWCharacter::OnResetVR);
-}
-
-
-void AProjectMMWCharacter::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AProjectMMWCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void AProjectMMWCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
 }
 
 void AProjectMMWCharacter::TurnAtRate(float Rate)
@@ -111,9 +109,9 @@ void AProjectMMWCharacter::MoveForward(float Value)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
 
-	UE_LOG(LogTemp, Log, TEXT("%s"), (isBoosting ? TEXT("True") : TEXT("False")));
-	isBoosting = true;
-	UE_LOG(LogTemp, Log, TEXT("%s"),  (isBoosting ? TEXT("True") : TEXT("False")));
+	UE_LOG(LogTemp, Log, TEXT("%s"), (IsBoosting ? TEXT("True") : TEXT("False")));
+	IsBoosting = true;
+	UE_LOG(LogTemp, Log, TEXT("%s"),  (IsBoosting ? TEXT("True") : TEXT("False")));
 	CheckStats();
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
@@ -145,7 +143,7 @@ void AProjectMMWCharacter::MoveRight(float Value)
 
 void AProjectMMWCharacter::ActivateBoost()
 {
-	if (isOverheat)
+	if (IsOverheat)
 	{
 		if( GetCharacterMovement()->IsFlying() == true )  
 		{  
@@ -154,11 +152,11 @@ void AProjectMMWCharacter::ActivateBoost()
 	}
 	else
 	{
-		isBoosting = true;
+		IsBoosting = true;
 		if( GetCharacterMovement()->IsFlying() == false )  
 		{  
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);  
-			if (currentEnergy <= 0)
+			if (CurrentEnergy <= 0)
 			{
 				GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 			}
@@ -177,7 +175,7 @@ void AProjectMMWCharacter::DeActivateBoost()
 void AProjectMMWCharacter::CheckStats()
 {
 	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(GetCharacterMovement());
-	if (isOverheat)
+	if (IsOverheat)
 	{
 		if (MovementPtr->MaxWalkSpeed != 600)
 		{
@@ -201,3 +199,46 @@ void AProjectMMWCharacter::CheckStats()
 	}
 }
 
+float AProjectMMWCharacter::GetHealth()
+{
+	return CurrentHp;
+}
+
+float AProjectMMWCharacter::GetEnergy()
+{
+	return CurrentEnergy;
+}
+
+FText AProjectMMWCharacter::GetHealthIntText()
+{
+	int32 HP = FMath::RoundHalfFromZero(HealthPercentage * 100);
+	FString HPS = FString::FromInt(HP);
+	FString HealthHUD = HPS + FString(TEXT("%"));
+	FText HPText = FText::FromString(HealthHUD);
+	return HPText;
+}
+
+FText AProjectMMWCharacter::GetEnergyIntText()
+{
+	int32 Energy = FMath::RoundHalfFromZero(EnergyPercentage * 100);
+	FString EnergyS = FString::FromInt(Energy);
+	FString EnergyHUD = EnergyS + FString(TEXT("%"));
+	FText EnergyText = FText::FromString(EnergyHUD);
+	return EnergyText;
+}
+
+void AProjectMMWCharacter::UpdateHp(float HealthChange)
+{
+	CurrentHp += HealthChange;
+	CurrentHp = FMath::Clamp(CurrentHp, 0.0f, MaxHp);
+	PreviousHp = HealthPercentage;
+	HealthPercentage = CurrentHp / MaxHp;
+}
+
+void AProjectMMWCharacter::UpdateEnergy(float MagicChange)
+{
+	CurrentEnergy += MagicChange;
+	CurrentEnergy = FMath::Clamp(CurrentEnergy, 0.0f, MaxEnergy);
+	PreviousEnergy = EnergyPercentage;
+	EnergyPercentage = CurrentEnergy / MaxEnergy;
+}

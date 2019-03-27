@@ -1,6 +1,8 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include "Components/TimelineComponent.h"
+#include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
 #include "Engine.h"
 #include "GameFramework/Character.h"
@@ -18,8 +20,11 @@ class AProjectMMWCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
 public:
 	AProjectMMWCharacter();
+
+	FTimeline MyTimeline;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -30,23 +35,42 @@ public:
 	float BaseLookUpRate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
-	bool isOverheat;
+	bool IsOverheat;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
-	bool isBoosting;
+	bool IsBoosting;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float MaxHp = 1000;
+	float MaxHp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float currentHp = 1000;
+	float CurrentHp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Stats)
+	float PreviousHp;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
+	float HealthPercentage;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float MaxEnergy = 1000;
+	float MaxEnergy;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float currentEnergy = 1000;
+	float CurrentEnergy;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	float PreviousEnergy;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
+	float EnergyPercentage;
+
+	UFUNCTION(BlueprintPure, Category=Stats)
+	float GetHealth();
+	UFUNCTION(BlueprintPure, Category=Stats)
+	float GetEnergy();
+	UFUNCTION(BlueprintPure, Category=Stats)
+	FText GetHealthIntText();
+	UFUNCTION(BlueprintPure, Category=Stats)
+	FText GetEnergyIntText();
+	UFUNCTION(BlueprintCallable, Category=Stats)
+	void UpdateHp(float HealthChange);
+	UFUNCTION(BlueprintCallable, Category=Stats)
+	void UpdateEnergy(float EnergyChange);
 
 protected:
-
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -70,11 +94,9 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
+	virtual void BeginPlay();
 
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	// APawn interface
