@@ -73,6 +73,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 	{
 		UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
 		CurrentDeltaTime -= DeltaTime;
+		CheckEnergy();
 	}
 }
 
@@ -83,8 +84,8 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::JumpKeyAction); //Jump
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::JumpKeyReleasedAction); //StopJumping
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectMMWCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectMMWCharacter::MoveRight);
@@ -112,6 +113,8 @@ void AProjectMMWCharacter::LookUpAtRate(float Rate)
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
+
+#pragma region Character Action Methods
 
 void AProjectMMWCharacter::MoveForward(float Value)
 {
@@ -149,6 +152,30 @@ void AProjectMMWCharacter::MoveRight(float Value)
 	}
 }
 
+void AProjectMMWCharacter::JumpKeyAction()
+{
+	if (!IsBoosting || IsOverheat)
+	{
+		AProjectMMWCharacter::Jump();
+	}
+	else
+	{
+		
+	}
+}
+
+void AProjectMMWCharacter::JumpKeyReleasedAction()
+{
+	if (!IsBoosting || IsOverheat)
+	{
+		AProjectMMWCharacter::StopJumping();
+	}
+	else
+	{
+		
+	}
+}
+
 void AProjectMMWCharacter::ActivateBoost()
 {
 	if (IsOverheat)
@@ -179,6 +206,10 @@ void AProjectMMWCharacter::DeActivateBoost()
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}  
 }
+
+#pragma endregion
+
+#pragma region Character Status Methods
 
 void AProjectMMWCharacter::CheckStats()
 {
@@ -250,3 +281,24 @@ void AProjectMMWCharacter::UpdateEnergy(float MagicChange)
 	PreviousEnergy = EnergyPercentage;
 	EnergyPercentage = CurrentEnergy / MaxEnergy;
 }
+
+void AProjectMMWCharacter::CheckEnergy()
+{
+	if (IsBoosting)
+	{
+		CurrentEnergy--;
+	}
+	else
+	{
+		RegenEnergy();
+	}
+}
+
+void AProjectMMWCharacter::RegenEnergy()
+{
+	if (!IsBoosting && CurrentEnergy < MaxEnergy)
+	{
+		CurrentEnergy += 5;
+	}
+}
+#pragma endregion

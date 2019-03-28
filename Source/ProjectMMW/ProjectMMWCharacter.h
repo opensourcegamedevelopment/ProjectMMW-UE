@@ -81,9 +81,14 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
+	void JumpKeyAction();
+	void JumpKeyReleasedAction();
+
 	void CheckStats();
 	void ActivateBoost();
 	void DeActivateBoost();
+	void CheckEnergy();
+	void RegenEnergy();
 
 	/** 
 	 * Called via input to turn at a given rate. 
