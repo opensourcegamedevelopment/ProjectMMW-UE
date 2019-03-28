@@ -70,6 +70,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category=Stats)
 	void UpdateEnergy(float EnergyChange);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	float FlightPower;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = States)
+	bool IsVerticalBoost;
+
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 

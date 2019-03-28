@@ -59,6 +59,7 @@ void AProjectMMWCharacter::BeginPlay()
 	MaxEnergy = 1000;
 	CurrentEnergy = 1000;
 	EnergyPercentage = 1.0f;
+	FlightPower = 10.0f;
 }
 
 void AProjectMMWCharacter::Tick(float DeltaTime)
@@ -74,6 +75,11 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
 		CurrentDeltaTime -= DeltaTime;
 		CheckEnergy();
+	}
+
+	if (GetCharacterMovement()->IsFlying() == true && IsVerticalBoost)
+	{
+		AddMovementInput(GetActorUpVector(), FlightPower);
 	}
 }
 
@@ -158,22 +164,16 @@ void AProjectMMWCharacter::JumpKeyAction()
 	{
 		AProjectMMWCharacter::Jump();
 	}
-	else
-	{
-		
-	}
 }
 
 void AProjectMMWCharacter::JumpKeyReleasedAction()
 {
 	if (!IsBoosting || IsOverheat)
 	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		AProjectMMWCharacter::StopJumping();
 	}
-	else
-	{
-		
-	}
+	IsVerticalBoost = false;
 }
 
 void AProjectMMWCharacter::ActivateBoost()
