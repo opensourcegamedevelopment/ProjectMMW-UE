@@ -66,6 +66,14 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MyTimeline.TickTimeline(DeltaTime);
+
+	CurrentDeltaTime += DeltaTime;
+
+	if (IsBoosting && CurrentDeltaTime > 1)
+	{
+		UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
+		CurrentDeltaTime -= DeltaTime;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,9 +117,9 @@ void AProjectMMWCharacter::MoveForward(float Value)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
 
-	UE_LOG(LogTemp, Log, TEXT("%s"), (IsBoosting ? TEXT("True") : TEXT("False")));
+	//UE_LOG(LogTemp, Log, TEXT("%s"), (IsBoosting ? TEXT("True") : TEXT("False")));
 	IsBoosting = true;
-	UE_LOG(LogTemp, Log, TEXT("%s"),  (IsBoosting ? TEXT("True") : TEXT("False")));
+	//UE_LOG(LogTemp, Log, TEXT("%s"),  (IsBoosting ? TEXT("True") : TEXT("False")));
 	CheckStats();
 	if ((Controller != NULL) && (Value != 0.0f))
 	{

@@ -70,6 +70,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category=Stats)
 	void UpdateEnergy(float EnergyChange);
 
+	//use to determine when to check stats
+	float CurrentDeltaTime;
+
 protected:
 
 	/** Called for forwards/backward input */
