@@ -66,7 +66,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	MyTimeline.TickTimeline(DeltaTime);
+	/*MyTimeline.TickTimeline(DeltaTime);
 
 	CurrentDeltaTime += DeltaTime;
 
@@ -80,7 +80,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 	if (GetCharacterMovement()->IsFlying() == true && IsVerticalBoost)
 	{
 		AddMovementInput(GetActorUpVector(), FlightPower);
-	}
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -90,14 +90,14 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::JumpKeyAction); //Jump
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::JumpKeyReleasedAction); //StopJumping
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AProjectMMWCharacter::JumpKeyAction); //Jump
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AProjectMMWCharacter::JumpKeyReleasedAction); //StopJumping
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectMMWCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectMMWCharacter::MoveRight);
 
-	PlayerInputComponent->BindAction("LeftShift", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
-	PlayerInputComponent->BindAction("LeftShift", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
+	PlayerInputComponent->BindAction("Boost", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
+	PlayerInputComponent->BindAction("Boost", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -160,7 +160,7 @@ void AProjectMMWCharacter::MoveRight(float Value)
 
 void AProjectMMWCharacter::JumpKeyAction()
 {
-	if (!IsBoosting || IsOverheat)
+	if (!IsBoosting || !IsOverheat)
 	{
 		AProjectMMWCharacter::Jump();
 	}
@@ -201,7 +201,7 @@ void AProjectMMWCharacter::ActivateBoost()
 
 void AProjectMMWCharacter::DeActivateBoost()
 {
-	if( GetCharacterMovement()->IsFlying() == false )  
+	if( GetCharacterMovement()->IsFlying() == true )  
 	{  
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}  
