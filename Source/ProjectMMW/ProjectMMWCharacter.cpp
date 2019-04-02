@@ -53,11 +53,12 @@ void AProjectMMWCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	IsBoosting = false;
 	MaxHp = 1000;
 	CurrentHp = 1000;
 	HealthPercentage = 1.0f;
-	MaxEnergy = 1000;
-	CurrentEnergy = 1000;
+	MaxEnergy = 1;
+	CurrentEnergy = 1;
 	EnergyPercentage = 1.0f;
 	FlightPower = 10.0f;
 }
@@ -66,21 +67,26 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	/*MyTimeline.TickTimeline(DeltaTime);
+	MyTimeline.TickTimeline(DeltaTime);
 
 	CurrentDeltaTime += DeltaTime;
 
-	if (IsBoosting && CurrentDeltaTime > 1)
+	if (CurrentDeltaTime > 1)
 	{
-		UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
-		CurrentDeltaTime -= DeltaTime;
+		UE_LOG(LogTemp, Log, TEXT("IsBoosting: %f"), CurrentEnergy);
 		CheckEnergy();
+
+		if (GetCharacterMovement()->IsFlying() == true && IsVerticalBoost)
+		{
+			AddMovementInput(GetActorUpVector(), FlightPower);
+		}
+		CurrentDeltaTime -= DeltaTime;
 	}
 
-	if (GetCharacterMovement()->IsFlying() == true && IsVerticalBoost)
-	{
-		AddMovementInput(GetActorUpVector(), FlightPower);
-	}*/
+	//UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
+	
+
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,7 +133,7 @@ void AProjectMMWCharacter::MoveForward(float Value)
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
 
 	//UE_LOG(LogTemp, Log, TEXT("%s"), (IsBoosting ? TEXT("True") : TEXT("False")));
-	IsBoosting = true;
+	//IsBoosting = true;
 	//UE_LOG(LogTemp, Log, TEXT("%s"),  (IsBoosting ? TEXT("True") : TEXT("False")));
 	CheckStats();
 	if ((Controller != NULL) && (Value != 0.0f))
@@ -184,6 +190,7 @@ void AProjectMMWCharacter::ActivateBoost()
 		{  
 			GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		}
+		IsBoosting = false;
 	}
 	else
 	{
@@ -205,6 +212,7 @@ void AProjectMMWCharacter::DeActivateBoost()
 	{  
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}  
+	IsBoosting = false;
 }
 
 #pragma endregion
@@ -286,7 +294,7 @@ void AProjectMMWCharacter::CheckEnergy()
 {
 	if (IsBoosting)
 	{
-		CurrentEnergy--;
+		CurrentEnergy -= 0.001;
 	}
 	else
 	{
@@ -298,7 +306,7 @@ void AProjectMMWCharacter::RegenEnergy()
 {
 	if (!IsBoosting && CurrentEnergy < MaxEnergy)
 	{
-		CurrentEnergy += 5;
+		CurrentEnergy += 0.002;
 	}
 }
 #pragma endregion
