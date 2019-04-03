@@ -53,6 +53,7 @@ void AProjectMMWCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	IsVerticalBoost = false;
 	IsBoosting = false;
 	MaxHp = 1000;
 	CurrentHp = 1000;
@@ -67,7 +68,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	MyTimeline.TickTimeline(DeltaTime);
+	//MyTimeline.TickTimeline(DeltaTime);
 
 	CurrentDeltaTime += DeltaTime;
 
@@ -170,6 +171,10 @@ void AProjectMMWCharacter::JumpKeyAction()
 	{
 		AProjectMMWCharacter::Jump();
 	}
+	else
+	{
+		IsVerticalBoost = true;
+	}
 }
 
 void AProjectMMWCharacter::JumpKeyReleasedAction()
@@ -192,16 +197,12 @@ void AProjectMMWCharacter::ActivateBoost()
 		}
 		IsBoosting = false;
 	}
-	else
+	else if (CurrentEnergy > 0)
 	{
 		IsBoosting = true;
 		if( GetCharacterMovement()->IsFlying() == false )  
 		{  
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);  
-			if (CurrentEnergy <= 0)
-			{
-				GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-			}
 		}  
 	}
 }
@@ -299,6 +300,11 @@ void AProjectMMWCharacter::CheckEnergy()
 	else
 	{
 		RegenEnergy();
+	}
+
+	if (CurrentEnergy <= 0)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
 }
 
