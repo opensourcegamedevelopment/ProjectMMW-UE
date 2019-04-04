@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "Damageable.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "StaticEnemyObject.generated.h"
 
+//, public IDamageable
 UCLASS()
-class PROJECTMMW_API AStaticEnemyObject : public AActor
+class PROJECTMMW_API AStaticEnemyObject : public AActor, public IDamageable
 {
 	GENERATED_BODY()
 
@@ -22,16 +24,16 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void DamageObject(int damage);				// deal damage to object
+	void DamageObject(int damage);	// deal damage to object
 
 private:
-	void RespawnObject(FVector location);		// respawn object at location x,y,z in world map
+	void RespawnObject(FVector location);			// respawn object at location x,y,z in world map
 
 private:
 	int maxHealth = 1000;
 	int currentHealth;
-	float respawnTimer = 0;						// timer used for respawning
-	const float respawnCooldown = 10;			// object respawns every X seconds using the above timer
+	float respawnTimer = 0;							// timer used for respawning
+	const float respawnCooldown = 10;				// object respawns every X seconds using the above timer
 	enum State
 	{
 		isIdle,

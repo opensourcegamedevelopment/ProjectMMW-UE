@@ -11,8 +11,8 @@ UCLASS()
 class PROJECTMMW_API ABullet : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ABullet();
 
@@ -20,15 +20,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 
 private:
-	UStaticMeshComponent* staticMeshComponent;
 	TArray<UStaticMeshComponent*> components;
-	UProjectileMovementComponent* projectileMovementComponent;
 	UStaticMesh* newMesh;
 	float bulletSpeed;
 	float bulletDamage;
@@ -36,15 +34,22 @@ private:
 	float lifespan = 3.0f;
 	bool isActive;
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UStaticMeshComponent* staticMeshComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UProjectileMovementComponent* projectileMovementComponent;
+
 
 public:
 	virtual void SetLifeSpan(float InLifespan) override;
 	bool IsActive();
 	//void SpawnBullet();
-	void SpawnBullet(float bulletSpeed);
-	void SpawnBullet(float bulletSpeed, float bulletDamage);
-	void SpawnBullet(float bulletSpeed, float bulletDamage, UStaticMesh* newMesh);
-	void SpawnBullet(float bulletSpeed, float bulletDamage, UStaticMesh* newMesh, float lifespan);
+	//void SpawnBullet(float bulletSpeed);
+	void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform);
+	void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform, UStaticMesh* newMesh);
+	void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform, UStaticMesh* newMesh, float lifespan);
+
 protected:
 	void DeActivate();
 	void SetActive(bool isActive);
