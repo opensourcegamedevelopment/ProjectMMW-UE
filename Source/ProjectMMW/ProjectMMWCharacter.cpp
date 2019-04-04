@@ -65,6 +65,7 @@ void AProjectMMWCharacter::BeginPlay()
 	FlightPower = 0.5f;
 }
 
+
 void AProjectMMWCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -75,12 +76,20 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 
 	if (CurrentDeltaTime > 1)
 	{
-		UE_LOG(LogTemp, Log, TEXT("IsBoosting: %f"), CurrentEnergy);
+		//UE_LOG(LogTemp, Log, TEXT("IsBoosting: %f"), CurrentEnergy);
 		CheckEnergy();
 
 		if (GetCharacterMovement()->IsFlying() == true && IsVerticalBoost)
 		{
-			AddMovementInput(GetActorUpVector(), FlightPower);
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			if (IsVerticalBoost)
+			{
+				AddMovementInput(GetActorUpVector(), FlightPower);
+			}
+		}
+		else
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
 		CurrentDeltaTime -= DeltaTime;
 	}
@@ -302,6 +311,10 @@ void AProjectMMWCharacter::CheckEnergy()
 	{
 		IsOverheat = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	}
+	else if (CurrentEnergy >= MaxEnergy)
+	{
+		IsOverheat = false;
 	}
 
 	if (IsBoosting)
