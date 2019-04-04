@@ -93,7 +93,7 @@ protected:
 	void ActivateBoost();
 	void DeActivateBoost();
 	void CheckEnergy();
-	void RegenEnergy();
+	void RegenEnergy(float regenRate);
 
 	/** 
 	 * Called via input to turn at a given rate. 

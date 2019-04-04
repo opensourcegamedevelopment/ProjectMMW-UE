@@ -53,6 +53,7 @@ void AProjectMMWCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	IsOverheat = false;
 	IsVerticalBoost = false;
 	IsBoosting = false;
 	MaxHp = 1000;
@@ -293,26 +294,34 @@ void AProjectMMWCharacter::UpdateEnergy(float MagicChange)
 
 void AProjectMMWCharacter::CheckEnergy()
 {
+	if (CurrentEnergy <= 0)
+	{
+		IsOverheat = true;
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	}
+
 	if (IsBoosting)
 	{
 		CurrentEnergy -= 0.001;
 	}
 	else
 	{
-		RegenEnergy();
-	}
-
-	if (CurrentEnergy <= 0)
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		if (IsOverheat)
+		{
+			RegenEnergy(0.001);
+		}
+		else
+		{
+			RegenEnergy(0.002);
+		}
 	}
 }
 
-void AProjectMMWCharacter::RegenEnergy()
+void AProjectMMWCharacter::RegenEnergy(float regenRate)
 {
 	if (!IsBoosting && CurrentEnergy < MaxEnergy)
 	{
-		CurrentEnergy += 0.002;
+		CurrentEnergy += regenRate;
 	}
 }
 #pragma endregion
