@@ -62,7 +62,7 @@ void AProjectMMWCharacter::BeginPlay()
 	MaxEnergy = 1;
 	CurrentEnergy = 1;
 	EnergyPercentage = 1.0f;
-	FlightPower = 10.0f;
+	FlightPower = 0.5f;
 }
 
 void AProjectMMWCharacter::Tick(float DeltaTime)
@@ -168,12 +168,16 @@ void AProjectMMWCharacter::MoveRight(float Value)
 
 void AProjectMMWCharacter::JumpKeyAction()
 {
-	if (!IsBoosting || !IsOverheat)
+	if (!IsBoosting && !IsOverheat)
 	{
 		AProjectMMWCharacter::Jump();
 	}
 	else
 	{
+		if (GetCharacterMovement()->IsFlying() == false)
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+		}
 		IsVerticalBoost = true;
 	}
 }
@@ -302,17 +306,17 @@ void AProjectMMWCharacter::CheckEnergy()
 
 	if (IsBoosting)
 	{
-		CurrentEnergy -= 0.001;
+		CurrentEnergy -= 0.004;
 	}
 	else
 	{
 		if (IsOverheat)
 		{
-			RegenEnergy(0.001);
+			RegenEnergy(0.004);
 		}
 		else
 		{
-			RegenEnergy(0.002);
+			RegenEnergy(0.01);
 		}
 	}
 }
