@@ -15,8 +15,9 @@ Note: Because this is a free source game development project which everyone can 
 
 ## License
 Please See license terms
-By contribute to this project, you agree to the license terms of GNU Affero General Public License v3.0 with the sxception of special conditions outline below:
-- Non-comercial right, this project is a free source project make by gamers for gamers and are strictly not allow for resale.
+By contribute to this project, you agree to the license terms of Creative Commons Attribution-NonCommercial 4.0 International Public License.
+
+- Non-comercial right, this project is a non-for-profit project make by gamers for gamers and are strictly not allow for resale.
 
 For any clarification, please contact repo admin.
 
