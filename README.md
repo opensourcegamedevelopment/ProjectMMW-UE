@@ -14,7 +14,8 @@ Features:
 Note: Because this is a free source game development project which everyone can contribute, features are subject to change during the development cycle.
 
 ## License
-Please See license terms
+Please See license terms.
+
 By contribute to this project, you agree to the license terms of Creative Commons Attribution-NonCommercial 4.0 International Public License.
 
 - Non-comercial right, this project is a non-for-profit project make by gamers for gamers and are strictly not allow for resale.
