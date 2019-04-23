@@ -76,16 +76,22 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 
 	if (CurrentDeltaTime > 1)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("IsBoosting: %f"), CurrentEnergy);
 		CheckEnergy();
 
-		if (GetCharacterMovement()->IsFlying() == true && IsVerticalBoost)
+		if (GetCharacterMovement()->IsFlying() == true)
 		{
-			GetCharacterMovement()->bOrientRotationToMovement = false;
 			if (IsVerticalBoost)
 			{
 				AddMovementInput(GetActorUpVector(), FlightPower);
 			}
+
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			APlayerCameraManager *camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
+			FVector camForward = camManager->GetCameraRotation().Vector();
+
+			FRotator rotator = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, camForward.Z);
+
+			SetActorRotation(rotator, ETeleportType::TeleportPhysics);
 		}
 		else
 		{
@@ -97,7 +103,6 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
 	
 
-	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,11 +188,11 @@ void AProjectMMWCharacter::JumpKeyAction()
 	}
 	else
 	{
-		if (GetCharacterMovement()->IsFlying() == false)
+		/*if (GetCharacterMovement()->IsFlying() == false)
 		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-		}
-		IsVerticalBoost = true;
+		}*/
+		if (IsVerticalBoost == false) IsVerticalBoost = true; 
 	}
 }
 
@@ -217,7 +222,12 @@ void AProjectMMWCharacter::ActivateBoost()
 		if( GetCharacterMovement()->IsFlying() == false )  
 		{  
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);  
+			/*if (GetCharacterMovement()->bOrientRotationToMovement == true)
+			{
+				GetCharacterMovement()->bOrientRotationToMovement = false;
+			}*/
 		}  
+		
 	}
 }
 
@@ -319,7 +329,7 @@ void AProjectMMWCharacter::CheckEnergy()
 
 	if (IsBoosting)
 	{
-		CurrentEnergy -= 0.004;
+		CurrentEnergy -= 0.003;
 	}
 	else
 	{
