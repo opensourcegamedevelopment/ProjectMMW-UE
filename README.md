@@ -42,8 +42,6 @@ Uploaded Temp Folder
 (Only use for if developer need new assets that was uploaded but haven’t been organised into the public folder)
 https://www.dropbox.com/sh/ml5p23mhjunezyr/AACZw9vSwAmhtYAYXuk-CBLua?dl=0
 
-'I will be writing a tool for checking and grabbing latest Asset files, for now, we will download off cloud storage manually.'
-
 Contribution instruction: 
 
 FOR PROGRAMMERS:
@@ -51,9 +49,9 @@ FOR PROGRAMMERS:
 2. Once in Sourcetree click Clone/New
 3. Click Clone Repository
 4. Under Repository Type paste in GitHub URL at the top of this page
-5. You now have the project on your local drive. Go to the saved location of the project. (You can do this in sourcetree by right clicking the project, and clicking Show in Explorer.
-6. Download the Latest game assets (LargeData) Folder from the Dropbox Public folder (See LargeAssetsData section below).
-7. Add the Large Assets fIles to the Content Directory.
+5. You now have the project on your local drive. Next, you will need to download our large data assets which isn't stored in GitHub. If the Large File sync application below doesn't work, you can manually download the assets from google drive. Contact project Admin if there are issues.
+6. Download our custom lfs-GD application from github (https://github.com/opensourcegamedevelopment/osgd-lfs-googledrive/releases).
+7. Follow the instruction there to sync the large data assets.
 8. Make sure you are using the correct Unreal Engine version. (see above for the version we are currently using)
 9. In source tree, make sure you select/checkout master branch. (Right click -> checkout)
 10. Create a new branch by clicking on the branch button. (Refer to branching section for naming conventions). 
@@ -70,12 +68,8 @@ For Artists / Designers / Audio Engineers:
 # Large Assets Data / Timestamp tags
 Video game development is slightly different from software development in that we have alot of large binary data (such as 3D models, Textures, Material etc). While gitHub can handle Large binary files (LFS), however, there is a limit of storage space (Our large Assets could go upto gigabytes and terabytes!!).
 
-For this reason, we will store Large Assets Files/Data in a seperate location (dropbox).
-You might notice there are timestamp tags in some of the commits (eg. 20190314T1221). Those refer the the current Large Assets folder it is reference to. You might notice on dropbox there are corresponding zipped files (eg. 20190314T1221.rar). 
-Simple grab the same zipped for the commit you are working on. 
-If there are no timestamp on the commit you are working on, refer the timestamp on previous commits. 
-
-Later on when I have time, I will write an application to automatic this process to make it easier.
+For this reason, we will store Large Assets Files/Data in a seperate location (google drive).
+Since we are doing game dev, as we will be switching branches to test different protypes and versions of the game. I had created a lfs-gd application to allow easy sync for large files assets. If all work according to plan. All you will have to do is to switch to the branch you want to work with. Then press the large sync button. The application will take care of the rest and u can get back to what you do best which is game dev =P. 
 
 # Branching
 
