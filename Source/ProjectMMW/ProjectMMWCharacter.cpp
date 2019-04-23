@@ -85,8 +85,8 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 				AddMovementInput(GetActorUpVector(), FlightPower);
 			}
 
-			GetCharacterMovement()->bOrientRotationToMovement = false;
 			bUseControllerRotationYaw = true;
+			//set player character face forward
 			APlayerCameraManager *camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
 			FVector camForward = camManager->GetCameraRotation().Vector();
 
@@ -96,15 +96,11 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		}
 		else
 		{
-			GetCharacterMovement()->bOrientRotationToMovement = true;
 			bUseControllerRotationYaw = false;
 		}
 		CurrentDeltaTime -= DeltaTime;
 	}
-
 	//UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
-	
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,6 +128,8 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectMMWCharacter::LookUpAtRate);
 }
 
+#pragma region Character Action Methods
+
 void AProjectMMWCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
@@ -144,14 +142,8 @@ void AProjectMMWCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-#pragma region Character Action Methods
-
 void AProjectMMWCharacter::MoveForward(float Value)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
-
-	//UE_LOG(LogTemp, Log, TEXT("%s"), (IsBoosting ? TEXT("True") : TEXT("False")));
-	//IsBoosting = true;
 	//UE_LOG(LogTemp, Log, TEXT("%s"),  (IsBoosting ? TEXT("True") : TEXT("False")));
 	CheckStats();
 	if ((Controller != NULL) && (Value != 0.0f))
@@ -184,18 +176,19 @@ void AProjectMMWCharacter::MoveRight(float Value)
 
 void AProjectMMWCharacter::JumpKeyAction()
 {
-	if (!IsBoosting && !IsOverheat)
+	if (IsBoosting && !IsOverheat)
+	{
+		if (GetCharacterMovement()->IsFlying() == false)
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+		}
+		if (IsVerticalBoost == false) IsVerticalBoost = true;
+	}
+	else 
 	{
 		AProjectMMWCharacter::Jump();
 	}
-	else
-	{
-		/*if (GetCharacterMovement()->IsFlying() == false)
-		{
-			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-		}*/
-		if (IsVerticalBoost == false) IsVerticalBoost = true; 
-	}
+	characterRotateCheck();
 }
 
 void AProjectMMWCharacter::JumpKeyReleasedAction()
@@ -223,14 +216,11 @@ void AProjectMMWCharacter::ActivateBoost()
 		IsBoosting = true;
 		if( GetCharacterMovement()->IsFlying() == false )  
 		{  
-			GetCharacterMovement()->SetMovementMode(MOVE_Flying);  
-			/*if (GetCharacterMovement()->bOrientRotationToMovement == true)
-			{
-				GetCharacterMovement()->bOrientRotationToMovement = false;
-			}*/
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 		}  
 		
 	}
+	characterRotateCheck();
 }
 
 void AProjectMMWCharacter::DeActivateBoost()
@@ -240,6 +230,31 @@ void AProjectMMWCharacter::DeActivateBoost()
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}  
 	IsBoosting = false;
+	characterRotateCheck();
+}
+
+void AProjectMMWCharacter::characterRotateCheck()
+{
+	if (GetCharacterMovement()->IsFlying() == true)
+	{
+		if (IsVerticalBoost)
+		{
+			AddMovementInput(GetActorUpVector(), FlightPower);
+		}
+
+		bUseControllerRotationYaw = true;
+		//set player character face forward
+		APlayerCameraManager *camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
+		FVector camForward = camManager->GetCameraRotation().Vector();
+
+		FRotator rotator = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, camForward.Z);
+
+		SetActorRotation(rotator, ETeleportType::TeleportPhysics);
+	}
+	else
+	{
+		bUseControllerRotationYaw = false;
+	}
 }
 
 #pragma endregion

@@ -79,21 +79,21 @@ public:
 	float CurrentDeltaTime;
 
 protected:
-
-	/** Called for forwards/backward input */
-	void MoveForward(float Value);
-
-	/** Called for side to side input */
-	void MoveRight(float Value);
-
-	void JumpKeyAction();
-	void JumpKeyReleasedAction();
-
+	
+	//Character Status Functions
 	void CheckStats();
-	void ActivateBoost();
-	void DeActivateBoost();
 	void CheckEnergy();
 	void RegenEnergy(float regenRate);
+
+	// Character Action Functions
+	void ActivateBoost();
+	void DeActivateBoost();
+	void characterRotateCheck();
+	void JumpKeyAction();
+	void JumpKeyReleasedAction();
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+
 
 	/** 
 	 * Called via input to turn at a given rate. 
