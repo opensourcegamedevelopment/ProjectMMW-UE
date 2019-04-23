@@ -86,6 +86,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 			}
 
 			GetCharacterMovement()->bOrientRotationToMovement = false;
+			bUseControllerRotationYaw = true;
 			APlayerCameraManager *camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
 			FVector camForward = camManager->GetCameraRotation().Vector();
 
@@ -96,6 +97,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		else
 		{
 			GetCharacterMovement()->bOrientRotationToMovement = true;
+			bUseControllerRotationYaw = false;
 		}
 		CurrentDeltaTime -= DeltaTime;
 	}
