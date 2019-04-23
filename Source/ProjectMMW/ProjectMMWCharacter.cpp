@@ -63,6 +63,8 @@ void AProjectMMWCharacter::BeginPlay()
 	CurrentEnergy = 1;
 	EnergyPercentage = 1.0f;
 	FlightPower = 0.5f;
+
+	CreateBulletPool(numOfBulletsToPool);
 }
 
 
@@ -368,4 +370,27 @@ void AProjectMMWCharacter::RegenEnergy(float regenRate)
 		CurrentEnergy += regenRate;
 	}
 }
+
+void AProjectMMWCharacter::CreateBulletPool(int howMany) {
+	for (int i = 0; i < howMany; i++) {
+		ABullet* tempGo = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(-9999999, -9999999, -9999999), FRotator::ZeroRotator);
+		bulletPool.push_back( tempGo );
+	}
+}
+
+void AProjectMMWCharacter::FireWeapon() {
+	float bulletSpeed = 100.0f;								//
+	float bulletDamage = 100.0f;							// those are test variables, delete when implented
+	FTransform transform = FTransform(GetActorLocation());	// 
+	//
+	// Check Bullet.h
+	// the intented function to use is
+	// void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform, UStaticMesh* newMesh, float lifespan);
+	// variables are to be drawn from equiped weapon
+	//
+	bulletPool.front()->SpawnBullet( bulletSpeed, bulletDamage, transform);
+	bulletPool.push_back(bulletPool.front());
+	bulletPool.pop_front();
+}
+
 #pragma endregion

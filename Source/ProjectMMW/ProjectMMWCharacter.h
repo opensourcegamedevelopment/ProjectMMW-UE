@@ -1,12 +1,18 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include <list>
+#include <iterator> 
+#include "Bullet.h"
+#include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
 #include "Engine.h"
 #include "GameFramework/Character.h"
 #include "ProjectMMWCharacter.generated.h"
+
+using namespace std;
 
 UCLASS(config=Game)
 class AProjectMMWCharacter : public ACharacter
@@ -78,6 +84,8 @@ public:
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 
+	void CreateBulletPool(int howMany);
+
 protected:
 	
 	//Character Status Functions
@@ -106,6 +114,11 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
+
+	list <ABullet*> bulletPool;
+	const int numOfBulletsToPool = 25;
+	void FireWeapon();
+	
 
 	virtual void BeginPlay();
 

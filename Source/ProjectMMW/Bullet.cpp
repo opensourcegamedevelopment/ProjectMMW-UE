@@ -25,7 +25,7 @@ ABullet::ABullet()
 
 	projectileMovementComponent->Velocity = FVector(0, 0, 0);
 	projectileMovementComponent->ProjectileGravityScale = 0.0f;
-	//DeActivate();		
+	DeActivate();		
 
 	staticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnOverlapBegin);
 	staticMeshComponent->OnComponentEndOverlap.AddDynamic(this, &ABullet::OnOverlapEnd);
@@ -41,8 +41,8 @@ void ABullet::BeginPlay()
 
 	//////////////////////////////////
 	// for testing
-	FTransform* transform = new FTransform(FQuat(0, 0, 0, 0), FVector(-1000, 0, 400), FVector(1, 1, 1));
-	SpawnBullet(100, 100, *transform);
+	//FTransform* transform = new FTransform(FQuat(0, 0, 0, 0), FVector(-1000, 0, 400), FVector(1, 1, 1));
+	//SpawnBullet(100, 100, *transform);
 
 }
 
@@ -75,6 +75,7 @@ void ABullet::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Othe
 
 	if (theInterface) {
 		//theInterface->DamageObject(this->bulletDamage);
+		//theInterface->Execute_DamageObject(this->bulletDamage);
 	}
 	
 	DeActivate();
