@@ -65,6 +65,10 @@ void AProjectMMWCharacter::BeginPlay()
 	FlightPower = 0.5f;
 
 	CreateBulletPool(numOfBulletsToPool);
+
+	ConstructorHelpers::FObjectFinder<ABeamRifle> BeamRifleRef(TEXT("Game/Blueprints/BP_BeamRifle.uasset"));
+
+	beamRifle = BeamRifleRef.Object;
 }
 
 
