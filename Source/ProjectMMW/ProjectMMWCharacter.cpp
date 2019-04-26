@@ -46,6 +46,17 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	ConstructorHelpers::FObjectFinder<UBlueprint> BeamRifleRef(TEXT("Blueprint'/Game/Blueprints/BP_BeamRifle.BP_BeamRifle'"));
+	if (BeamRifleRef.Succeeded() == true)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
+		beamRifle = BeamRifleRef.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Failed Getting Beam Rifle"));
+	}
 }
 
 void AProjectMMWCharacter::BeginPlay()
@@ -66,9 +77,7 @@ void AProjectMMWCharacter::BeginPlay()
 
 	CreateBulletPool(numOfBulletsToPool);
 
-	ConstructorHelpers::FObjectFinder<ABeamRifle> BeamRifleRef(TEXT("Game/Blueprints/BP_BeamRifle.uasset"));
-
-	beamRifle = BeamRifleRef.Object;
+	
 }
 
 

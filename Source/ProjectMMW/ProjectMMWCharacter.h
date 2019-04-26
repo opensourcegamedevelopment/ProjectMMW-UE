@@ -88,7 +88,8 @@ public:
 	void CreateBulletPool(int howMany);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipments)
-	ABeamRifle* beamRifle;
+	//ABeamRifle* beamRifle;
+	UBlueprint* beamRifle;
 
 protected:
 	
