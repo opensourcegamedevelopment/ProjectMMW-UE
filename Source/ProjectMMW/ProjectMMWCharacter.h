@@ -4,6 +4,7 @@
 #include <list>
 #include <iterator> 
 #include "Bullet.h"
+#include "BeamRifle.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Components/BoxComponent.h"
@@ -85,6 +86,9 @@ public:
 	float CurrentDeltaTime;
 
 	void CreateBulletPool(int howMany);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	ABeamRifle* beamRifle;
 
 protected:
 	

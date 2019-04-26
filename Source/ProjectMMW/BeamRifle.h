@@ -23,4 +23,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UStaticMeshComponent* staticMeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UStaticMesh* staticMesh;
+
 };
