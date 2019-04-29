@@ -25,3 +25,8 @@ void ABeamRifle::Tick(float DeltaTime)
 
 }
 
+void ABeamRifle::Shoot()
+{
+
+}
+

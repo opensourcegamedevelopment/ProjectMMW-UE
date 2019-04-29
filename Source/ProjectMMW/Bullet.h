@@ -28,8 +28,8 @@ public:
 private:
 	TArray<UStaticMeshComponent*> components;
 	UStaticMesh* newMesh;
-	float bulletSpeed;
-	float bulletDamage;
+	float bulletSpeed = 100.0f;
+	float bulletDamage = 100.0f;
 	FTimerHandle lifeSpanTimer;
 	float lifespan = 3.0f;
 	bool isActive;
@@ -44,6 +44,10 @@ protected:
 public:
 	virtual void SetLifeSpan(float InLifespan) override;
 	bool IsActive();
+	float getLifeSpan();
+	float getBulletSpeed();
+	float getBulletDamage();
+
 	//void SpawnBullet();
 	//void SpawnBullet(float bulletSpeed);
 	void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform);

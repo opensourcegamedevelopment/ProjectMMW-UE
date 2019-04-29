@@ -3,8 +3,7 @@
 #pragma once
 #include <list>
 #include <iterator> 
-#include "Bullet.h"
-#include "BeamRifle.h"
+#include "Weapon.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Components/BoxComponent.h"
@@ -85,11 +84,9 @@ public:
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 
-	void CreateBulletPool(int howMany);
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipments)
 	//ABeamRifle* beamRifle;
-	UBlueprint* beamRifle;
+	UBlueprint* weapon1;
 
 protected:
 	
@@ -98,7 +95,7 @@ protected:
 	void CheckEnergy();
 	void RegenEnergy(float regenRate);
 
-	// Character Action Functions
+	// Character Movment Action Functions
 	void ActivateBoost();
 	void DeActivateBoost();
 	void characterRotateCheck();
@@ -107,6 +104,9 @@ protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	// Character Movment Action Functions
+	void ActivateMainWeapon();
+	void DeActivateMainWeapon();
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -119,11 +119,6 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
-
-	list <ABullet*> bulletPool;
-	const int numOfBulletsToPool = 25;
-	void FireWeapon();
-	
 
 	virtual void BeginPlay();
 

@@ -47,11 +47,12 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
+	//find beamRifle and add as weapon 1
 	ConstructorHelpers::FObjectFinder<UBlueprint> BeamRifleRef(TEXT("Blueprint'/Game/Blueprints/BP_BeamRifle.BP_BeamRifle'"));
 	if (BeamRifleRef.Succeeded() == true)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
-		beamRifle = BeamRifleRef.Object;
+		weapon1 = BeamRifleRef.Object;
 	}
 	else
 	{
@@ -75,7 +76,7 @@ void AProjectMMWCharacter::BeginPlay()
 	EnergyPercentage = 1.0f;
 	FlightPower = 0.5f;
 
-	CreateBulletPool(numOfBulletsToPool);
+	//CreateBulletPool(numOfBulletsToPool);
 
 	
 }
@@ -134,6 +135,9 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAction("Boost", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
 	PlayerInputComponent->BindAction("Boost", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
 
+	PlayerInputComponent->BindAction("MainWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateMainWeapon);
+	PlayerInputComponent->BindAction("MainWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateMainWeapon);
+
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
@@ -145,12 +149,12 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 #pragma region Character Action Functions
 
+#pragma region Character Action Movements
 void AProjectMMWCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
-
 void AProjectMMWCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
@@ -172,7 +176,6 @@ void AProjectMMWCharacter::MoveForward(float Value)
 		AddMovementInput(Direction, Value);
 	}
 }
-
 void AProjectMMWCharacter::MoveRight(float Value)
 {
 	CheckStats();
@@ -205,7 +208,6 @@ void AProjectMMWCharacter::JumpKeyAction()
 	}
 	characterRotateCheck();
 }
-
 void AProjectMMWCharacter::JumpKeyReleasedAction()
 {
 	if (!IsBoosting || IsOverheat)
@@ -272,27 +274,61 @@ void AProjectMMWCharacter::characterRotateCheck()
 	}
 }
 
-void AProjectMMWCharacter::CreateBulletPool(int howMany) {
-	for (int i = 0; i < howMany; i++) {
-		ABullet* tempGo = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(-9999999, -9999999, -9999999), FRotator::ZeroRotator);
-		bulletPool.push_back(tempGo);
+#pragma endregion
+
+void AProjectMMWCharacter::ActivateMainWeapon()
+{
+	//UClass* Weapon_Class = weapon1->ParentClass;
+
+
+	////AWeapon AWeapon_Class = Cast<AWeapon>(weapon1->GetClass());
+
+	//TSubclassOf<AWeapon> AWeapon_Class = Weapon_Class;
+
+	////WeaponPtr = weapon1->GetClass();
+	//AWeapon* WeaponPtr = AWeapon_Class;
+	//WeaponPtr->Shoot();
+	//
+
+	if (weapon1->GetClass()->IsChildOf(AWeapon::StaticClass())) {
+
+		AWeapon* WeaponPtr = Cast<AWeapon>(weapon1);
+
+		WeaponPtr->Shoot();
 	}
+
+	//AWeapon* Weapon = weapon1
+	//AWeapon Weapon = AWeapon();
+	//AWeapon* WeaponPtr = &Weapon;
+	//WeaponPtr->Shoot();
 }
 
-void AProjectMMWCharacter::FireWeapon() {
-	float bulletSpeed = 100.0f;								//
-	float bulletDamage = 100.0f;							// those are test variables, delete when implented
-	FTransform transform = FTransform(GetActorLocation());	// 
-	//
-	// Check Bullet.h
-	// the intented function to use is
-	// void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform, UStaticMesh* newMesh, float lifespan);
-	// variables are to be drawn from equiped weapon
-	//
-	bulletPool.front()->SpawnBullet(bulletSpeed, bulletDamage, transform);
-	bulletPool.push_back(bulletPool.front());
-	bulletPool.pop_front();
+void AProjectMMWCharacter::DeActivateMainWeapon()
+{
+
 }
+
+//void AProjectMMWCharacter::CreateBulletPool(int howMany) {
+//	for (int i = 0; i < howMany; i++) {
+//		ABullet* tempGo = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(-9999999, -9999999, -9999999), FRotator::ZeroRotator);
+//		bulletPool.push_back(tempGo);
+//	}
+//}
+
+//void AProjectMMWCharacter::FireWeapon() {
+//	float bulletSpeed = 100.0f;								//
+//	float bulletDamage = 100.0f;							// those are test variables, delete when implented
+//	FTransform transform = FTransform(GetActorLocation());	// 
+//	//
+//	// Check Bullet.h
+//	// the intented function to use is
+//	// void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform, UStaticMesh* newMesh, float lifespan);
+//	// variables are to be drawn from equiped weapon
+//	//
+//	bulletPool.front()->SpawnBullet(bulletSpeed, bulletDamage, transform);
+//	bulletPool.push_back(bulletPool.front());
+//	bulletPool.pop_front();
+//}
 
 #pragma endregion
 

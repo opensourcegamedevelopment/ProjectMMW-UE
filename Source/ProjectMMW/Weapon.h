@@ -2,28 +2,36 @@
 
 #pragma once
 
+#include <list>
+#include <iterator> 
 #include "CoreMinimal.h"
-#include "BeamRifle.generated.h"
-//#include "Weapon.h"
+#include "GameFramework/Actor.h"
+#include "Weapon.generated.h"
+#include "Bullet.h"
+#include "Components/BoxComponent.h"
 
 UCLASS()
-class PROJECTMMW_API ABeamRifle : public AActor
+class PROJECTMMW_API AWeapon : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ABeamRifle();
+	AWeapon();
+
+	void CreateBulletPool(int howMany);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	list <ABullet*> bulletPool;
+	const int numOfBulletsToPool = 25;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void Shoot() override;
+	virtual void Shoot();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

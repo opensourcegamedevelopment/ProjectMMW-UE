@@ -53,6 +53,25 @@ void ABullet::Tick(float DeltaTime)
 
 }
 
+#pragma region getters/setters
+
+#pragma region getters
+float ABullet::getLifeSpan()
+{
+	return lifespan;
+}
+float ABullet::getBulletSpeed()
+{
+	return bulletSpeed;
+}
+
+float ABullet::getBulletDamage()
+{
+	return bulletDamage;
+}
+#pragma endregion
+
+#pragma region setters
 void ABullet::SetLifeSpan(float InLifespan) {
 
 	lifespan = InLifespan;
@@ -65,6 +84,9 @@ void ABullet::SetActive(bool isActive)
 	staticMeshComponent->SetGenerateOverlapEvents(isActive);
 	SetActorHiddenInGame(!isActive);
 }
+#pragma endregion
+
+#pragma endregion
 
 void ABullet::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
@@ -91,6 +113,7 @@ bool ABullet::IsActive()
 {
 	return isActive;
 }
+
 
 void ABullet::DeActivate()
 {
