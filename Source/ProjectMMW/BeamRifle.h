@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Weapon.h"
 #include "BeamRifle.generated.h"
-//#include "Weapon.h"
 
 UCLASS()
-class PROJECTMMW_API ABeamRifle : public AActor
+class PROJECTMMW_API ABeamRifle : public AWeapon
 {
 	GENERATED_BODY()
 	
@@ -26,10 +26,10 @@ public:
 	virtual void Shoot() override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UStaticMeshComponent* staticMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UStaticMesh* staticMesh;
+		UStaticMesh* staticMesh;*/
 
 };

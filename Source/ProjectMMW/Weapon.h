@@ -6,9 +6,9 @@
 #include <iterator> 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Weapon.generated.h"
 #include "Bullet.h"
 #include "Components/BoxComponent.h"
+#include "Weapon.generated.h"
 
 UCLASS()
 class PROJECTMMW_API AWeapon : public AActor
@@ -25,7 +25,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	list <ABullet*> bulletPool;
+	//list <ABullet*> bulletPool;
 	const int numOfBulletsToPool = 25;
 
 public:	

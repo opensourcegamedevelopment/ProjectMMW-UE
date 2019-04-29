@@ -28,7 +28,7 @@ void AWeapon::Tick(float DeltaTime)
 void AWeapon::CreateBulletPool(int howMany) {
 	for (int i = 0; i < howMany; i++) {
 		ABullet* tempGo = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(-9999999, -9999999, -9999999), FRotator::ZeroRotator);
-		bulletPool.push_back(tempGo);
+		//bulletPool.push_back(tempGo);
 	}
 }
 
@@ -41,5 +41,5 @@ void AWeapon::Shoot()
 	//ABullet* bullet;
 	//bullet->SpawnBullet(bullet->getBulletSpeed,bullet->getBulletDamage, transform);
 
-	UE_LOG(LogTemp, Log, TEXT("Shoot!!"));
+	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!!"));
 }

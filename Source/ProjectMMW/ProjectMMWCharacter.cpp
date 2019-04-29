@@ -289,9 +289,9 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 	//AWeapon* WeaponPtr = AWeapon_Class;
 	//WeaponPtr->Shoot();
 	//
-
+	UE_LOG(LogTemp, Log, TEXT("Character.cpp - Shoot!!"));
 	if (weapon1->GetClass()->IsChildOf(AWeapon::StaticClass())) {
-
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp2 - Shoot!!"));
 		AWeapon* WeaponPtr = Cast<AWeapon>(weapon1);
 
 		WeaponPtr->Shoot();
