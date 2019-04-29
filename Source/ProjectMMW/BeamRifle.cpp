@@ -25,8 +25,24 @@ void ABeamRifle::Tick(float DeltaTime)
 
 }
 
-void ABeamRifle::Shoot()
+void ABeamRifle::Shoot(AActor *actor)
 {
+	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - Shoot!!"));
+	FTransform transform = FTransform(GetActorLocation());
 
+	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - transform %s"), *transform.ToString());
+
+	UWorld* const World = actor->GetWorld();
+	if (World)
+	{
+		ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
+		bullet->SpawnBullet(float(100), float(100), transform);
+	}
+
+	//GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
+
+	//ABullet* bullet = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
+
+	//bullet->SpawnBullet(float(100), float(100), transform);
 }
 

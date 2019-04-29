@@ -278,29 +278,12 @@ void AProjectMMWCharacter::characterRotateCheck()
 
 void AProjectMMWCharacter::ActivateMainWeapon()
 {
-	//UClass* Weapon_Class = weapon1->ParentClass;
-
-
-	////AWeapon AWeapon_Class = Cast<AWeapon>(weapon1->GetClass());
-
-	//TSubclassOf<AWeapon> AWeapon_Class = Weapon_Class;
-
-	////WeaponPtr = weapon1->GetClass();
-	//AWeapon* WeaponPtr = AWeapon_Class;
-	//WeaponPtr->Shoot();
-	//
-	UE_LOG(LogTemp, Log, TEXT("Character.cpp - Shoot!!"));
-	if (weapon1->GetClass()->IsChildOf(AWeapon::StaticClass())) {
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp2 - Shoot!!"));
-		AWeapon* WeaponPtr = Cast<AWeapon>(weapon1);
-
-		WeaponPtr->Shoot();
+	ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+	if (BeamRifle != nullptr)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
+		BeamRifle->Shoot(this);
 	}
-
-	//AWeapon* Weapon = weapon1
-	//AWeapon Weapon = AWeapon();
-	//AWeapon* WeaponPtr = &Weapon;
-	//WeaponPtr->Shoot();
 }
 
 void AProjectMMWCharacter::DeActivateMainWeapon()

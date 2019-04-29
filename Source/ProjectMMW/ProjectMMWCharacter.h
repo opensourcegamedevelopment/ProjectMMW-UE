@@ -4,6 +4,7 @@
 #include <list>
 #include <iterator> 
 #include "Weapon.h"
+#include "BeamRifle.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Components/BoxComponent.h"

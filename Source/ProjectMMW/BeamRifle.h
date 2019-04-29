@@ -23,7 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Shoot() override;
+	//virtual void Shoot() override;
+
+	void Shoot(AActor *actor);
 
 protected:
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
