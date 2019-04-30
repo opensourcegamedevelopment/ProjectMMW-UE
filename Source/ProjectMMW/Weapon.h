@@ -19,7 +19,7 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
-	void CreateBulletPool(int howMany);
+	virtual void CreateBulletPool(int howMany);
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,12 +32,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void Shoot();
+	virtual void Shoot(AActor *actor);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UStaticMeshComponent* staticMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UStaticMesh* staticMesh;
+		UStaticMesh* staticMesh;*/
 
 };

@@ -32,6 +32,14 @@ void ABeamRifle::Shoot(AActor *actor)
 
 	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - transform %s"), *transform.ToString());
 
+	FVector actorLocation = actor->execK2_GetActorLocation;
+
+	FVector actorForwardVector = actor->GetActorForwardVector;
+
+	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - actorLocation %s"), *actorLocation.ToString());
+
+	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - actorForwardVector %s"), *actorForwardVector.ToString());
+
 	UWorld* const World = actor->GetWorld();
 	if (World)
 	{

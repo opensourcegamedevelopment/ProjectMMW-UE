@@ -43,3 +43,8 @@ void AWeapon::Shoot()
 
 	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!!"));
 }
+
+void AWeapon::Shoot(AActor *actor)
+{
+	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!! - To Be Implemented in Parent Class"));
+}
