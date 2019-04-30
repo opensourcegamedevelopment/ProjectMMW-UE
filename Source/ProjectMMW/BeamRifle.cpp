@@ -32,9 +32,9 @@ void ABeamRifle::Shoot(AActor *actor)
 
 	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - transform %s"), *transform.ToString());
 
-	FVector actorLocation = actor->execK2_GetActorLocation;
+	FVector actorLocation = actor->GetActorLocation();
 
-	FVector actorForwardVector = actor->GetActorForwardVector;
+	FVector actorForwardVector = actor->GetActorForwardVector();
 
 	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - actorLocation %s"), *actorLocation.ToString());
 
