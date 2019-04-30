@@ -34,7 +34,9 @@ void ABeamRifle::Shoot(AActor *actor)
 
 	FVector actorLocation = actor->GetActorLocation();
 
-	FVector actorForwardVector = actor->GetActorForwardVector();
+	FVector actorForwardVector = actor->GetActorForwardVector() * 10;
+
+	FVector newActorLocation = actorForwardVector + actorLocation;
 
 	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - actorLocation %s"), *actorLocation.ToString());
 
@@ -43,8 +45,8 @@ void ABeamRifle::Shoot(AActor *actor)
 	UWorld* const World = actor->GetWorld();
 	if (World)
 	{
-		ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
-		bullet->SpawnBullet(float(100), float(100), transform);
+		ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), newActorLocation, FRotator::ZeroRotator);
+		bullet->SpawnBullet(float(10), float(10), transform);
 	}
 
 	//GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
