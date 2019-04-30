@@ -46,7 +46,7 @@ void ABeamRifle::Shoot(AActor *actor)
 	if (World)
 	{
 		ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), newActorLocation, FRotator::ZeroRotator);
-		bullet->SpawnBullet(float(10), float(10), transform);
+		bullet->SpawnBullet(float(10), float(10), FTransform(newActorLocation));
 	}
 
 	//GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
