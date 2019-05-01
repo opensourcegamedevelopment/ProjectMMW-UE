@@ -53,6 +53,14 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
 		weapon1 = BeamRifleRef.Object;
+
+		FName fnWeaponSocket = TEXT("WeaponSocket");
+		ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+		if (BeamRifle != nullptr)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character.cpp - ing weapon!!"));
+			AttachToActor(BeamRifle, FAttachmentTransformRules::KeepWorldTransform, fnWeaponSocket);
+		}
 	}
 	else
 	{
