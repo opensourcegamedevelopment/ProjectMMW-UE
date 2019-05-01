@@ -28,10 +28,10 @@ public:
 	void Shoot(AActor *actor);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
 		UStaticMeshComponent* AmmoStaticMeshComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
-		UStaticMesh* AmmoStaticMesh;
+		*/
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
+		UStaticMesh* AmmoStaticMesh;*/
 
 };

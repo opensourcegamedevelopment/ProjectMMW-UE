@@ -37,8 +37,8 @@ public:
 protected:
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UStaticMeshComponent* staticMeshComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UStaticMesh* staticMesh;*/
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
+		UStaticMesh* AmmoStaticMesh;
 
 };
