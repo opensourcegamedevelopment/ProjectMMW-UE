@@ -9,13 +9,29 @@ ABeamRifle::ABeamRifle()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//find and add BeamRifile Bullet
+	ConstructorHelpers::FObjectFinder<UBlueprint> BulletRef(TEXT("Blueprint'/Game/Blueprints/BP_DummyBUllet.BP_DummyBUllet'"));
+	if (BulletRef.Succeeded() == true)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
+		//weapon1 = BulletRef.Object;
+
+		//BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+		BulletToSpawn = (UClass*)BulletRef.Object->GeneratedClass;
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Failed Getting Beam Rifle"));
+	}
 }
 
 // Called when the game starts or when spawned
 void ABeamRifle::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//staticMeshComponent->SetStaticMesh(sta);
+
+	SetRootComponent(staticMeshComponent);
 }
 
 // Called every frame
@@ -45,14 +61,11 @@ void ABeamRifle::Shoot(AActor *actor)
 	UWorld* const World = actor->GetWorld();
 	if (World)
 	{
-		ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), newActorLocation, FRotator::ZeroRotator);
-		bullet->SpawnBullet(float(10), float(10), FTransform(newActorLocation), AmmoStaticMesh);
+		//ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), newActorLocation, FRotator::ZeroRotator);
+		//bullet->SpawnBullet(float(10), float(10), FTransform(newActorLocation), AmmoStaticMesh);
+		ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, newActorLocation, FRotator::ZeroRotator);
+		bullet->SpawnBullet(float(600), float(10), FTransform(newActorLocation));
 	}
 
-	//GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
-
-	//ABullet* bullet = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(100, 100, 100), FRotator::ZeroRotator);
-
-	//bullet->SpawnBullet(float(100), float(100), transform);
 }
 

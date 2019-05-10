@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon.h"
+#include "UObject\ConstructorHelpers.h"
 #include "BeamRifle.generated.h"
 
 UCLASS()
@@ -33,5 +34,10 @@ protected:
 		*/
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
 		UStaticMesh* AmmoStaticMesh;*/
+
+private:
+	TSubclassOf<class ABullet> BulletToSpawn;
+
+	
 
 };

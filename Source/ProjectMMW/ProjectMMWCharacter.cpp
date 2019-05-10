@@ -54,13 +54,8 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 		UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
 		weapon1 = BeamRifleRef.Object;
 
-		FName fnWeaponSocket = TEXT("WeaponSocket");
-		ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-		if (BeamRifle != nullptr)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Character.cpp - ing weapon!!"));
-			AttachToActor(BeamRifle, FAttachmentTransformRules::KeepWorldTransform, fnWeaponSocket);
-		}
+		BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+		BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;
 	}
 	else
 	{
@@ -86,7 +81,30 @@ void AProjectMMWCharacter::BeginPlay()
 
 	//CreateBulletPool(numOfBulletsToPool);
 
-	
+
+	if (BeamRifle != nullptr)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - loading weapon!!"));
+
+		FVector actorLocation = GetActorLocation();
+		FVector actorForwardVector = GetActorForwardVector() * 200;
+		FVector NewLocation = actorForwardVector + actorLocation;
+
+		ABeamRifle* beamRifle = GetWorld()->SpawnActor<ABeamRifle>(BeamRifleToSpawn, NewLocation, FRotator::ZeroRotator);
+
+		if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
+			FName fnWeaponSocket = TEXT("LeftWeaponSocket");
+
+			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+			socket->AttachActor(beamRifle, GetMesh());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Not Found!!"));
+		}
+	}
 }
 
 
@@ -286,7 +304,7 @@ void AProjectMMWCharacter::characterRotateCheck()
 
 void AProjectMMWCharacter::ActivateMainWeapon()
 {
-	ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
 	if (BeamRifle != nullptr)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));

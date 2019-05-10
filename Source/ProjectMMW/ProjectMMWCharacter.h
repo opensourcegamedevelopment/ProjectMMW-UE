@@ -88,6 +88,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipments)
 	//ABeamRifle* beamRifle;
 	UBlueprint* weapon1;
+	ABeamRifle* BeamRifle;
+	TSubclassOf<class ABeamRifle> BeamRifleToSpawn;
 
 protected:
 	

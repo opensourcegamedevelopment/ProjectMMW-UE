@@ -77,3 +77,4 @@ Plugins/*/Intermediate/*
 DerivedDataCache/*
 Content/LargeData/
 Content/StarterContent/
+Output-Build.txt

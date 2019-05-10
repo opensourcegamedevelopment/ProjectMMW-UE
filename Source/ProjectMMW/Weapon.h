@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "Bullet.h"
 #include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -28,17 +29,23 @@ protected:
 	//list <ABullet*> bulletPool;
 	const int numOfBulletsToPool = 25;
 
+private:
+	TArray<UStaticMeshComponent*> components;
+	bool isActive;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	bool IsActive();
 	virtual void Shoot();
 	virtual void Shoot(AActor *actor);
 
 protected:
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UStaticMeshComponent* staticMeshComponent;
-	*/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
-		UStaticMesh* AmmoStaticMesh;
+
+	void SetActive(bool isActive);
+	void DeActivate();
 
 };
