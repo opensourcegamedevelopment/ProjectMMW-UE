@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon.h"
-#include "UObject\ConstructorHelpers.h"
+#include "UObject/ConstructorHelpers.h"
 #include "BeamRifle.generated.h"
 
 UCLASS()
