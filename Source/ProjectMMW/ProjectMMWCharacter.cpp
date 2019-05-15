@@ -49,7 +49,11 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 
 	//find beamRifle and add as weapon 1
 	ConstructorHelpers::FObjectFinder<UBlueprint> BeamRifleRef(TEXT("Blueprint'/Game/Blueprints/BP_BeamRifle.BP_BeamRifle'"));
-	if (BeamRifleRef.Succeeded() == true)
+
+	BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+	BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;
+
+	/*if (BeamRifleRef.Succeeded() == true)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
 		weapon1 = BeamRifleRef.Object;
@@ -60,7 +64,7 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	else
 	{
 		UE_LOG(LogTemp, Log, TEXT("Failed Getting Beam Rifle"));
-	}
+	}*/
 }
 
 void AProjectMMWCharacter::BeginPlay()
