@@ -5,6 +5,7 @@
 #include <iterator> 
 #include "Weapon.h"
 #include "BeamRifle.h"
+#include "GlobalSettings.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Components/BoxComponent.h"
@@ -85,11 +86,14 @@ public:
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipments)
-	//ABeamRifle* beamRifle;
-	UBlueprint* weapon1;
-	ABeamRifle* BeamRifle;
-	TSubclassOf<class ABeamRifle> BeamRifleToSpawn;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	TArray<TSubclassOf<class ABeamRifle>> EquipableWeapons;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+	UBlueprint* GlobalSettings;
+
+private: 
+	ABeamRifle* spawnedBeamRifle;
 
 protected:
 	

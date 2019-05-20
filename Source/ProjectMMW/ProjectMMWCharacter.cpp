@@ -47,24 +47,24 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
-	//find beamRifle and add as weapon 1
-	ConstructorHelpers::FObjectFinder<UBlueprint> BeamRifleRef(TEXT("Blueprint'/Game/Blueprints/BP_BeamRifle.BP_BeamRifle'"));
+	//find GlobalSettings Blueprint 
+	ConstructorHelpers::FObjectFinder<UBlueprint> GlobalSettingsRef(TEXT("Blueprint'/Game/Blueprints/BP_GlobalSettings.BP_GlobalSettings'"));
 
-	BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;
+	/*BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+	BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;*/
 
-	/*if (BeamRifleRef.Succeeded() == true)
+	if (GlobalSettingsRef.Succeeded() == true)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
-		weapon1 = BeamRifleRef.Object;
+		UE_LOG(LogConfig, Log, TEXT(" Successful Getting GlobalSettingsRef"));
+		GlobalSettings = GlobalSettingsRef.Object;
 
-		BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-		BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;
+		/*BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+		BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;*/
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Failed Getting Beam Rifle"));
-	}*/
+		UE_LOG(LogConfig, Error, TEXT("Failed Getting GlobalSettingsRef"));
+	}
 }
 
 void AProjectMMWCharacter::BeginPlay()
@@ -85,29 +85,41 @@ void AProjectMMWCharacter::BeginPlay()
 
 	//CreateBulletPool(numOfBulletsToPool);
 
+	/*TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWeapon::StaticClass(), FoundActors);*/
 
-	if (BeamRifle != nullptr)
+
+	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
+	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
+
+	/*int32 Count = EquipableWeapons.Num();
+	UE_LOG(LogTemp, Warning, TEXT("GlobalSettings itemsTotal: %d"), Count);*/
+	for (auto& Elem : EquipableWeapons)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp - loading weapon!!"));
+		/*Elem.Key,
+			* Elem.Value*/
+		UE_LOG(LogTemp, Warning, TEXT("GlobalSettingsItems"));
+		UE_LOG(LogTemp, Warning, TEXT("GlobalSettings: %s"), *Elem.Key);
 
-		FVector actorLocation = GetActorLocation();
-		FVector actorForwardVector = GetActorForwardVector() * 200;
-		FVector NewLocation = actorForwardVector + actorLocation;
+	}
 
-		ABeamRifle* beamRifle = GetWorld()->SpawnActor<ABeamRifle>(BeamRifleToSpawn, NewLocation, FRotator::ZeroRotator);
+	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
 
-		if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
-			FName fnWeaponSocket = TEXT("LeftWeaponSocket");
+	FVector actorLocation = GetActorLocation();
+	FVector actorForwardVector = GetActorForwardVector() * 200;
+	FVector NewLocation = actorForwardVector + actorLocation;
+	spawnedBeamRifle = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), NewLocation, FRotator::ZeroRotator);
+	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
+		FName fnWeaponSocket = TEXT("LeftWeaponSocket");
 
-			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-			socket->AttachActor(beamRifle, GetMesh());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Not Found!!"));
-		}
+		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		socket->AttachActor(spawnedBeamRifle, GetMesh());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Not Found!!"));
 	}
 }
 
@@ -309,10 +321,10 @@ void AProjectMMWCharacter::characterRotateCheck()
 void AProjectMMWCharacter::ActivateMainWeapon()
 {
 	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	if (BeamRifle != nullptr)
+	if (spawnedBeamRifle != nullptr)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
-		BeamRifle->Shoot(this);
+		spawnedBeamRifle->Shoot(this);
 	}
 }
 
