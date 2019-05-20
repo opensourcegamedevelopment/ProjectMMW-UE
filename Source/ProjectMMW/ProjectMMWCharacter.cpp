@@ -108,14 +108,16 @@ void AProjectMMWCharacter::BeginPlay()
 	FVector actorLocation = GetActorLocation();
 	FVector actorForwardVector = GetActorForwardVector() * 200;
 	FVector NewLocation = actorForwardVector + actorLocation;
-	spawnedBeamRifle = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), NewLocation, FRotator::ZeroRotator);
+	EquippedWeapon_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), NewLocation, FRotator::ZeroRotator);
+
+
 	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
 		FName fnWeaponSocket = TEXT("LeftWeaponSocket");
 
 		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-		socket->AttachActor(spawnedBeamRifle, GetMesh());
+		socket->AttachActor(EquippedWeapon_Left, GetMesh());
 	}
 	else
 	{
@@ -321,10 +323,10 @@ void AProjectMMWCharacter::characterRotateCheck()
 void AProjectMMWCharacter::ActivateMainWeapon()
 {
 	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	if (spawnedBeamRifle != nullptr)
+	if (EquippedWeapon_Left != nullptr)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
-		spawnedBeamRifle->Shoot(this);
+		EquippedWeapon_Left->Shoot(this);
 	}
 }
 

@@ -87,13 +87,29 @@ public:
 	float CurrentDeltaTime;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TArray<TSubclassOf<class ABeamRifle>> EquipableWeapons;
+	TSubclassOf<AWeapon> Weapon1_Left;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	TSubclassOf<AWeapon> Weapon1_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	TSubclassOf<AWeapon> Weapon2_Left;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	TSubclassOf<AWeapon> Weapon2_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	TSubclassOf<AWeapon> Weapon3_Left;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	TSubclassOf<AWeapon> Weapon4_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 	UBlueprint* GlobalSettings;
 
-private: 
-	ABeamRifle* spawnedBeamRifle;
+private:
+	AWeapon* EquippedWeapon_Left;
+	AWeapon* EquippedWeapon_Right;
 
 protected:
 	

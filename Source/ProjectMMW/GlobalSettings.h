@@ -29,7 +29,6 @@ protected:
 	TMap<FString, TSubclassOf<class AWeapon>> EquipableWeapons;
 
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
