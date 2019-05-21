@@ -35,9 +35,10 @@ protected:
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
 		UStaticMesh* AmmoStaticMesh;*/
 
-private:
-	TSubclassOf<class ABullet> BulletToSpawn;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
+		TSubclassOf<class ABullet> BulletToSpawn;
 
+private:
 	
 
 };

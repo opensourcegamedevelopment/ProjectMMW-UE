@@ -85,11 +85,10 @@ void AProjectMMWCharacter::BeginPlay()
 
 	//CreateBulletPool(numOfBulletsToPool);
 
-	/*TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWeapon::StaticClass(), FoundActors);*/
 
-
-	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
+	//Get EquiableWeapons from globalSettings
+	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
+	GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
 	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
 
 	/*int32 Count = EquipableWeapons.Num();
@@ -103,13 +102,16 @@ void AProjectMMWCharacter::BeginPlay()
 
 	}
 
+	//look for Beam Rifle
 	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
+	Weapon1_Left = BeamRiflePtr->Get();
+	Weapon2_Left = EquipableWeapons.Find("CannonRifle")->Get();
 
+	//Equip BeamRifle to current Equipped Weapon_Left
 	FVector actorLocation = GetActorLocation();
 	FVector actorForwardVector = GetActorForwardVector() * 200;
 	FVector NewLocation = actorForwardVector + actorLocation;
 	EquippedWeapon_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), NewLocation, FRotator::ZeroRotator);
-
 
 	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
 	{
@@ -121,7 +123,7 @@ void AProjectMMWCharacter::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Not Found!!"));
+		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
 	}
 }
 
@@ -181,6 +183,9 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 	PlayerInputComponent->BindAction("MainWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateMainWeapon);
 	PlayerInputComponent->BindAction("MainWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateMainWeapon);
+
+	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon1);
+	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon2);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -333,6 +338,50 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 void AProjectMMWCharacter::DeActivateMainWeapon()
 {
 
+}
+
+void AProjectMMWCharacter::SwitchToWeapon1()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SwitchToWeapon1()"));
+
+	if (EquippedWeapon_Left->Destroy())
+	{
+		FVector actorLocation = GetActorLocation();
+		FVector actorForwardVector = GetActorForwardVector() * 200;
+		FVector NewLocation = actorForwardVector + actorLocation;
+		EquippedWeapon_Left = GetWorld()->SpawnActor<AWeapon>(Weapon1_Left, NewLocation, FRotator::ZeroRotator);
+		if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
+		{
+			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+			socket->AttachActor(EquippedWeapon_Left, GetMesh());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
+		}
+	}
+}
+
+void AProjectMMWCharacter::SwitchToWeapon2()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SwitchToWeapon2()"));
+
+	if (EquippedWeapon_Left->Destroy())
+	{
+		FVector actorLocation = GetActorLocation();
+		FVector actorForwardVector = GetActorForwardVector() * 200;
+		FVector NewLocation = actorForwardVector + actorLocation;
+		EquippedWeapon_Left = GetWorld()->SpawnActor<AWeapon>(Weapon2_Left, NewLocation, FRotator::ZeroRotator);
+		if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
+		{
+			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+			socket->AttachActor(EquippedWeapon_Left, GetMesh());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
+		}
+	}
 }
 
 //void AProjectMMWCharacter::CreateBulletPool(int howMany) {

@@ -130,6 +130,8 @@ protected:
 	// Character Movment Action Functions
 	void ActivateMainWeapon();
 	void DeActivateMainWeapon();
+	void SwitchToWeapon1();
+	void SwitchToWeapon2();
 
 	/** 
 	 * Called via input to turn at a given rate. 
