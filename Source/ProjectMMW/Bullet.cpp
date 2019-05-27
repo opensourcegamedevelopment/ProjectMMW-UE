@@ -127,8 +127,13 @@ void ABullet::DeActivate()
 
 void ABullet::SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform)
 {
-	this->SetActorLocation(transform.GetLocation(), false);
 	this->SetActorRotation(transform.GetRotation());
+
+	FVector actorLocation = transform.GetLocation();
+	FVector actorForwardVector = transform.GetLocation().ForwardVector * 10;
+	FVector newActorLocation = actorForwardVector + actorLocation;
+
+	this->SetActorLocation(newActorLocation, false);
 	this->bulletSpeed = bulletSpeed;
 	this->bulletDamage = bulletDamage;
 	projectileMovementComponent->Velocity = GetActorForwardVector() * bulletSpeed;

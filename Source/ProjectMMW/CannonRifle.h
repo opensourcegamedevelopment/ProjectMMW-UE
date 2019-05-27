@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	ACannonRifle();
 
-	void Shoot(AActor* actor);
+	void Shoot(FVector location, FQuat rotation);
 
 protected:
 	// Called when the game starts or when spawned

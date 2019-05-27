@@ -41,31 +41,12 @@ void ABeamRifle::Tick(float DeltaTime)
 
 }
 
-void ABeamRifle::Shoot(AActor *actor)
+void ABeamRifle::Shoot(FVector location, FQuat rotation)
 {
-	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - Shoot!!"));
-	FTransform transform = FTransform(GetActorLocation());
-
-	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - transform %s"), *transform.ToString());
-
-	FVector actorLocation = actor->GetActorLocation();
-
-	FVector actorForwardVector = actor->GetActorForwardVector() * 10;
-
-	FVector newActorLocation = actorForwardVector + actorLocation;
-
-	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - actorLocation %s"), *actorLocation.ToString());
-
-	UE_LOG(LogTemp, Log, TEXT("BeamRifle.cpp - actorForwardVector %s"), *actorForwardVector.ToString());
-
-	UWorld* const World = actor->GetWorld();
+	UWorld* const World = GetWorld();
 	if (World)
 	{
-		//ABullet* bullet = World->SpawnActor<ABullet>(ABullet::StaticClass(), newActorLocation, FRotator::ZeroRotator);
-		//bullet->SpawnBullet(float(10), float(10), FTransform(newActorLocation), AmmoStaticMesh);
-		ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, newActorLocation, FRotator::ZeroRotator);
-		bullet->SpawnBullet(float(600), float(10), FTransform(newActorLocation));
+		ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, location, rotation.Rotator());
+		bullet->SpawnBullet(float(600), float(10), FTransform(rotation, location, FVector::OneVector));
 	}
-
 }
-

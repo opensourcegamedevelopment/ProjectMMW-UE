@@ -331,7 +331,17 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 	if (EquippedWeapon_Left != nullptr)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
-		EquippedWeapon_Left->Shoot(this);
+
+		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
+		{
+			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+
+			FVector socketLocation;
+			FQuat socketRotation;
+			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+
+			EquippedWeapon_Left->Shoot(socketLocation, socketRotation);
+		}
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "Bullet.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+//#include "Engine/Classes/Engine//SkeletalMesh.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -38,7 +39,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	bool IsActive();
 	virtual void Shoot();
-	virtual void Shoot(AActor *actor);
+	virtual void Shoot(FVector location, FQuat rotation);
 
 protected:
 

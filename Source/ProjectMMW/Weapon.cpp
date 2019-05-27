@@ -60,10 +60,11 @@ void AWeapon::Shoot()
 	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!!"));
 }
 
-void AWeapon::Shoot(AActor *actor)
+void AWeapon::Shoot(FVector location, FQuat rotation)
 {
 	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!! - To Be Implemented in Parent Class"));
 }
+
 
 void AWeapon::DeActivate()
 {

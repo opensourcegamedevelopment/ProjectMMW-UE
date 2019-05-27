@@ -26,7 +26,7 @@ public:
 
 	//virtual void Shoot() override;
 
-	void Shoot(AActor *actor);
+	void Shoot(FVector location, FQuat rotation);
 
 protected:
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
