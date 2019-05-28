@@ -4,6 +4,7 @@
 #include <list>
 #include <iterator> 
 #include "Weapon.h"
+#include "CannonRifle.h"
 #include "BeamRifle.h"
 #include "GlobalSettings.h"
 #include "GameFramework/Actor.h"
@@ -78,6 +79,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category=Stats)
 	void UpdateEnergy(float EnergyChange);
 
+	UFUNCTION(BlueprintPure, Category = Stats)
+		FText GetWeaponLeftCurrentClipSize();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		FText GetWeaponLeftCurrentTotalAmmo();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 	float FlightPower;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = States)
@@ -86,30 +92,35 @@ public:
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TSubclassOf<AWeapon> Weapon1_Left;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TSubclassOf<AWeapon> Weapon1_Right;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TSubclassOf<AWeapon> Weapon2_Left;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TSubclassOf<AWeapon> Weapon2_Right;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TSubclassOf<AWeapon> Weapon3_Left;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	TSubclassOf<AWeapon> Weapon4_Right;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 	UBlueprint* GlobalSettings;
 
-private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon1_Left;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon1_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon2_Left;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon2_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon3_Left;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon3_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon4_Left;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+	AWeapon* Weapon4_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 	AWeapon* EquippedWeapon_Left;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 	AWeapon* EquippedWeapon_Right;
+
+private:
 
 protected:
 	
@@ -130,6 +141,7 @@ protected:
 	// Character Movment Action Functions
 	void ActivateMainWeapon();
 	void DeActivateMainWeapon();
+	void Reload();
 	void SwitchToWeapon1();
 	void SwitchToWeapon2();
 

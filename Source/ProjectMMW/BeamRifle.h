@@ -24,10 +24,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//virtual void Shoot() override;
-
-	void Shoot(FVector location, FQuat rotation);
-
 protected:
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
 		UStaticMeshComponent* AmmoStaticMeshComponent;
@@ -35,8 +31,8 @@ protected:
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ammo)
 		UStaticMesh* AmmoStaticMesh;*/
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
-		TSubclassOf<class ABullet> BulletToSpawn;
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
+		TSubclassOf<class ABullet> BulletToSpawn;*/
 
 private:
 	

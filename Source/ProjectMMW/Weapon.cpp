@@ -13,6 +13,9 @@ AWeapon::AWeapon()
 
 	staticMeshComponent->SetupAttachment(RootComponent);
 
+	CurrentClipSize = ClipSize;
+	CurrentTotalAmmo = MaxAmmo;
+
 	//DeActivate();
 }
 
@@ -20,7 +23,8 @@ AWeapon::AWeapon()
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CurrentClipSize = ClipSize;
+	CurrentTotalAmmo = MaxAmmo;
 }
 
 // Called every frame
@@ -50,21 +54,49 @@ bool AWeapon::IsActive()
 
 void AWeapon::Shoot()
 {						
-	//FTransform transform = FTransform(GetActorLocation());
-
-	//ABullet* bullet = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(-9999999, -9999999, -9999999), FRotator::ZeroRotator);
-
-	//ABullet* bullet;
-	//bullet->SpawnBullet(bullet->getBulletSpeed,bullet->getBulletDamage, transform);
-
 	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!!"));
 }
 
 void AWeapon::Shoot(FVector location, FQuat rotation)
 {
-	UE_LOG(LogTemp, Log, TEXT("Weapon.cpp - Shoot!! - To Be Implemented in Parent Class"));
+	//AmmoCheck
+	if (CurrentClipSize <= 0)
+	{
+		Reload();
+	}
+	else
+	{
+		//shoot
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, location, rotation.Rotator());
+			bullet->SpawnBullet(float(600), float(10), FTransform(rotation, location, FVector::OneVector));
+		}
+		CurrentClipSize -= 1;
+	}
 }
 
+void AWeapon::Reload()
+{
+	UE_LOG(LogTemp, Log, TEXT("Reload"));
+	//check if need to reload
+	if (CurrentClipSize < ClipSize)
+	{
+		int reloadAmount = ClipSize - CurrentClipSize;
+		//only reload upto the maximum amount of ammo left
+		if (CurrentTotalAmmo < reloadAmount)
+		{
+			CurrentClipSize += CurrentTotalAmmo;
+			CurrentTotalAmmo -= CurrentTotalAmmo;
+		}
+		else
+		{
+			CurrentClipSize = ClipSize;
+			CurrentTotalAmmo -= reloadAmount;
+		}
+	}
+}
 
 void AWeapon::DeActivate()
 {

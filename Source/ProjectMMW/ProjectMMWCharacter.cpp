@@ -50,16 +50,10 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	//find GlobalSettings Blueprint 
 	ConstructorHelpers::FObjectFinder<UBlueprint> GlobalSettingsRef(TEXT("Blueprint'/Game/Blueprints/BP_GlobalSettings.BP_GlobalSettings'"));
 
-	/*BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;*/
-
 	if (GlobalSettingsRef.Succeeded() == true)
 	{
 		UE_LOG(LogConfig, Log, TEXT(" Successful Getting GlobalSettingsRef"));
 		GlobalSettings = GlobalSettingsRef.Object;
-
-		/*BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-		BeamRifleToSpawn = (UClass*)BeamRifleRef.Object->GeneratedClass;*/
 	}
 	else
 	{
@@ -96,7 +90,7 @@ void AProjectMMWCharacter::BeginPlay()
 	for (auto& Elem : EquipableWeapons)
 	{
 		/*Elem.Key,
-			* Elem.Value*/
+		* Elem.Value*/
 		UE_LOG(LogTemp, Warning, TEXT("GlobalSettingsItems"));
 		UE_LOG(LogTemp, Warning, TEXT("GlobalSettings: %s"), *Elem.Key);
 
@@ -104,22 +98,37 @@ void AProjectMMWCharacter::BeginPlay()
 
 	//look for Beam Rifle
 	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
-	Weapon1_Left = BeamRiflePtr->Get();
-	Weapon2_Left = EquipableWeapons.Find("CannonRifle")->Get();
+	TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
+	Weapon1_Left = BeamRifle->GetDefaultObject<ABeamRifle>();
+
+
+	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
+	TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
+	Weapon2_Left = CannonRifle->GetDefaultObject<ACannonRifle>();
+
 
 	//Equip BeamRifle to current Equipped Weapon_Left
 	FVector actorLocation = GetActorLocation();
 	FVector actorForwardVector = GetActorForwardVector() * 200;
 	FVector NewLocation = actorForwardVector + actorLocation;
-	EquippedWeapon_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), NewLocation, FRotator::ZeroRotator);
+
 
 	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
-		FName fnWeaponSocket = TEXT("LeftWeaponSocket");
-
 		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-		socket->AttachActor(EquippedWeapon_Left, GetMesh());
+
+		//Spawn Weapons
+		Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		socket->AttachActor(Weapon1_Left, GetMesh());
+		Weapon1_Left->SetActive(false);
+
+		Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		socket->AttachActor(Weapon2_Left, GetMesh());
+		Weapon2_Left->SetActive(false);
+
+		EquippedWeapon_Left = Weapon1_Left;
+		EquippedWeapon_Left->SetActive(true);
 	}
 	else
 	{
@@ -186,6 +195,8 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon1);
 	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon2);
+
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AProjectMMWCharacter::Reload);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -332,6 +343,7 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
 
+		//Shoot
 		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
 		{
 			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
@@ -354,21 +366,11 @@ void AProjectMMWCharacter::SwitchToWeapon1()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SwitchToWeapon1()"));
 
-	if (EquippedWeapon_Left->Destroy())
+	if (EquippedWeapon_Left != Weapon1_Left)
 	{
-		FVector actorLocation = GetActorLocation();
-		FVector actorForwardVector = GetActorForwardVector() * 200;
-		FVector NewLocation = actorForwardVector + actorLocation;
-		EquippedWeapon_Left = GetWorld()->SpawnActor<AWeapon>(Weapon1_Left, NewLocation, FRotator::ZeroRotator);
-		if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
-		{
-			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-			socket->AttachActor(EquippedWeapon_Left, GetMesh());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
-		}
+		EquippedWeapon_Left->SetActive(false);
+		EquippedWeapon_Left = Weapon1_Left;
+		EquippedWeapon_Left->SetActive(true);
 	}
 }
 
@@ -376,22 +378,27 @@ void AProjectMMWCharacter::SwitchToWeapon2()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SwitchToWeapon2()"));
 
-	if (EquippedWeapon_Left->Destroy())
+	if (EquippedWeapon_Left != Weapon2_Left)
 	{
-		FVector actorLocation = GetActorLocation();
-		FVector actorForwardVector = GetActorForwardVector() * 200;
-		FVector NewLocation = actorForwardVector + actorLocation;
-		EquippedWeapon_Left = GetWorld()->SpawnActor<AWeapon>(Weapon2_Left, NewLocation, FRotator::ZeroRotator);
-		if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
-		{
-			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-			socket->AttachActor(EquippedWeapon_Left, GetMesh());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
-		}
+		EquippedWeapon_Left->SetActive(false);
+		EquippedWeapon_Left = Weapon2_Left;
+		EquippedWeapon_Left->SetActive(true);
 	}
+}
+
+void AProjectMMWCharacter::Reload()
+{
+	EquippedWeapon_Left->Reload();
+}
+
+FText AProjectMMWCharacter::GetWeaponLeftCurrentClipSize()
+{
+	return FText::AsNumber(EquippedWeapon_Left->CurrentClipSize);
+}
+
+FText AProjectMMWCharacter::GetWeaponLeftCurrentTotalAmmo()
+{
+	return FText::AsNumber(EquippedWeapon_Left->CurrentTotalAmmo);
 }
 
 //void AProjectMMWCharacter::CreateBulletPool(int howMany) {
@@ -400,22 +407,6 @@ void AProjectMMWCharacter::SwitchToWeapon2()
 //		bulletPool.push_back(tempGo);
 //	}
 //}
-
-//void AProjectMMWCharacter::FireWeapon() {
-//	float bulletSpeed = 100.0f;								//
-//	float bulletDamage = 100.0f;							// those are test variables, delete when implented
-//	FTransform transform = FTransform(GetActorLocation());	// 
-//	//
-//	// Check Bullet.h
-//	// the intented function to use is
-//	// void SpawnBullet(float bulletSpeed, float bulletDamage, FTransform transform, UStaticMesh* newMesh, float lifespan);
-//	// variables are to be drawn from equiped weapon
-//	//
-//	bulletPool.front()->SpawnBullet(bulletSpeed, bulletDamage, transform);
-//	bulletPool.push_back(bulletPool.front());
-//	bulletPool.pop_front();
-//}
-
 #pragma endregion
 
 #pragma region Character Status Functions

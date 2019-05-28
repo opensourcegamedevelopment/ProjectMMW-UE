@@ -24,14 +24,3 @@ void ACannonRifle::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
-void ACannonRifle::Shoot(FVector location, FQuat rotation)
-{
-	UWorld* const World = GetWorld();
-	if (World)
-	{
-		ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, location, rotation.Rotator());
-		bullet->SpawnBullet(float(600), float(10), FTransform(rotation, location, FVector::OneVector));
-	}
-}
-

@@ -16,8 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	ACannonRifle();
 
-	void Shoot(FVector location, FQuat rotation);
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -25,9 +23,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
-		TSubclassOf<class ABullet> BulletToSpawn;
 
 private:
 	

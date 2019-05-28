@@ -13,15 +13,11 @@ ABeamRifle::ABeamRifle()
 	ConstructorHelpers::FObjectFinder<UBlueprint> BulletRef(TEXT("Blueprint'/Game/Blueprints/BP_DummyBUllet.BP_DummyBUllet'"));
 	if (BulletRef.Succeeded() == true)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Success Getting Beam Rifle"));
-		//weapon1 = BulletRef.Object;
-
-		//BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
 		BulletToSpawn = (UClass*)BulletRef.Object->GeneratedClass;
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Failed Getting Beam Rifle"));
+		UE_LOG(LogTemp, Error, TEXT("Failed Getting Beam Rifle"));
 	}
 }
 
@@ -39,14 +35,4 @@ void ABeamRifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void ABeamRifle::Shoot(FVector location, FQuat rotation)
-{
-	UWorld* const World = GetWorld();
-	if (World)
-	{
-		ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, location, rotation.Rotator());
-		bullet->SpawnBullet(float(600), float(10), FTransform(rotation, location, FVector::OneVector));
-	}
 }
