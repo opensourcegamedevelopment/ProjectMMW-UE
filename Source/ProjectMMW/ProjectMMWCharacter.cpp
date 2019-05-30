@@ -393,12 +393,17 @@ void AProjectMMWCharacter::Reload()
 
 FText AProjectMMWCharacter::GetWeaponLeftCurrentClipSize()
 {
-	return FText::AsNumber(EquippedWeapon_Left->CurrentClipSize);
+	return FText::AsNumber(EquippedWeapon_Left->GetCurrentClipSize());
 }
 
 FText AProjectMMWCharacter::GetWeaponLeftCurrentTotalAmmo()
 {
-	return FText::AsNumber(EquippedWeapon_Left->CurrentTotalAmmo);
+	return FText::AsNumber(EquippedWeapon_Left->GetCurrentTotalAmmo());
+}
+
+float AProjectMMWCharacter::GetReloadPercentage()
+{
+	return EquippedWeapon_Left->GetReloadPercentage();
 }
 
 //void AProjectMMWCharacter::CreateBulletPool(int howMany) {

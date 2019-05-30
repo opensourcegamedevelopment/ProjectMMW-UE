@@ -83,6 +83,8 @@ public:
 		FText GetWeaponLeftCurrentClipSize();
 	UFUNCTION(BlueprintPure, Category = Stats)
 		FText GetWeaponLeftCurrentTotalAmmo();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		float GetReloadPercentage();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 	float FlightPower;

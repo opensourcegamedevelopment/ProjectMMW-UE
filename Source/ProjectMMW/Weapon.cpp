@@ -32,7 +32,46 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//reload settings
+	if (Reloading && CurrentReloadTime >= ReloadSpeed)
+	{
+		int reloadAmount = ClipSize - CurrentClipSize;
+		//only reload up to the maximum amount of ammo left
+		if (CurrentTotalAmmo < reloadAmount)
+		{
+			CurrentClipSize += CurrentTotalAmmo;
+			CurrentTotalAmmo -= CurrentTotalAmmo;
+		}
+		else
+		{
+			CurrentClipSize = ClipSize;
+			CurrentTotalAmmo -= reloadAmount;
+		}
+		reloadPercentage = 0;
+		Reloading = false;
+	}
+	else if (Reloading)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Weapon.cpp - Reloading: %d"), CurrentReloadTime);
+		CurrentReloadTime += DeltaTime;
+		reloadPercentage = 1 - (CurrentReloadTime / ReloadSpeed);
+	}
 }
+
+#pragma region getters
+int AWeapon::GetCurrentClipSize()
+{
+	return CurrentClipSize;
+}
+int AWeapon::GetCurrentTotalAmmo()
+{
+	return CurrentTotalAmmo;
+}
+float AWeapon::GetReloadPercentage()
+{
+	return reloadPercentage;
+}
+#pragma endregion
 
 void AWeapon::CreateBulletPool(int howMany) {
 	for (int i = 0; i < howMany; i++) {
@@ -60,6 +99,10 @@ void AWeapon::Shoot()
 void AWeapon::Shoot(FVector location, FQuat rotation)
 {
 	//AmmoCheck
+	if (Reloading)
+	{
+		//if reloading cannot shoot! so do nothing
+	}
 	if (CurrentClipSize <= 0)
 	{
 		Reload();
@@ -81,20 +124,10 @@ void AWeapon::Reload()
 {
 	UE_LOG(LogTemp, Log, TEXT("Reload"));
 	//check if need to reload
-	if (CurrentClipSize < ClipSize)
+	if (!Reloading && CurrentClipSize < ClipSize)
 	{
-		int reloadAmount = ClipSize - CurrentClipSize;
-		//only reload upto the maximum amount of ammo left
-		if (CurrentTotalAmmo < reloadAmount)
-		{
-			CurrentClipSize += CurrentTotalAmmo;
-			CurrentTotalAmmo -= CurrentTotalAmmo;
-		}
-		else
-		{
-			CurrentClipSize = ClipSize;
-			CurrentTotalAmmo -= reloadAmount;
-		}
+		Reloading = true;
+		CurrentReloadTime = 0;
 	}
 }
 

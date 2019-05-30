@@ -28,10 +28,17 @@ public:
 		int ClipSize;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 		int MaxAmmo;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
-		int CurrentClipSize;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
-		int CurrentTotalAmmo;
+		float ReloadSpeed;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		float CurrentReloadTime;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+	bool Reloading;
+
+	int GetCurrentClipSize();
+	int GetCurrentTotalAmmo();
+	float GetReloadPercentage();
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,6 +51,10 @@ protected:
 private:
 	TArray<UStaticMeshComponent*> components;
 	bool isActive;
+	
+	int CurrentClipSize;
+	int CurrentTotalAmmo;
+	float reloadPercentage = 0;
 
 public:	
 	// Called every frame
