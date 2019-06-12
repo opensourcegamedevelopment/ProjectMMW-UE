@@ -28,6 +28,9 @@ public:
 		int ClipSize;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 		int MaxAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		int AmmoUsePerShot = 1; //default to 1
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
 		float ReloadSpeed;
@@ -35,6 +38,11 @@ public:
 		float CurrentReloadTime;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 	bool Reloading;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
+		float attackInterval;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		float CurrentAttackInterval;
 
 	int GetCurrentClipSize();
 	int GetCurrentTotalAmmo();

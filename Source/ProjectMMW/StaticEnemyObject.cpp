@@ -24,6 +24,14 @@ void AStaticEnemyObject::BeginPlay()
 	spawnLocation = GetActorLocation();
 	GetComponents<UStaticMeshComponent>(components);
 
+	GetComponents<UWidgetComponent>(statusBarComponents);
+	statusBarComponent = statusBarComponents[0]; //Should only have 1
+	if (GEngine) 
+	{
+		CameraLocation = GEngine->GetFirstLocalPlayerController(GetWorld())->PlayerCameraManager->GetCameraLocation();
+		statusBarlocation = statusBarComponent->RelativeLocation;
+		statusBarComponent->SetRelativeRotation(FRotationMatrix::MakeFromXZ(CameraLocation - statusBarlocation, CameraLocation - statusBarlocation).Rotator());
+	}
 }
 
 // Called every frame
@@ -49,6 +57,12 @@ void AStaticEnemyObject::Tick(float DeltaTime)
 			break;
 	}
 
+	if (GEngine)
+	{
+		CameraLocation = GEngine->GetFirstLocalPlayerController(GetWorld())->PlayerCameraManager->GetCameraLocation();
+		statusBarlocation = statusBarComponent->RelativeLocation;
+		statusBarComponent->SetRelativeRotation(FRotationMatrix::MakeFromXZ(CameraLocation - statusBarlocation, CameraLocation - statusBarlocation).Rotator());
+	}
 }
 
 void AStaticEnemyObject::DamageObject(int damage)

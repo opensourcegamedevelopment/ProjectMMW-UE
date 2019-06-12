@@ -5,6 +5,8 @@
 #include "Damageable.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/WidgetComponent.h"
+#include "Engine/Engine.h"
 #include "StaticEnemyObject.generated.h"
 
 //, public IDamageable
@@ -46,4 +48,8 @@ private:
 													// PS: No actual Destruction of object is happening
 
 	TArray<UStaticMeshComponent*> components;	// this is used to edit the UStaticMeshComponents under root (ex: toggle vissibility)
+	TArray<UWidgetComponent*> statusBarComponents;    // this is used to edit the UWidgetComponent under root
+	UWidgetComponent* statusBarComponent;
+	FVector CameraLocation;
+	FVector statusBarlocation;
 };

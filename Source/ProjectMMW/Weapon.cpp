@@ -32,6 +32,12 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//attack interval settings
+	if (CurrentAttackInterval <= attackInterval)
+	{
+		CurrentAttackInterval += DeltaTime;
+	}
+
 	//reload settings
 	if (Reloading && CurrentReloadTime >= ReloadSpeed)
 	{
@@ -99,11 +105,13 @@ void AWeapon::Shoot()
 void AWeapon::Shoot(FVector location, FQuat rotation)
 {
 	//AmmoCheck
-	if (Reloading)
+	if (Reloading || CurrentAttackInterval < attackInterval)
 	{
-		//if reloading cannot shoot! so do nothing
+		//Cannot shoot if:
+		//1. Reloading
+		//2. Within the set interval from last attack
 	}
-	if (CurrentClipSize <= 0)
+	else if (CurrentClipSize <= 0)
 	{
 		Reload();
 	}
@@ -116,7 +124,8 @@ void AWeapon::Shoot(FVector location, FQuat rotation)
 			ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, location, rotation.Rotator());
 			bullet->SpawnBullet(float(600), float(10), FTransform(rotation, location, FVector::OneVector));
 		}
-		CurrentClipSize -= 1;
+		CurrentClipSize -= AmmoUsePerShot; //use 1 ammo at a time.
+		CurrentAttackInterval = 0;
 	}
 }
 
