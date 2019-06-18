@@ -42,7 +42,7 @@ void ABullet::BeginPlay()
 	//////////////////////////////////
 	// for testing
 	//FTransform* transform = new FTransform(FQuat(0, 0, 0, 0), FVector(-1000, 0, 400), FVector(1, 1, 1));
-	//SpawnBullet(100, 100, *transform);
+	//SpawnBullet(100, 100000000, *transform);
 
 }
 
@@ -92,11 +92,10 @@ void ABullet::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Othe
 {
 	UE_LOG(LogTemp, Warning, TEXT("OverlapBegin"));
 	
-	
 	IDamageable* theInterface = Cast<IDamageable>( OtherActor );
 
 	if (theInterface) {
-		//theInterface->DamageObject(this->bulletDamage);
+		theInterface->DamageObject(this->bulletDamage);
 		//theInterface->Execute_DamageObject(this->bulletDamage);
 	}
 	
