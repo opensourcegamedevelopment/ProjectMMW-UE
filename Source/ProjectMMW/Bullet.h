@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "CoreMinimal.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/Actor.h"
 #include "Bullet.generated.h"
 
@@ -28,18 +28,19 @@ public:
 private:
 	TArray<UStaticMeshComponent*> components;
 	UStaticMesh* newMesh;
-	float bulletSpeed = 100.0f;
-	float bulletDamage = 100.0f;
 	FTimerHandle lifeSpanTimer;
 	float lifespan = 3.0f;
 	bool isActive;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 		UStaticMeshComponent* staticMeshComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 		UProjectileMovementComponent* projectileMovementComponent;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		float bulletSpeed = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		float bulletDamage = 100.0f;
 
 public:
 	virtual void SetLifeSpan(float InLifespan) override;

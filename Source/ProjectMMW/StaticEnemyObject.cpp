@@ -84,6 +84,33 @@ void AStaticEnemyObject::DamageObject(int damage)
 
 }
 
+void AStaticEnemyObject::DamageObject(int damage, AActor* actor)
+{
+	DamageObject(damage);
+
+	TArray<UActorComponent*> MArray;
+	actor->GetComponents<UActorComponent>(MArray);
+
+	for (UActorComponent* comp : MArray)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("component->GetName(): %s"), *comp->GetName());
+
+		if (comp->GetName().Compare("StatusBar") == 0)
+		{
+			UWidgetComponent* WidgetComponent = (UWidgetComponent*) comp; //Cast Actor Component to widget component
+			UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject(); //Retrieve user widget 
+			
+			UStaticEnemyHUDWidget* EnemyHUDWidget = (UStaticEnemyHUDWidget*) UserWidget; //Cast user widget to HUDWidget Widget (HP bar of the blueprint)
+
+			UWidgetTree* tree = EnemyHUDWidget->WidgetTree; //Retrieve widgetTree in the HUD
+			UWidget* HealthBar = tree->FindWidget("HealthBar"); //get health bar
+			UProgressBar* HealthProgressBar = (UProgressBar*)HealthBar; // get progress bar of the health bar
+			HealthProgressBar->Percent = GetHealthPercentage(); //set progress
+			EnemyHUDWidget->SetHealthPercentage(GetHealthPercentage());
+		}
+	}
+}
+
 void AStaticEnemyObject::RespawnObject(FVector location)
 {
 	respawnTimer = 0;	// reset timer back to 0
@@ -100,5 +127,11 @@ void AStaticEnemyObject::RespawnObject(FVector location)
 		StaticMeshComponent->SetVisibility(true, false);					// Do we wanna propagate visibility to children?
 	}
 
+}
+
+float AStaticEnemyObject::GetHealthPercentage()
+{
+	float result = (float)currentHealth / (float)maxHealth;
+	return result;
 }
 

@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/Engine.h"
+#include "StaticEnemyHUDWidget.h"
 #include "StaticEnemyObject.generated.h"
 
 //, public IDamageable
@@ -19,21 +20,25 @@ public:
 	// Sets default values for this actor's properties
 	AStaticEnemyObject();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	void DamageObject(int damage);	// deal damage to object
+	void DamageObject(int damage, AActor* actor);	// deal damage to object
+	UFUNCTION(BlueprintPure, Category = Stats)
+	float GetHealthPercentage();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	void DamageObject(int damage);	// deal damage to object
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		int currentHealth;
 
-private:
 	void RespawnObject(FVector location);			// respawn object at location x,y,z in world map
 
 private:
 	int maxHealth = 1000;
-	int currentHealth;
+	
 	float respawnTimer = 0;							// timer used for respawning
 	const float respawnCooldown = 10;				// object respawns every X seconds using the above timer
 	enum State

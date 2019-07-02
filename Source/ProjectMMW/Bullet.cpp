@@ -3,8 +3,6 @@
 #include "Bullet.h"
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
-#include "Runtime/Engine/Classes/GameFramework/ProjectileMovementComponent.h"
-#include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Damageable.h"
@@ -95,7 +93,7 @@ void ABullet::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Othe
 	IDamageable* theInterface = Cast<IDamageable>( OtherActor );
 
 	if (theInterface) {
-		theInterface->DamageObject(this->bulletDamage);
+		theInterface->DamageObject(this->bulletDamage, OtherActor);
 		//theInterface->Execute_DamageObject(this->bulletDamage);
 	}
 	

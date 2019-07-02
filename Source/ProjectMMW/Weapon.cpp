@@ -122,7 +122,7 @@ void AWeapon::Shoot(FVector location, FQuat rotation)
 		if (World)
 		{
 			ABullet* bullet = World->SpawnActor<ABullet>(BulletToSpawn, location, rotation.Rotator());
-			bullet->SpawnBullet(float(600), float(10), FTransform(rotation, location, FVector::OneVector));
+			bullet->SpawnBullet(bullet->getBulletSpeed(), bullet->getBulletDamage(), FTransform(rotation, location, FVector::OneVector));
 		}
 		CurrentClipSize -= AmmoUsePerShot; //use 1 ammo at a time.
 		CurrentAttackInterval = 0;

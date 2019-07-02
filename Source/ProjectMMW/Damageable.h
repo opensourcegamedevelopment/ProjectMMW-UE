@@ -23,4 +23,5 @@ class PROJECTMMW_API IDamageable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void DamageObject(int damage) = 0;
+	virtual void DamageObject(int damage, AActor* actor) = 0;
 };
