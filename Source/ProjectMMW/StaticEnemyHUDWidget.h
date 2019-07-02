@@ -17,6 +17,8 @@ class PROJECTMMW_API UStaticEnemyHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UStaticEnemyHUDWidget(const FObjectInitializer& ObjectInitializer);
+
 	UFUNCTION(BlueprintPure, Category = Stats)
 		float GetHealthPercentage();
 

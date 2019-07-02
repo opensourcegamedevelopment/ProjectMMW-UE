@@ -3,6 +3,11 @@
 
 #include "StaticEnemyHUDWidget.h"
 
+UStaticEnemyHUDWidget::UStaticEnemyHUDWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	SetHealthPercentage(1);
+}
+
 float UStaticEnemyHUDWidget::GetHealthPercentage()
 {
 	return currentHealthPercentage;
