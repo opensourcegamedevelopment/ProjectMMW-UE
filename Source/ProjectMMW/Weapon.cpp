@@ -56,7 +56,7 @@ void AWeapon::Tick(float DeltaTime)
 		reloadPercentage = 0;
 		Reloading = false;
 	}
-	else if (Reloading)
+	else if (Reloading && isActive)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Weapon.cpp - Reloading: %d"), CurrentReloadTime);
 		CurrentReloadTime += DeltaTime;
