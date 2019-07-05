@@ -22,7 +22,7 @@ void AStaticEnemyObject::BeginPlay()
 	Super::BeginPlay();
 
 	spawnLocation = GetActorLocation();
-	GetComponents<UStaticMeshComponent>(components);
+	GetComponents<UStaticMeshComponent>(staticMeshComponents);
 
 	GetComponents<UWidgetComponent>(statusBarComponents);
 	statusBarComponent = statusBarComponents[0]; //Should only have 1
@@ -74,11 +74,18 @@ void AStaticEnemyObject::DamageObject(int damage)
 		state = State::isDead;
 		// maybe do some cool animations here and disable collider
 
-		for (int16 i = 0; i<components.Num(); i++)
+		for (int16 i = 0; i< staticMeshComponents.Num(); i++)
 		{
-			UStaticMeshComponent* StaticMeshComponent = components[i];
+			UStaticMeshComponent* StaticMeshComponent = staticMeshComponents[i];
 			//UStaticMesh* StaticMesh = StaticMeshComponent->GetStaticMesh();	// use if you want to get the actual static mesh
-			StaticMeshComponent->SetVisibility(false, false);					// Do we wanna propagate visibility to children?
+			StaticMeshComponent->SetVisibility(false, true);					// Do we wanna propagate visibility to children?
+		}
+
+		for (int16 i = 0; i < statusBarComponents.Num(); i++)
+		{
+			UWidgetComponent* statusBarComponent = statusBarComponents[i];
+			//UStaticMesh* StaticMesh = StaticMeshComponent->GetStaticMesh();	// use if you want to get the actual static mesh
+			statusBarComponent->SetVisibility(false, true);					// Do we wanna propagate visibility to children?
 		}
 	}
 
@@ -97,10 +104,10 @@ void AStaticEnemyObject::DamageObject(int damage, AActor* actor)
 
 		if (comp->GetName().Compare("StatusBar") == 0)
 		{
-			UWidgetComponent* WidgetComponent = (UWidgetComponent*) comp; //Cast Actor Component to widget component
+			UWidgetComponent* WidgetComponent = (UWidgetComponent*)comp; //Cast Actor Component to widget component
 			UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject(); //Retrieve user widget 
-			
-			UStaticEnemyHUDWidget* EnemyHUDWidget = (UStaticEnemyHUDWidget*) UserWidget; //Cast user widget to HUDWidget Widget (HP bar of the blueprint)
+
+			UStaticEnemyHUDWidget* EnemyHUDWidget = (UStaticEnemyHUDWidget*)UserWidget; //Cast user widget to HUDWidget Widget (HP bar of the blueprint)
 
 			UWidgetTree* tree = EnemyHUDWidget->WidgetTree; //Retrieve widgetTree in the HUD
 			UWidget* HealthBar = tree->FindWidget("HealthBar"); //get health bar
@@ -120,13 +127,19 @@ void AStaticEnemyObject::RespawnObject(FVector location)
 	SetActorLocation(location);
 
 	// re-display | re-animate dead mesh component ?!
-	for (int16 i = 0; i<components.Num(); i++)
+	for (int16 i = 0; i < staticMeshComponents.Num(); i++)
 	{
-		UStaticMeshComponent* StaticMeshComponent = components[i];
+		UStaticMeshComponent* StaticMeshComponent = staticMeshComponents[i];
 		//UStaticMesh* StaticMesh = StaticMeshComponent->GetStaticMesh();	//use if you want to get the actual static mesh
 		StaticMeshComponent->SetVisibility(true, false);					// Do we wanna propagate visibility to children?
 	}
 
+	for (int16 i = 0; i < statusBarComponents.Num(); i++)
+	{
+		UWidgetComponent* statusBarComponent = statusBarComponents[i];
+		//UStaticMesh* StaticMesh = StaticMeshComponent->GetStaticMesh();	// use if you want to get the actual static mesh
+		statusBarComponent->SetVisibility(true, true);					// Do we wanna propagate visibility to children?
+	}
 }
 
 float AStaticEnemyObject::GetHealthPercentage()

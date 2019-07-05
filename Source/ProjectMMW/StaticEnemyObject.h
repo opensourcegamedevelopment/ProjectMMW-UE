@@ -52,7 +52,7 @@ private:
 													// after 10 seconds it resets to that position
 													// PS: No actual Destruction of object is happening
 
-	TArray<UStaticMeshComponent*> components;	// this is used to edit the UStaticMeshComponents under root (ex: toggle vissibility)
+	TArray<UStaticMeshComponent*> staticMeshComponents;	// this is used to edit the UStaticMeshComponents under root (ex: toggle vissibility)
 	TArray<UWidgetComponent*> statusBarComponents;    // this is used to edit the UWidgetComponent under root
 	UWidgetComponent* statusBarComponent;
 	FVector CameraLocation;

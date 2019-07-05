@@ -48,23 +48,27 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
 	bool IsBoosting;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
 	float MaxHp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
 	float CurrentHp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Stats)
 	float PreviousHp;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
 	float HealthPercentage;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float MaxEnergy;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
+	float MaxEnergy; //Default: 1000
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
 	float CurrentEnergy;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 	float PreviousEnergy;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
 	float EnergyPercentage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	float EnergyUsage; //Default: 2
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	float EnergyRegen; //Default: 1
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	float OverheatEnergyRegen; //Default: 0.5
 
 	UFUNCTION(BlueprintPure, Category=Stats)
 	float GetHealth();
@@ -86,8 +90,16 @@ public:
 	UFUNCTION(BlueprintPure, Category = Stats)
 		float GetReloadPercentage();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-	float FlightPower;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	float FlightPower; //Default: 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+		float MaxWalkSpeed; //Default: 600
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+		float MaxFlySpeed; //Default: 600
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+		float OverheatMaxWalkSpeed; //Default: 1000
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+		float OverheatMaxFlySpeed; //Default: 1000
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = States)
 	bool IsVerticalBoost;
 

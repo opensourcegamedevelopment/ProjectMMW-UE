@@ -69,11 +69,9 @@ void AProjectMMWCharacter::BeginPlay()
 	IsOverheat = false;
 	IsVerticalBoost = false;
 	IsBoosting = false;
-	MaxHp = 1000;
-	CurrentHp = 1000;
+	CurrentHp = MaxHp;
 	HealthPercentage = 1.0f;
-	MaxEnergy = 1;
-	CurrentEnergy = 1;
+	CurrentEnergy = MaxEnergy;
 	EnergyPercentage = 1.0f;
 	FlightPower = 0.5f;
 
@@ -501,19 +499,21 @@ void AProjectMMWCharacter::CheckEnergy()
 
 	if (IsBoosting)
 	{
-		CurrentEnergy -= 0.003;
+		CurrentEnergy -= EnergyUsage;
 	}
 	else
 	{
 		if (IsOverheat)
 		{
-			RegenEnergy(0.004);
+			RegenEnergy(OverheatEnergyRegen);
 		}
 		else
 		{
-			RegenEnergy(0.01);
+			RegenEnergy(EnergyRegen);
 		}
 	}
+
+	EnergyPercentage = CurrentEnergy / MaxEnergy;
 }
 
 void AProjectMMWCharacter::RegenEnergy(float regenRate)
