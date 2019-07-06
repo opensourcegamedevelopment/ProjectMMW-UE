@@ -52,7 +52,7 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 
 	if (GlobalSettingsRef.Succeeded() == true)
 	{
-		UE_LOG(LogConfig, Log, TEXT(" Successful Getting GlobalSettingsRef"));
+		//UE_LOG(LogConfig, Log, TEXT(" Successful Getting GlobalSettingsRef"));
 		GlobalSettings = GlobalSettingsRef.Object;
 	}
 	else
@@ -66,72 +66,11 @@ void AProjectMMWCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	IsOverheat = false;
-	IsVerticalBoost = false;
-	IsBoosting = false;
-	CurrentHp = MaxHp;
-	HealthPercentage = 1.0f;
-	CurrentEnergy = MaxEnergy;
-	EnergyPercentage = 1.0f;
-	FlightPower = 0.5f;
+	SetDefaultStats();
 
 	//CreateBulletPool(numOfBulletsToPool);
 
-
-	//Get EquiableWeapons from globalSettings
-	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
-	GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
-	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
-
-	/*int32 Count = EquipableWeapons.Num();
-	UE_LOG(LogTemp, Warning, TEXT("GlobalSettings itemsTotal: %d"), Count);*/
-	for (auto& Elem : EquipableWeapons)
-	{
-		/*Elem.Key,
-		* Elem.Value*/
-		UE_LOG(LogTemp, Warning, TEXT("GlobalSettingsItems"));
-		UE_LOG(LogTemp, Warning, TEXT("GlobalSettings: %s"), *Elem.Key);
-
-	}
-
-	//look for Beam Rifle
-	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
-	TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
-	Weapon1_Left = BeamRifle->GetDefaultObject<ABeamRifle>();
-
-
-	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
-	TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
-	Weapon2_Left = CannonRifle->GetDefaultObject<ACannonRifle>();
-
-
-	//Equip BeamRifle to current Equipped Weapon_Left
-	FVector actorLocation = GetActorLocation();
-	FVector actorForwardVector = GetActorForwardVector() * 200;
-	FVector NewLocation = actorForwardVector + actorLocation;
-
-
-	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
-		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-
-		//Spawn Weapons
-		Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		socket->AttachActor(Weapon1_Left, GetMesh());
-		Weapon1_Left->SetActive(false);
-
-		Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		socket->AttachActor(Weapon2_Left, GetMesh());
-		Weapon2_Left->SetActive(false);
-
-		EquippedWeapon_Left = Weapon1_Left;
-		EquippedWeapon_Left->SetActive(true);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
-	}
+	SetDefaultEquipment();
 }
 
 
@@ -413,7 +352,77 @@ float AProjectMMWCharacter::GetReloadPercentage()
 #pragma endregion
 
 #pragma region Character Status Functions
+void AProjectMMWCharacter::SetDefaultStats()
+{
+	IsOverheat = false;
+	IsVerticalBoost = false;
+	IsBoosting = false;
+	CurrentHp = MaxHp;
+	HealthPercentage = 1.0f;
+	CurrentEnergy = MaxEnergy;
+	EnergyPercentage = 1.0f;
+	FlightPower = 0.5f;
+}
 
+void AProjectMMWCharacter::SetDefaultEquipment()
+{
+	//Get EquiableWeapons from globalSettings
+	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
+	GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
+	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
+
+	/*int32 Count = EquipableWeapons.Num();
+	UE_LOG(LogTemp, Warning, TEXT("GlobalSettings itemsTotal: %d"), Count);*/
+	for (auto& Elem : EquipableWeapons)
+	{
+		/*Elem.Key,
+		* Elem.Value*/
+		UE_LOG(LogTemp, Warning, TEXT("GlobalSettingsItems"));
+		UE_LOG(LogTemp, Warning, TEXT("GlobalSettings: %s"), *Elem.Key);
+
+	}
+
+	//look for Beam Rifle
+	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
+	TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
+	Weapon1_Left = BeamRifle->GetDefaultObject<ABeamRifle>();
+
+
+	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
+	TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
+	Weapon2_Left = CannonRifle->GetDefaultObject<ACannonRifle>();
+
+
+	//Equip BeamRifle to current Equipped Weapon_Left
+	FVector actorLocation = GetActorLocation();
+	FVector actorForwardVector = GetActorForwardVector() * 200;
+	FVector NewLocation = actorForwardVector + actorLocation;
+
+
+	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
+		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+
+		//Spawn Weapons
+		Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		socket->AttachActor(Weapon1_Left, GetMesh());
+		Weapon1_Left->SetActive(false);
+
+		Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		socket->AttachActor(Weapon2_Left, GetMesh());
+		Weapon2_Left->SetActive(false);
+
+		EquippedWeapon_Left = Weapon1_Left;
+		EquippedWeapon_Left->SetActive(true);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
+	}
+}
+
+#pragma region health and energy
 void AProjectMMWCharacter::CheckStats()
 {
 	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(GetCharacterMovement());
@@ -523,4 +532,5 @@ void AProjectMMWCharacter::RegenEnergy(float regenRate)
 		CurrentEnergy += regenRate;
 	}
 }
+#pragma endregion
 #pragma endregion

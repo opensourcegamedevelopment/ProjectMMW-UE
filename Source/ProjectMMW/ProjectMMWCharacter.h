@@ -139,6 +139,8 @@ private:
 protected:
 	
 	//Character Status Functions
+	void SetDefaultStats();
+	void SetDefaultEquipment();
 	void CheckStats();
 	void CheckEnergy();
 	void RegenEnergy(float regenRate);
