@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "CanvasPanelSlot.h"
+#include "Blueprint/WidgetTree.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 
@@ -71,6 +73,25 @@ void AProjectMMWCharacter::BeginPlay()
 	//CreateBulletPool(numOfBulletsToPool);
 
 	SetDefaultEquipment();
+
+	if (AimCursorHUDWidgetRef)
+	{
+		AimCursorHudWidget = CreateWidget<UAimCursorHUDWidget>(GetWorld(), AimCursorHUDWidgetRef);
+
+		if (AimCursorHudWidget) {
+
+			//AimCursorHudWidget->SetDesiredSizeInViewport(FVector2D(400, 400));
+			if (!AimCursorHudWidget->GetIsVisible())
+			{
+				AimCursorHudWidget->AddToViewport();
+
+				//AimCursorHudWidget->SetVisibility(ESlateVisibility::Visible);
+
+				//UE_LOG(LogTemp, Warning, TEXT("HUD added!!"));
+			}
+		}
+	}
+	
 }
 
 
@@ -108,7 +129,68 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		}
 		CurrentDeltaTime -= DeltaTime;
 	}
-	//UE_LOG(LogTemp, Log, TEXT("DeltaTime: %s"), CurrentDeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("DeltaTime: %s"), CurrentDeltaTime);
+
+
+
+	//if (playerController != nullptr)
+	//{
+	//	playerController->GetMousePosition(currentMouseLocation.X, currentMouseLocation.Y);
+	//	//UE_LOG(LogTemp, Warning, TEXT("Mouse Position -> %f %f"), LocationX, LocationY);
+
+
+	//	if (previousMouseLocation.X > 0)
+	//	{
+	//		Location_X_Changes = previousMouseLocation.X - currentMouseLocation.X;
+	//	}
+	//	
+	//	if (previousMouseLocation.Y > 0)
+	//	{
+	//		Location_Y_Changes = previousMouseLocation.Y - currentMouseLocation.Y;
+	//	}
+	//	//UE_LOG(LogTemp, Warning, TEXT("previousMouseLocation Position -> %f %f"), previousMouseLocation.X, previousMouseLocation.Y);
+	//	//UE_LOG(LogTemp, Warning, TEXT("currentMouseLocation Position -> %f %f"), currentMouseLocation.X, currentMouseLocation.Y);
+
+	//	if (AimCursorHudWidgetTree == nullptr)
+	//	{
+	//		AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+	//		AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+	//		AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+	//	}
+
+	//	UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
+	//	UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
+	//	FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
+	//	FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
+	//	FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
+
+	//	float newPositionX = currentAimLocation.X - Location_X_Changes;
+	//	float newPositionY = currentAimLocation.Y - Location_Y_Changes;
+
+	//	if (newPositionX > (AimAreaPosition.X + AimAreaSize.X) / 2)
+	//	{
+	//		newPositionX = AimAreaPosition.X + AimAreaSize.X /2;
+	//	}
+	//	else if (newPositionX < AimAreaPosition.X - AimAreaSize.X / 2)
+	//	{
+	//		newPositionX = AimAreaPosition.X - AimAreaSize.X / 2;
+	//	}
+	//	else if (newPositionY > (AimAreaPosition.Y + AimAreaSize.Y) /2)
+	//	{
+	//		newPositionY = AimAreaPosition.Y + AimAreaSize.Y /2 ;
+	//	}
+	//	else if (newPositionY < AimAreaPosition.Y - AimAreaSize.Y / 2)
+	//	{
+	//		newPositionY = AimAreaPosition.Y - AimAreaSize.Y / 2;
+	//	}
+	//	else
+	//	{
+	//		//this->bUseControllerRotationYaw = false;
+	//	}
+
+	//	AimCursorPanelSlot->SetPosition(FVector2D(newPositionX, newPositionY));
+	//	previousMouseLocation = currentMouseLocation;
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -280,6 +362,43 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
 
+		//Check shoot location
+		if (AimCursorHudWidgetTree == nullptr)
+		{
+			AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+			AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+			AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+		}
+		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
+		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
+		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
+		FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
+		FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
+
+		FVector HitLocation = FVector(0);
+		FString ObjectHit = "Nothing";
+
+		int32 ViewportSizeX, ViewportSizeY;
+		playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
+
+		bool bHit;
+		FVector2D CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+		//FVector2D CrosshairPosition = currentAimLocation;
+		FHitResult HitResult;
+
+		bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
+
+		if (bHit)
+		{
+			HitLocation = HitResult.ImpactPoint;
+			ObjectHit = HitResult.GetActor()->GetName();
+		}
+
+		// Draws a red line for debugging purposes
+		//DrawDebugLine(GetWorld(), HitResult.TraceStart, HitResult.TraceEnd, FColor::Red,false,1.0f,0,1);
+
+		UE_LOG(LogTemp, Warning, TEXT("Targeting: %s  Location: %s"), *ObjectHit, *HitLocation.ToString());
+
 		//Shoot
 		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
 		{
@@ -289,10 +408,14 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 			FQuat socketRotation;
 			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
 
-			EquippedWeapon_Left->Shoot(socketLocation, socketRotation);
+			FRotator newRotator =  UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+			FQuat newRotation = newRotator.Quaternion();
+
+			EquippedWeapon_Left->Shoot(socketLocation, newRotation);
 		}
 	}
 }
+
 
 void AProjectMMWCharacter::DeActivateMainWeapon()
 {
@@ -362,6 +485,23 @@ void AProjectMMWCharacter::SetDefaultStats()
 	CurrentEnergy = MaxEnergy;
 	EnergyPercentage = 1.0f;
 	FlightPower = 0.5f;
+	playerController = Cast<APlayerController>(GetController());
+	Location_X_Changes = 0;
+	Location_Y_Changes = 0;
+	if (playerController != nullptr)
+	{
+		playerController->GetMousePosition(previousMouseLocation.X, previousMouseLocation.Y);
+		playerController->GetMousePosition(currentMouseLocation.X, currentMouseLocation.Y);
+
+		//UE_LOG(LogTemp, Warning, TEXT("Initial previousMouseLocation Position -> %f %f"), previousMouseLocation.X, previousMouseLocation.Y);
+		//UE_LOG(LogTemp, Warning, TEXT("Initial currentMouseLocation Position -> %f %f"), currentMouseLocation.X, currentMouseLocation.Y);
+
+		//AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+		//AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor"); 
+		//AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+		//AimCursorPanelSlot = (UCanvasPanelSlot)AimCursorWidget->Slot;
+		//AimAreaPanelSlot = (UCanvasPanelSlot)AimAreaWidget->Slot;
+	}
 }
 
 void AProjectMMWCharacter::SetDefaultEquipment()

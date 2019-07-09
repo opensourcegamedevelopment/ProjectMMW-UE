@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "CannonRifle.h"
 #include "BeamRifle.h"
+#include "AimCursorHUDWidget.h"
 #include "GlobalSettings.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
@@ -34,6 +35,12 @@ public:
 	AProjectMMWCharacter();
 
 	FTimeline MyTimeline;
+
+	UPROPERTY(EditAnywhere, Category = "CustomWidgets")
+	TSubclassOf<UAimCursorHUDWidget> AimCursorHUDWidgetRef;
+
+	UPROPERTY(VisibleAnywhere, Category = "CustomWidgets")
+		UAimCursorHUDWidget* AimCursorHudWidget;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -135,7 +142,16 @@ public:
 	AWeapon* EquippedWeapon_Right;
 
 private:
-
+	FVector2D previousMouseLocation;
+	FVector2D currentMouseLocation;
+	APlayerController* playerController;
+	float Location_X_Changes;
+	float Location_Y_Changes;
+	UWidgetTree* AimCursorHudWidgetTree;
+	UWidget* AimCursorWidget;
+	UWidget* AimAreaWidget;
+	//UCanvasPanelSlot* AimCursorPanelSlot;
+	//UCanvasPanelSlot* AimAreaPanelSlot;
 protected:
 	
 	//Character Status Functions
