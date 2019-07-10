@@ -414,8 +414,14 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 			//no change to z - So that player model will look up or down while bullet will fire up or down
 			FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
 
-			//turn character at aim location
-			this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
+			//UE_LOG(LogTemp, Warning, TEXT("newVector x: %f y: %f"), newVector.X, newVector.Y);
+			//UE_LOG(LogTemp, Warning, TEXT("socketLocation.ForwardVector x: %f y: %f"), socketRotation.GetForwardVector().X, socketRotation.GetForwardVector().Y);
+			
+			if (newVector.X > socketRotation.GetForwardVector().X + 0.3 || newVector.X < socketRotation.GetForwardVector().X - 0.3)
+			{
+				//turn character at aim location
+				this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
+			}
 
 			//reset and get new aim location after character turned.
 			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
