@@ -103,9 +103,12 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 
 	CurrentDeltaTime += DeltaTime;
 
-	if (CurrentDeltaTime > 1)
+	if (CurrentDeltaTime > 0.1)
 	{
 		CheckEnergy();
+		CheckStun(DeltaTime);
+		CheckDisabledMovement(DeltaTime);
+		ChecDisabledTurning(DeltaTime);
 
 		if (GetCharacterMovement()->IsFlying() == true)
 		{
@@ -244,7 +247,7 @@ void AProjectMMWCharacter::MoveForward(float Value)
 {
 	//UE_LOG(LogTemp, Log, TEXT("%s"),  (IsBoosting ? TEXT("True") : TEXT("False")));
 	CheckStats();
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != NULL) && (Value != 0.0f) && !disabledMovement)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -258,7 +261,7 @@ void AProjectMMWCharacter::MoveForward(float Value)
 void AProjectMMWCharacter::MoveRight(float Value)
 {
 	CheckStats();
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ( (Controller != NULL) && (Value != 0.0f) && !disabledMovement)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -408,28 +411,50 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 			FQuat socketRotation;
 			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
 
-			FRotator newRotator =  UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-			FVector newVector = newRotator.Vector();
+			//DrawDebugLine(GetWorld(), socketLocation, socketRotation, FColor::Red, false, 1.0f, 0, 1);
 
-			//no change to z - So that player model will look up or down while bullet will fire up or down
-			FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
-
-			//UE_LOG(LogTemp, Warning, TEXT("newVector x: %f y: %f"), newVector.X, newVector.Y);
-			//UE_LOG(LogTemp, Warning, TEXT("socketLocation.ForwardVector x: %f y: %f"), socketRotation.GetForwardVector().X, socketRotation.GetForwardVector().Y);
-			
-			if (newVector.X > socketRotation.GetForwardVector().X + 0.3 || newVector.X < socketRotation.GetForwardVector().X - 0.3)
+			if (!disabledTuring)
 			{
-				//turn character at aim location
-				this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
+				
+
+				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+				FVector newVector = newRotator.Vector();
+
+				//no change to z - So that player model will look up or down while bullet will fire up or down
+				FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
+
+				//UE_LOG(LogTemp, Warning, TEXT("newVector x: %f y: %f"), newVector.X, newVector.Y);
+				 
+				//UE_LOG(LogTemp, Warning, TEXT("ForwardVector x: %f y: %f"), this->GetActorRotation().Vector().X, this->GetActorRotation().Vector().Y);
+				//UE_LOG(LogTemp, Warning, TEXT("ForwardVector x: %f y: %f"), socketRotation.GetForwardVector().X, socketRotation.GetForwardVector().Y);
+
+				if (newVector.X > socketRotation.GetForwardVector().X + 0.3 || newVector.X < socketRotation.GetForwardVector().X - 0.3 ||
+					newVector.Y > socketRotation.GetForwardVector().Y + 0.3 || newVector.Y < socketRotation.GetForwardVector().Y - 0.3)
+				{
+					//turn character at aim location
+					this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
+
+					//disable movement for 0.2 second
+					disabledMovement = true;
+					disabledMovementCountDown = 0.2;
+					//disabledTuring = true;
+					//disabledTuringCountDown = 1;
+
+				}
+
+				//reset and get new aim location after character turned.
+				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+				newRotation = newRotator.Quaternion();
+
+				//shoot bullet
+				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
 			}
-
-			//reset and get new aim location after character turned.
-			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
-			newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-			newRotation = newRotator.Quaternion();
-
-			//shoot bullet
-			EquippedWeapon_Left->Shoot(socketLocation, newRotation);
+			else
+			{
+				//shoot bullet
+				EquippedWeapon_Left->Shoot(socketLocation, socketRotation);
+			}
 		}
 	}
 }
@@ -688,6 +713,42 @@ void AProjectMMWCharacter::RegenEnergy(float regenRate)
 	if (!IsBoosting && CurrentEnergy < MaxEnergy)
 	{
 		CurrentEnergy += regenRate;
+	}
+}
+void AProjectMMWCharacter::CheckStun(float DeltaTime)
+{
+	if (stunned)
+	{
+		stunnedCountDown -= DeltaTime;
+		
+		if (stunnedCountDown <= 0)
+		{
+			stunned = false;
+		}
+	}
+}
+void AProjectMMWCharacter::CheckDisabledMovement(float DeltaTime)
+{
+	if (disabledMovement)
+	{
+		disabledMovementCountDown -= DeltaTime;
+
+		if (disabledMovementCountDown <= 0)
+		{
+			disabledMovement = false;
+		}
+	}
+}
+void AProjectMMWCharacter::ChecDisabledTurning(float DeltaTime)
+{
+	if (disabledTuring)
+	{
+		disabledTuringCountDown -= DeltaTime;
+
+		if (disabledTuringCountDown <= 0)
+		{
+			disabledTuring = false;
+		}
 	}
 }
 #pragma endregion

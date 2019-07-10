@@ -152,6 +152,14 @@ private:
 	UWidget* AimAreaWidget;
 	//UCanvasPanelSlot* AimCursorPanelSlot;
 	//UCanvasPanelSlot* AimAreaPanelSlot;
+
+	bool stunned;
+	bool disabledMovement;
+	bool disabledTuring;
+	float stunnedCountDown; // in seconds
+	float disabledMovementCountDown; // in seconds
+	float disabledTuringCountDown; // in seconds
+
 protected:
 	
 	//Character Status Functions
@@ -160,6 +168,9 @@ protected:
 	void CheckStats();
 	void CheckEnergy();
 	void RegenEnergy(float regenRate);
+	void CheckStun(float DeltaTime);
+	void CheckDisabledMovement(float DeltaTime);
+	void ChecDisabledTurning(float DeltaTime);
 
 	// Character Movment Action Functions
 	void ActivateBoost();
