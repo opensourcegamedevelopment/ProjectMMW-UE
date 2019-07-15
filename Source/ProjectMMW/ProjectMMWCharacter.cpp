@@ -133,67 +133,6 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		CurrentDeltaTime -= DeltaTime;
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("DeltaTime: %s"), CurrentDeltaTime);
-
-
-
-	//if (playerController != nullptr)
-	//{
-	//	playerController->GetMousePosition(currentMouseLocation.X, currentMouseLocation.Y);
-	//	//UE_LOG(LogTemp, Warning, TEXT("Mouse Position -> %f %f"), LocationX, LocationY);
-
-
-	//	if (previousMouseLocation.X > 0)
-	//	{
-	//		Location_X_Changes = previousMouseLocation.X - currentMouseLocation.X;
-	//	}
-	//	
-	//	if (previousMouseLocation.Y > 0)
-	//	{
-	//		Location_Y_Changes = previousMouseLocation.Y - currentMouseLocation.Y;
-	//	}
-	//	//UE_LOG(LogTemp, Warning, TEXT("previousMouseLocation Position -> %f %f"), previousMouseLocation.X, previousMouseLocation.Y);
-	//	//UE_LOG(LogTemp, Warning, TEXT("currentMouseLocation Position -> %f %f"), currentMouseLocation.X, currentMouseLocation.Y);
-
-	//	if (AimCursorHudWidgetTree == nullptr)
-	//	{
-	//		AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
-	//		AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
-	//		AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
-	//	}
-
-	//	UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
-	//	UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
-	//	FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
-	//	FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
-	//	FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
-
-	//	float newPositionX = currentAimLocation.X - Location_X_Changes;
-	//	float newPositionY = currentAimLocation.Y - Location_Y_Changes;
-
-	//	if (newPositionX > (AimAreaPosition.X + AimAreaSize.X) / 2)
-	//	{
-	//		newPositionX = AimAreaPosition.X + AimAreaSize.X /2;
-	//	}
-	//	else if (newPositionX < AimAreaPosition.X - AimAreaSize.X / 2)
-	//	{
-	//		newPositionX = AimAreaPosition.X - AimAreaSize.X / 2;
-	//	}
-	//	else if (newPositionY > (AimAreaPosition.Y + AimAreaSize.Y) /2)
-	//	{
-	//		newPositionY = AimAreaPosition.Y + AimAreaSize.Y /2 ;
-	//	}
-	//	else if (newPositionY < AimAreaPosition.Y - AimAreaSize.Y / 2)
-	//	{
-	//		newPositionY = AimAreaPosition.Y - AimAreaSize.Y / 2;
-	//	}
-	//	else
-	//	{
-	//		//this->bUseControllerRotationYaw = false;
-	//	}
-
-	//	AimCursorPanelSlot->SetPosition(FVector2D(newPositionX, newPositionY));
-	//	previousMouseLocation = currentMouseLocation;
-	//}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -215,8 +154,12 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAction("MainWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateMainWeapon);
 	PlayerInputComponent->BindAction("MainWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateMainWeapon);
 
+	PlayerInputComponent->BindAction("SubWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateSubWeapon);
+	PlayerInputComponent->BindAction("SubWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateSubWeapon);
+
 	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon1);
 	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon2);
+	PlayerInputComponent->BindAction("Weapon3", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon3);
 
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AProjectMMWCharacter::Reload);
 
@@ -458,9 +401,97 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 		}
 	}
 }
-
-
 void AProjectMMWCharacter::DeActivateMainWeapon()
+{
+
+}
+
+void AProjectMMWCharacter::ActivateSubWeapon()
+{
+	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
+	if (EquippedWeapon_Right != nullptr)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
+
+		//Check shoot location
+		if (AimCursorHudWidgetTree == nullptr)
+		{
+			AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+			AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+			AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+		}
+		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
+		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
+		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
+		FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
+		FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
+
+		FVector HitLocation = FVector(0);
+		FString ObjectHit = "Nothing";
+
+		int32 ViewportSizeX, ViewportSizeY;
+		playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
+
+		bool bHit;
+		FVector2D CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+		FHitResult HitResult;
+
+		bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
+
+		if (bHit)
+		{
+			HitLocation = HitResult.ImpactPoint;
+			ObjectHit = HitResult.GetActor()->GetName();
+		}
+
+		//Shoot
+		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
+		{
+			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("RightWeaponSocket");
+
+			FVector socketLocation;
+			FQuat socketRotation;
+			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+
+			if (!disabledTuring)
+			{
+				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+				FVector newVector = newRotator.Vector();
+
+				//no change to z - So that player model will look up or down while bullet will fire up or down
+				FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
+
+				if (newVector.X > socketRotation.GetForwardVector().X + 0.3 || newVector.X < socketRotation.GetForwardVector().X - 0.3 ||
+					newVector.Y > socketRotation.GetForwardVector().Y + 0.3 || newVector.Y < socketRotation.GetForwardVector().Y - 0.3)
+				{
+					//turn character at aim location
+					this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
+
+					//disable movement for 0.2 second
+					disabledMovement = true;
+					disabledMovementCountDown = 0.2;
+					//disabledTuring = true;
+					//disabledTuringCountDown = 1;
+
+				}
+
+				//reset and get new aim location after character turned.
+				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+				newRotation = newRotator.Quaternion();
+
+				//shoot bullet
+				EquippedWeapon_Right->Shoot(socketLocation, newRotation);
+			}
+			else
+			{
+				//shoot bullet
+				EquippedWeapon_Right->Shoot(socketLocation, socketRotation);
+			}
+		}
+	}
+}
+void AProjectMMWCharacter::DeActivateSubWeapon()
 {
 
 }
@@ -471,9 +502,16 @@ void AProjectMMWCharacter::SwitchToWeapon1()
 
 	if (EquippedWeapon_Left != Weapon1_Left)
 	{
-		EquippedWeapon_Left->SetActive(false);
+		if (EquippedWeapon_Left != nullptr) EquippedWeapon_Left->SetActive(false);
 		EquippedWeapon_Left = Weapon1_Left;
-		EquippedWeapon_Left->SetActive(true);
+		if (EquippedWeapon_Left != nullptr) EquippedWeapon_Left->SetActive(true);
+	}
+
+	if (EquippedWeapon_Right != Weapon1_Right)
+	{
+		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(false);
+		EquippedWeapon_Right = Weapon1_Right;
+		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(true);
 	}
 }
 
@@ -483,30 +521,114 @@ void AProjectMMWCharacter::SwitchToWeapon2()
 
 	if (EquippedWeapon_Left != Weapon2_Left)
 	{
-		EquippedWeapon_Left->SetActive(false);
+		if (EquippedWeapon_Left != nullptr) EquippedWeapon_Left->SetActive(false);
 		EquippedWeapon_Left = Weapon2_Left;
-		EquippedWeapon_Left->SetActive(true);
+		if (EquippedWeapon_Left != nullptr) EquippedWeapon_Left->SetActive(true);
+	}
+
+	if (EquippedWeapon_Right != Weapon2_Right)
+	{
+		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(false);
+		EquippedWeapon_Right = Weapon2_Right;
+		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(true);
 	}
 }
+
+void AProjectMMWCharacter::SwitchToWeapon3()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SwitchToWeapon3()"));
+
+	if (EquippedWeapon_Left != Weapon3_Left)
+	{
+		if (EquippedWeapon_Left != nullptr) EquippedWeapon_Left->SetActive(false);
+		EquippedWeapon_Left = Weapon3_Left;
+		if (EquippedWeapon_Left != nullptr) EquippedWeapon_Left->SetActive(true);
+	}
+
+	if (EquippedWeapon_Right != Weapon3_Right)
+	{
+		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(false);
+		EquippedWeapon_Right = Weapon3_Right;
+		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(true);
+	}
+}
+
 
 void AProjectMMWCharacter::Reload()
 {
 	EquippedWeapon_Left->Reload();
 }
 
-FText AProjectMMWCharacter::GetWeaponLeftCurrentClipSize()
+FText AProjectMMWCharacter::GetWeaponLeft_CurrentClipSize()
 {
-	return FText::AsNumber(EquippedWeapon_Left->GetCurrentClipSize());
+	if (EquippedWeapon_Left != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Left->GetCurrentClipSize());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
 }
 
-FText AProjectMMWCharacter::GetWeaponLeftCurrentTotalAmmo()
+FText AProjectMMWCharacter::GetWeaponLeft_CurrentTotalAmmo()
 {
-	return FText::AsNumber(EquippedWeapon_Left->GetCurrentTotalAmmo());
+	if (EquippedWeapon_Left != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Left->GetCurrentTotalAmmo());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
 }
 
-float AProjectMMWCharacter::GetReloadPercentage()
+FText AProjectMMWCharacter::GetWeaponRight_CurrentClipSize()
 {
-	return EquippedWeapon_Left->GetReloadPercentage();
+	if (EquippedWeapon_Right != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Right->GetCurrentClipSize());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
+}
+
+FText AProjectMMWCharacter::GetWeaponRight_CurrentTotalAmmo()
+{
+	if (EquippedWeapon_Right != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Right->GetCurrentTotalAmmo());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
+}
+
+float AProjectMMWCharacter::GetWeaponLeft_ReloadPercentage()
+{
+	if (EquippedWeapon_Left != nullptr)
+	{
+		return EquippedWeapon_Left->GetReloadPercentage();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+float AProjectMMWCharacter::GetWeaponRight_ReloadPercentage()
+{
+	if (EquippedWeapon_Right != nullptr)
+	{
+		return EquippedWeapon_Right->GetReloadPercentage();
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 //void AProjectMMWCharacter::CreateBulletPool(int howMany) {
@@ -535,15 +657,6 @@ void AProjectMMWCharacter::SetDefaultStats()
 	{
 		playerController->GetMousePosition(previousMouseLocation.X, previousMouseLocation.Y);
 		playerController->GetMousePosition(currentMouseLocation.X, currentMouseLocation.Y);
-
-		//UE_LOG(LogTemp, Warning, TEXT("Initial previousMouseLocation Position -> %f %f"), previousMouseLocation.X, previousMouseLocation.Y);
-		//UE_LOG(LogTemp, Warning, TEXT("Initial currentMouseLocation Position -> %f %f"), currentMouseLocation.X, currentMouseLocation.Y);
-
-		//AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
-		//AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor"); 
-		//AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
-		//AimCursorPanelSlot = (UCanvasPanelSlot)AimCursorWidget->Slot;
-		//AimAreaPanelSlot = (UCanvasPanelSlot)AimAreaWidget->Slot;
 	}
 }
 
@@ -585,16 +698,25 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
-		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
 
 		//Spawn Weapons
 		Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		socket->AttachActor(Weapon1_Left, GetMesh());
+		LeftWeaponSocket->AttachActor(Weapon1_Left, GetMesh());
 		Weapon1_Left->SetActive(false);
 
 		Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		socket->AttachActor(Weapon2_Left, GetMesh());
+		LeftWeaponSocket->AttachActor(Weapon2_Left, GetMesh());
 		Weapon2_Left->SetActive(false);
+
+		Weapon3_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		LeftWeaponSocket->AttachActor(Weapon3_Left, GetMesh());
+		Weapon3_Left->SetActive(false);
+
+		Weapon3_Right = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		RightWeaponSocket->AttachActor(Weapon3_Right, GetMesh());
+		Weapon3_Right->SetActive(false);
 
 		EquippedWeapon_Left = Weapon1_Left;
 		EquippedWeapon_Left->SetActive(true);

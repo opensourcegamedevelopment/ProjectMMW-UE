@@ -91,11 +91,17 @@ public:
 	void UpdateEnergy(float EnergyChange);
 
 	UFUNCTION(BlueprintPure, Category = Stats)
-		FText GetWeaponLeftCurrentClipSize();
+		FText GetWeaponLeft_CurrentClipSize();
 	UFUNCTION(BlueprintPure, Category = Stats)
-		FText GetWeaponLeftCurrentTotalAmmo();
+		FText GetWeaponRight_CurrentClipSize();
 	UFUNCTION(BlueprintPure, Category = Stats)
-		float GetReloadPercentage();
+		FText GetWeaponLeft_CurrentTotalAmmo();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		FText GetWeaponRight_CurrentTotalAmmo();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		float GetWeaponLeft_ReloadPercentage();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		float GetWeaponRight_ReloadPercentage();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 	float FlightPower; //Default: 0.5f;
@@ -136,9 +142,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
 	AWeapon* Weapon4_Right;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
 	AWeapon* EquippedWeapon_Left;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
 	AWeapon* EquippedWeapon_Right;
 
 private:
@@ -184,9 +190,12 @@ protected:
 	// Character Movment Action Functions
 	void ActivateMainWeapon();
 	void DeActivateMainWeapon();
+	void ActivateSubWeapon();
+	void DeActivateSubWeapon();
 	void Reload();
 	void SwitchToWeapon1();
 	void SwitchToWeapon2();
+	void SwitchToWeapon3();
 
 	/** 
 	 * Called via input to turn at a given rate. 
