@@ -163,6 +163,8 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AProjectMMWCharacter::Reload);
 
+	PlayerInputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AProjectMMWCharacter::ToggleInventory);
+
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
@@ -386,6 +388,29 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 				}
 
 				//reset and get new aim location after character turned.
+				TArray<UStaticMeshComponent*> weaponMeshComponents;
+
+
+				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+
+				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("EquippedWeapon_Left->GetComponents-> %s"), *weaponMeshComponent->GetName());
+
+					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+					{
+						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+
+						for (UStaticMeshSocket* socket : sockets)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("EquippedWeapon_Left->socket-> %s"), *socket->SocketName.ToString());
+						}
+						
+					}
+				}
+				
+
+
 				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
 				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
 				newRotation = newRotator.Quaternion();
@@ -724,6 +749,39 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
+	}
+}
+
+void AProjectMMWCharacter::ToggleInventory()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ToggleInventory"));
+	if (PlayerStatusMenuWidget) {
+		if (PlayerStatusMenuWidgetInstance == nullptr)
+		{
+			PlayerStatusMenuWidgetInstance = CreateWidget(GetWorld(), PlayerStatusMenuWidget);
+		}
+
+		if (PlayerStatusMenuWidgetInstance != nullptr)
+		{
+			if (!PlayerStatusMenuWidgetInstance->GetIsVisible())
+			{
+				PlayerStatusMenuWidgetInstance->AddToViewport();
+				playerController->bShowMouseCursor = true;
+				playerController->bEnableClickEvents = true;
+				playerController->bEnableMouseOverEvents = true;
+			}
+			else
+			{
+				PlayerStatusMenuWidgetInstance->RemoveFromViewport();
+				playerController->bShowMouseCursor = false;
+				playerController->bEnableClickEvents = false;
+				playerController->bEnableMouseOverEvents = false;
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerStatusMenuWidgetInstance does not exists!!"));
+		}
 	}
 }
 

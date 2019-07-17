@@ -147,6 +147,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
 	AWeapon* EquippedWeapon_Right;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> PlayerStatusMenuWidget;
+
+	
 private:
 	FVector2D previousMouseLocation;
 	FVector2D currentMouseLocation;
@@ -167,6 +171,7 @@ private:
 	float disabledTuringCountDown; // in seconds
 
 protected:
+	UUserWidget* PlayerStatusMenuWidgetInstance;
 	
 	//Character Status Functions
 	void SetDefaultStats();
@@ -196,6 +201,8 @@ protected:
 	void SwitchToWeapon1();
 	void SwitchToWeapon2();
 	void SwitchToWeapon3();
+
+	void ToggleInventory();
 
 	/** 
 	 * Called via input to turn at a given rate. 
