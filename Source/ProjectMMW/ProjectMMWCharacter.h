@@ -25,11 +25,11 @@ class AProjectMMWCharacter : public ACharacter
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+		class UCameraComponent* FollowCamera;
 
 public:
 	AProjectMMWCharacter();
@@ -37,59 +37,88 @@ public:
 	FTimeline MyTimeline;
 
 	UPROPERTY(EditAnywhere, Category = "CustomWidgets")
-	TSubclassOf<UAimCursorHUDWidget> AimCursorHUDWidgetRef;
+		TSubclassOf<UAimCursorHUDWidget> AimCursorHUDWidgetRef;
 
 	UPROPERTY(VisibleAnywhere, Category = "CustomWidgets")
 		UAimCursorHUDWidget* AimCursorHudWidget;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseTurnRate;
+		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseLookUpRate;
+		float BaseLookUpRate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
-	bool IsOverheat;
+		bool IsOverheat;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=States)
-	bool IsBoosting;
+		bool IsBoosting;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
-	float MaxHp;
+		float MaxHp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float CurrentHp;
+		float CurrentHp;
 	float PreviousHp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float HealthPercentage;
+		float HealthPercentage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats)
-	float MaxEnergy; //Default: 1000
+		float MaxEnergy; //Default: 1000
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float CurrentEnergy;
+		float CurrentEnergy;
 	float PreviousEnergy;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stats)
-	float EnergyPercentage;
+		float EnergyPercentage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-	float EnergyUsage; //Default: 2
+		float EnergyUsage; //Default: 2
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-	float EnergyRegen; //Default: 1
+		float EnergyRegen; //Default: 1
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-	float OverheatEnergyRegen; //Default: 0.5
+		float OverheatEnergyRegen; //Default: 0.5
 
 	UFUNCTION(BlueprintPure, Category=Stats)
-	float GetHealth();
-	UFUNCTION(BlueprintPure, Category=Stats)
-	float GetEnergy();
-	UFUNCTION(BlueprintPure, Category=Stats)
-	FText GetHealthIntText();
-	UFUNCTION(BlueprintPure, Category=Stats)
-	FText GetEnergyIntText();
-	UFUNCTION(BlueprintCallable, Category=Stats)
-	void UpdateHp(float HealthChange);
-	UFUNCTION(BlueprintCallable, Category=Stats)
-	void UpdateEnergy(float EnergyChange);
+		FText GetCurrentHealth();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		FText GetMaxHealth();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		float GetHealthPercentage();
 
+	UFUNCTION(BlueprintPure, Category=Stats)
+		FText GetCurrentEnergy();
+	UFUNCTION(BlueprintPure, Category = Stats)
+		FText GetMaxEnergy();
+	UFUNCTION(BlueprintPure, Category=Stats)
+		FText GetHealthIntText();
+	UFUNCTION(BlueprintPure, Category=Stats)
+		FText GetEnergyIntText();
+	UFUNCTION(BlueprintCallable, Category=Stats)
+		void UpdateHp(float HealthChange);
+	UFUNCTION(BlueprintCallable, Category=Stats)
+		void UpdateEnergy(float EnergyChange);
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMaxHpStats(int points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetMaxEnergyStats(float points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetEnergyRegenStats(float points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetMassStats(float points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetMaxAccelerationStats(float points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetMaxGroundSpeedStats(float points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetMaxFlightSpeedStats(float points);
+	//UFUNCTION(BlueprintCallable, Category = Stats)
+	//	void SetMaxFlightPowerStats(float points); // default 0.5f
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMechRotateOnGround(bool enable);
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetEnableAimRange(bool enable);
+	
 	UFUNCTION(BlueprintPure, Category = Stats)
 		FText GetWeaponLeft_CurrentClipSize();
 	UFUNCTION(BlueprintPure, Category = Stats)
@@ -104,7 +133,7 @@ public:
 		float GetWeaponRight_ReloadPercentage();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-	float FlightPower; //Default: 0.5f;
+		float FlightPower; //Default: 0.5f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 		float MaxWalkSpeed; //Default: 600
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
@@ -114,41 +143,44 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 		float OverheatMaxFlySpeed; //Default: 1000
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = States)
-	bool IsVerticalBoost;
+		bool IsVerticalBoost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+		float acceptableTargeRange = 0.6; //Default: 0.3
 
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
-	UBlueprint* GlobalSettings;
+		UBlueprint* GlobalSettings;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon1_Left;
+		AWeapon* Weapon1_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon1_Right;
+		AWeapon* Weapon1_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon2_Left;
+		AWeapon* Weapon2_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon2_Right;
+		AWeapon* Weapon2_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon3_Left;
+		AWeapon* Weapon3_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon3_Right;
+		AWeapon* Weapon3_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon4_Left;
+		AWeapon* Weapon4_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* Weapon4_Right;
+		AWeapon* Weapon4_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* EquippedWeapon_Left;
+		AWeapon* EquippedWeapon_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-	AWeapon* EquippedWeapon_Right;
+		AWeapon* EquippedWeapon_Right;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
-	TSubclassOf<UUserWidget> PlayerStatusMenuWidget;
+		TSubclassOf<UUserWidget> PlayerStatusMenuWidget;
 
 	
 private:
@@ -163,12 +195,16 @@ private:
 	//UCanvasPanelSlot* AimCursorPanelSlot;
 	//UCanvasPanelSlot* AimAreaPanelSlot;
 
+	bool inMenu;
 	bool stunned;
 	bool disabledMovement;
 	bool disabledTuring;
 	float stunnedCountDown; // in seconds
 	float disabledMovementCountDown; // in seconds
 	float disabledTuringCountDown; // in seconds
+
+	bool bMechRotateOnGround = false;
+	bool bEnableAimRange = false;
 
 protected:
 	UUserWidget* PlayerStatusMenuWidgetInstance;
@@ -181,7 +217,7 @@ protected:
 	void RegenEnergy(float regenRate);
 	void CheckStun(float DeltaTime);
 	void CheckDisabledMovement(float DeltaTime);
-	void ChecDisabledTurning(float DeltaTime);
+	void CheckDisabledTurning(float DeltaTime);
 
 	// Character Movment Action Functions
 	void ActivateBoost();
