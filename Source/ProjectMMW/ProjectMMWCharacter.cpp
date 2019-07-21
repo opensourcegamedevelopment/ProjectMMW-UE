@@ -11,6 +11,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
+#include "image.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AProjectMMWCharacter
@@ -91,6 +92,13 @@ void AProjectMMWCharacter::BeginPlay()
 			}
 		}
 	}
+
+	if (AimCursorHudWidgetTree == nullptr)
+	{
+		AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+		AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+		AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+	}
 	
 }
 
@@ -108,7 +116,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		CheckEnergy();
 		CheckStun(DeltaTime);
 		CheckDisabledMovement(DeltaTime);
-		ChecDisabledTurning(DeltaTime);
+		CheckDisabledTurning(DeltaTime);
 
 		if (GetCharacterMovement()->IsFlying() == true)
 		{
@@ -133,6 +141,68 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 		CurrentDeltaTime -= DeltaTime;
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("DeltaTime: %s"), CurrentDeltaTime);
+
+	if (bEnableAimRange)
+	{
+		if (playerController != nullptr)
+		{
+			playerController->GetMousePosition(currentMouseLocation.X, currentMouseLocation.Y);
+			//UE_LOG(LogTemp, Warning, TEXT("Mouse Position -> %f %f"), LocationX, LocationY);
+
+
+			if (previousMouseLocation.X > 0)
+			{
+				Location_X_Changes = previousMouseLocation.X - currentMouseLocation.X;
+			}
+
+			if (previousMouseLocation.Y > 0)
+			{
+				Location_Y_Changes = previousMouseLocation.Y - currentMouseLocation.Y;
+			}
+			//UE_LOG(LogTemp, Warning, TEXT("previousMouseLocation Position -> %f %f"), previousMouseLocation.X, previousMouseLocation.Y);
+			//UE_LOG(LogTemp, Warning, TEXT("currentMouseLocation Position -> %f %f"), currentMouseLocation.X, currentMouseLocation.Y);
+
+			//if (AimCursorHudWidgetTree == nullptr)
+			//{
+			//	AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+			//	AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+			//	AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+			//}
+
+			UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
+			UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
+			FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
+			FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
+			FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
+
+			float newPositionX = currentAimLocation.X - Location_X_Changes;
+			float newPositionY = currentAimLocation.Y - Location_Y_Changes;
+
+			if (newPositionX > (AimAreaPosition.X + AimAreaSize.X) / 2)
+			{
+				newPositionX = AimAreaPosition.X + AimAreaSize.X / 2;
+			}
+			else if (newPositionX < AimAreaPosition.X - AimAreaSize.X / 2)
+			{
+				newPositionX = AimAreaPosition.X - AimAreaSize.X / 2;
+			}
+			else if (newPositionY > (AimAreaPosition.Y + AimAreaSize.Y) / 2)
+			{
+				newPositionY = AimAreaPosition.Y + AimAreaSize.Y / 2;
+			}
+			else if (newPositionY < AimAreaPosition.Y - AimAreaSize.Y / 2)
+			{
+				newPositionY = AimAreaPosition.Y - AimAreaSize.Y / 2;
+			}
+			else
+			{
+				//this->bUseControllerRotationYaw = false;
+			}
+
+			AimCursorPanelSlot->SetPosition(FVector2D(newPositionX, newPositionY));
+			previousMouseLocation = currentMouseLocation;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,21 +271,31 @@ void AProjectMMWCharacter::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
+
+		if (!bMechRotateOnGround)
+		{
+			characterRotateCheck();
+		}
 	}
 }
 void AProjectMMWCharacter::MoveRight(float Value)
 {
 	CheckStats();
-	if ( (Controller != NULL) && (Value != 0.0f) && !disabledMovement)
+	if ((Controller != NULL) && (Value != 0.0f) && !disabledMovement)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
+
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+
+		if (!bMechRotateOnGround)
+		{
+			characterRotateCheck();
+		}
 	}
 }
 
@@ -233,7 +313,11 @@ void AProjectMMWCharacter::JumpKeyAction()
 	{
 		AProjectMMWCharacter::Jump();
 	}
-	characterRotateCheck();
+
+	if (!bMechRotateOnGround)
+	{
+		characterRotateCheck();
+	}
 }
 void AProjectMMWCharacter::JumpKeyReleasedAction()
 {
@@ -297,7 +381,21 @@ void AProjectMMWCharacter::characterRotateCheck()
 	}
 	else
 	{
-		bUseControllerRotationYaw = false;
+		if (bMechRotateOnGround)
+		{
+			bUseControllerRotationYaw = false;
+		}
+		else
+		{
+			//set player character face forward
+			bUseControllerRotationYaw = true;
+			APlayerCameraManager* camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
+			FVector camForward = camManager->GetCameraRotation().Vector();
+
+			FRotator rotator = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, camForward.Z);
+
+			SetActorRotation(rotator, ETeleportType::TeleportPhysics);
+		}
 	}
 }
 
@@ -306,17 +404,17 @@ void AProjectMMWCharacter::characterRotateCheck()
 void AProjectMMWCharacter::ActivateMainWeapon()
 {
 	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	if (EquippedWeapon_Left != nullptr)
+	if (EquippedWeapon_Left != nullptr && !inMenu)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
 
 		//Check shoot location
-		if (AimCursorHudWidgetTree == nullptr)
-		{
-			AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
-			AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
-			AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
-		}
+		//if (AimCursorHudWidgetTree == nullptr)
+		//{
+		//	AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
+		//	AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
+		//	AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+		//}
 		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
 		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
 		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
@@ -330,8 +428,17 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 		playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
 
 		bool bHit;
-		FVector2D CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
-		//FVector2D CrosshairPosition = currentAimLocation;
+		FVector2D CrosshairPosition;
+		if (bEnableAimRange)
+		{
+			// aim cursor at cursor location <--- NOTE (ZEROKIRI): position not correct atm.
+			CrosshairPosition = currentAimLocation;
+		}
+		else
+		{
+			// aim cursor at center of the screen
+			CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+		}
 		FHitResult HitResult;
 
 		bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
@@ -350,7 +457,7 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 		//Shoot
 		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
 		{
-			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+			//const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
 
 			FVector socketLocation;
 			FQuat socketRotation;
@@ -373,8 +480,8 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 				//UE_LOG(LogTemp, Warning, TEXT("ForwardVector x: %f y: %f"), this->GetActorRotation().Vector().X, this->GetActorRotation().Vector().Y);
 				//UE_LOG(LogTemp, Warning, TEXT("ForwardVector x: %f y: %f"), socketRotation.GetForwardVector().X, socketRotation.GetForwardVector().Y);
 
-				if (newVector.X > socketRotation.GetForwardVector().X + 0.3 || newVector.X < socketRotation.GetForwardVector().X - 0.3 ||
-					newVector.Y > socketRotation.GetForwardVector().Y + 0.3 || newVector.Y < socketRotation.GetForwardVector().Y - 0.3)
+				if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
+					newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
 				{
 					//turn character at aim location
 					this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
@@ -434,7 +541,7 @@ void AProjectMMWCharacter::DeActivateMainWeapon()
 void AProjectMMWCharacter::ActivateSubWeapon()
 {
 	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	if (EquippedWeapon_Right != nullptr)
+	if (EquippedWeapon_Right != nullptr && !inMenu)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
 
@@ -472,7 +579,7 @@ void AProjectMMWCharacter::ActivateSubWeapon()
 		//Shoot
 		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
 		{
-			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("RightWeaponSocket");
+			//const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("RightWeaponSocket");
 
 			FVector socketLocation;
 			FQuat socketRotation;
@@ -583,79 +690,6 @@ void AProjectMMWCharacter::Reload()
 {
 	EquippedWeapon_Left->Reload();
 }
-
-FText AProjectMMWCharacter::GetWeaponLeft_CurrentClipSize()
-{
-	if (EquippedWeapon_Left != nullptr)
-	{
-		return FText::AsNumber(EquippedWeapon_Left->GetCurrentClipSize());
-	}
-	else
-	{
-		return FText::FromString("0");
-	}
-}
-
-FText AProjectMMWCharacter::GetWeaponLeft_CurrentTotalAmmo()
-{
-	if (EquippedWeapon_Left != nullptr)
-	{
-		return FText::AsNumber(EquippedWeapon_Left->GetCurrentTotalAmmo());
-	}
-	else
-	{
-		return FText::FromString("0");
-	}
-}
-
-FText AProjectMMWCharacter::GetWeaponRight_CurrentClipSize()
-{
-	if (EquippedWeapon_Right != nullptr)
-	{
-		return FText::AsNumber(EquippedWeapon_Right->GetCurrentClipSize());
-	}
-	else
-	{
-		return FText::FromString("0");
-	}
-}
-
-FText AProjectMMWCharacter::GetWeaponRight_CurrentTotalAmmo()
-{
-	if (EquippedWeapon_Right != nullptr)
-	{
-		return FText::AsNumber(EquippedWeapon_Right->GetCurrentTotalAmmo());
-	}
-	else
-	{
-		return FText::FromString("0");
-	}
-}
-
-float AProjectMMWCharacter::GetWeaponLeft_ReloadPercentage()
-{
-	if (EquippedWeapon_Left != nullptr)
-	{
-		return EquippedWeapon_Left->GetReloadPercentage();
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-float AProjectMMWCharacter::GetWeaponRight_ReloadPercentage()
-{
-	if (EquippedWeapon_Right != nullptr)
-	{
-		return EquippedWeapon_Right->GetReloadPercentage();
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 //void AProjectMMWCharacter::CreateBulletPool(int howMany) {
 //	for (int i = 0; i < howMany; i++) {
 //		ABullet* tempGo = GetWorld()->SpawnActor<ABullet>(ABullet::StaticClass(), FVector(-9999999, -9999999, -9999999), FRotator::ZeroRotator);
@@ -667,6 +701,7 @@ float AProjectMMWCharacter::GetWeaponRight_ReloadPercentage()
 #pragma region Character Status Functions
 void AProjectMMWCharacter::SetDefaultStats()
 {
+	inMenu = false;
 	IsOverheat = false;
 	IsVerticalBoost = false;
 	IsBoosting = false;
@@ -769,6 +804,10 @@ void AProjectMMWCharacter::ToggleInventory()
 				playerController->bShowMouseCursor = true;
 				playerController->bEnableClickEvents = true;
 				playerController->bEnableMouseOverEvents = true;
+				playerController->SetIgnoreLookInput(true);
+				//PlayerStatusMenuWidgetInstance->bStopAction = true;
+				//playerController->SetInputMode(FInputModeUIOnly());
+				inMenu = true;
 			}
 			else
 			{
@@ -776,6 +815,10 @@ void AProjectMMWCharacter::ToggleInventory()
 				playerController->bShowMouseCursor = false;
 				playerController->bEnableClickEvents = false;
 				playerController->bEnableMouseOverEvents = false;
+				playerController->SetIgnoreLookInput(false);
+				//PlayerStatusMenuWidgetInstance->bStopAction = false;
+				//playerController->SetInputMode(FInputModeGameAndUI());
+				inMenu = false;
 			}
 		}
 		else
@@ -785,19 +828,18 @@ void AProjectMMWCharacter::ToggleInventory()
 	}
 }
 
-#pragma region health and energy
 void AProjectMMWCharacter::CheckStats()
 {
 	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(GetCharacterMovement());
-	if (IsOverheat)
+	if (!IsOverheat && IsBoosting)
 	{
-		if (MovementPtr->MaxWalkSpeed != 600)
+		if (MovementPtr->MaxWalkSpeed != 2000)
 		{
-			MovementPtr->MaxWalkSpeed = 600;
+			MovementPtr->MaxWalkSpeed = 2000;
 		}
-		if (MovementPtr->MaxFlySpeed != 600)
+		if (MovementPtr->MaxFlySpeed != 2000)
 		{
-			MovementPtr->MaxFlySpeed = 600;
+			MovementPtr->MaxFlySpeed = 2000;
 		}
 	}
 	else
@@ -811,34 +853,6 @@ void AProjectMMWCharacter::CheckStats()
 			MovementPtr->MaxFlySpeed = 1000;
 		}
 	}
-}
-
-float AProjectMMWCharacter::GetHealth()
-{
-	return CurrentHp;
-}
-
-float AProjectMMWCharacter::GetEnergy()
-{
-	return CurrentEnergy;
-}
-
-FText AProjectMMWCharacter::GetHealthIntText()
-{
-	int32 HP = FMath::RoundHalfFromZero(HealthPercentage * 100);
-	FString HPS = FString::FromInt(HP);
-	FString HealthHUD = HPS + FString(TEXT("%"));
-	FText HPText = FText::FromString(HealthHUD);
-	return HPText;
-}
-
-FText AProjectMMWCharacter::GetEnergyIntText()
-{
-	int32 Energy = FMath::RoundHalfFromZero(EnergyPercentage * 100);
-	FString EnergyS = FString::FromInt(Energy);
-	FString EnergyHUD = EnergyS + FString(TEXT("%"));
-	FText EnergyText = FText::FromString(EnergyHUD);
-	return EnergyText;
 }
 
 void AProjectMMWCharacter::UpdateHp(float HealthChange)
@@ -919,7 +933,7 @@ void AProjectMMWCharacter::CheckDisabledMovement(float DeltaTime)
 		}
 	}
 }
-void AProjectMMWCharacter::ChecDisabledTurning(float DeltaTime)
+void AProjectMMWCharacter::CheckDisabledTurning(float DeltaTime)
 {
 	if (disabledTuring)
 	{
@@ -931,5 +945,228 @@ void AProjectMMWCharacter::ChecDisabledTurning(float DeltaTime)
 		}
 	}
 }
+
+#pragma region getter and setters
+FText AProjectMMWCharacter::GetCurrentHealth()
+{
+	return FText::FromString(FString::SanitizeFloat(CurrentHp, 0));
+}
+FText AProjectMMWCharacter::GetMaxHealth()
+{
+	return FText::FromString(FString::SanitizeFloat(MaxHp, 0));
+}
+FText AProjectMMWCharacter::GetHealthIntText()
+{
+	int32 HP = FMath::RoundHalfFromZero(HealthPercentage * 100);
+	FString HPS = FString::FromInt(HP);
+	FString HealthHUD = HPS + FString(TEXT("%"));
+	FText HPText = FText::FromString(HealthHUD);
+	return HPText;
+}
+float AProjectMMWCharacter::GetHealthPercentage()
+{
+	float HealthPercentage = CurrentHp / MaxHp;
+	return HealthPercentage;
+}
+FText AProjectMMWCharacter::GetCurrentEnergy()
+{
+	return FText::FromString(FString::SanitizeFloat(CurrentEnergy, 0));
+}
+FText AProjectMMWCharacter::GetMaxEnergy()
+{
+	return FText::FromString(FString::SanitizeFloat(MaxEnergy, 0));
+}
+
+FText AProjectMMWCharacter::GetEnergyIntText()
+{
+	int32 Energy = FMath::RoundHalfFromZero(EnergyPercentage * 100);
+	FString EnergyS = FString::FromInt(Energy);
+	FString EnergyHUD = EnergyS + FString(TEXT("%"));
+	FText EnergyText = FText::FromString(EnergyHUD);
+	return EnergyText;
+}
+
+FText AProjectMMWCharacter::GetWeaponLeft_CurrentClipSize()
+{
+	if (EquippedWeapon_Left != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Left->GetCurrentClipSize());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
+}
+
+FText AProjectMMWCharacter::GetWeaponLeft_CurrentTotalAmmo()
+{
+	if (EquippedWeapon_Left != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Left->GetCurrentTotalAmmo());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
+}
+
+FText AProjectMMWCharacter::GetWeaponRight_CurrentClipSize()
+{
+	if (EquippedWeapon_Right != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Right->GetCurrentClipSize());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
+}
+
+FText AProjectMMWCharacter::GetWeaponRight_CurrentTotalAmmo()
+{
+	if (EquippedWeapon_Right != nullptr)
+	{
+		return FText::AsNumber(EquippedWeapon_Right->GetCurrentTotalAmmo());
+	}
+	else
+	{
+		return FText::FromString("0");
+	}
+}
+
+float AProjectMMWCharacter::GetWeaponLeft_ReloadPercentage()
+{
+	if (EquippedWeapon_Left != nullptr)
+	{
+		return EquippedWeapon_Left->GetReloadPercentage();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+float AProjectMMWCharacter::GetWeaponRight_ReloadPercentage()
+{
+	if (EquippedWeapon_Right != nullptr)
+	{
+		return EquippedWeapon_Right->GetReloadPercentage();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+void AProjectMMWCharacter::SetMaxHpStats(int points)
+{
+	UWidgetTree* tree = PlayerStatusMenuWidgetInstance->WidgetTree;
+	UWidget* icon_1_Widget = tree->FindWidget("MaxHealthStats1_Image");
+	UImage* icon_1_image = (UImage*)icon_1_Widget;
+	UWidget* icon_2_Widget = tree->FindWidget("MaxHealthStats2_Image");
+	UImage* icon_2_image = (UImage*)icon_2_Widget;
+	UWidget* icon_3_Widget = tree->FindWidget("MaxHealthStats3_Image");
+	UImage* icon_3_image = (UImage*)icon_3_Widget;
+	UWidget* icon_4_Widget = tree->FindWidget("MaxHealthStats4_Image");
+	UImage* icon_4_image = (UImage*)icon_4_Widget;
+	UWidget* icon_5_Widget = tree->FindWidget("MaxHealthStats5_Image");
+	UImage* icon_5_image = (UImage*)icon_5_Widget;
+
+	switch (points)
+	{
+	case 1:
+		this->MaxHp = 1000;
+		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		break;
+	case 2:
+		this->MaxHp = 2000;
+		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		break;
+	case 3:
+		this->MaxHp = 3000;
+		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		break;
+	case 4:
+		this->MaxHp = 4000;
+		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		break;
+	case 5:
+		this->MaxHp = 5000;
+		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		break;
+	}
+}
+//void AProjectMMWCharacter::SetMaxEnergyStats(float points)
+//{
+//	this->MaxEnergy = energyPoints;
+//}
+//void AProjectMMWCharacter::SetEnergyRegenStats(float points)
+//{
+//	this->EnergyRegen = energyRegenPoints;
+//}
+//void AProjectMMWCharacter::SetMassStats(float massPoints)
+//{
+//	//playerController-> = massPoints;
+//}
+//void AProjectMMWCharacter::SetMaxAccelerationStats(float points)
+//{
+//	//MaxHp = maxAccelerationPoints;
+//}
+//void AProjectMMWCharacter::SetMaxGroundSpeedStats(float points)
+//{
+//	this->MaxWalkSpeed = maxGroundSpeedPoints;
+//}
+//void AProjectMMWCharacter::SetMaxFlightSpeedStats(float points)
+//{
+//	this->MaxFlySpeed = maxFlightSpeedPoints;
+//}
+//void AProjectMMWCharacter::SetMaxFlightPowerStats(float maxFlightPowerPoints)
+//{
+//	this->FlightPower = maxFlightPowerPoints;
+//}
+
+
+void AProjectMMWCharacter::SetMechRotateOnGround(bool enable)
+{
+	if (enable) bMechRotateOnGround = true;
+	else bMechRotateOnGround = false;
+}
+
+void AProjectMMWCharacter::SetEnableAimRange(bool enable)
+{
+	UImage* AimAreaWidgetImage = (UImage*)AimAreaWidget;
+	if (enable)
+	{
+		AimAreaWidgetImage->SetColorAndOpacity(FLinearColor(0.5f, 0.5f, 0.5f, 0.2f));
+		bEnableAimRange = true;
+	}
+	else
+	{
+		AimAreaWidgetImage->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.0f));
+		bEnableAimRange = false;
+	}
+}
+
 #pragma endregion
 #pragma endregion
