@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "CannonRifle.h"
 #include "BeamRifle.h"
+#include "PlayerStatusMenu.h"
 #include "AimCursorHUDWidget.h"
 #include "GlobalSettings.h"
 #include "GameFramework/Actor.h"
@@ -99,8 +100,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 		void SetMaxHpStats(int points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetMaxEnergyStats(float points);
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMaxEnergyStats(int points);
 	//UFUNCTION(BlueprintCallable, Category = Stats)
 	//	void SetEnergyRegenStats(float points);
 	//UFUNCTION(BlueprintCallable, Category = Stats)
@@ -208,6 +209,7 @@ private:
 
 protected:
 	UUserWidget* PlayerStatusMenuWidgetInstance;
+	UPlayerStatusMenu* StatusMenuInstance;
 	
 	//Character Status Functions
 	void SetDefaultStats();

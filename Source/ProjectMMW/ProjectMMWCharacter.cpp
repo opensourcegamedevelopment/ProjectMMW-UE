@@ -13,6 +13,7 @@
 #include "TimerManager.h"
 #include "image.h"
 
+
 //////////////////////////////////////////////////////////////////////////
 // AProjectMMWCharacter
 
@@ -98,6 +99,17 @@ void AProjectMMWCharacter::BeginPlay()
 		AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
 		AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
 		AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
+	}
+
+	if (PlayerStatusMenuWidgetInstance == nullptr)
+	{
+		PlayerStatusMenuWidgetInstance = CreateWidget(GetWorld(), PlayerStatusMenuWidget);
+
+		if (StatusMenuInstance == nullptr)
+		{
+			StatusMenuInstance = (UPlayerStatusMenu*)PlayerStatusMenuWidgetInstance;
+			StatusMenuInstance->InitialiseData();
+		}
 	}
 	
 }
@@ -791,10 +803,6 @@ void AProjectMMWCharacter::ToggleInventory()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ToggleInventory"));
 	if (PlayerStatusMenuWidget) {
-		if (PlayerStatusMenuWidgetInstance == nullptr)
-		{
-			PlayerStatusMenuWidgetInstance = CreateWidget(GetWorld(), PlayerStatusMenuWidget);
-		}
 
 		if (PlayerStatusMenuWidgetInstance != nullptr)
 		{
@@ -1061,66 +1069,59 @@ float AProjectMMWCharacter::GetWeaponRight_ReloadPercentage()
 
 void AProjectMMWCharacter::SetMaxHpStats(int points)
 {
-	UWidgetTree* tree = PlayerStatusMenuWidgetInstance->WidgetTree;
-	UWidget* icon_1_Widget = tree->FindWidget("MaxHealthStats1_Image");
-	UImage* icon_1_image = (UImage*)icon_1_Widget;
-	UWidget* icon_2_Widget = tree->FindWidget("MaxHealthStats2_Image");
-	UImage* icon_2_image = (UImage*)icon_2_Widget;
-	UWidget* icon_3_Widget = tree->FindWidget("MaxHealthStats3_Image");
-	UImage* icon_3_image = (UImage*)icon_3_Widget;
-	UWidget* icon_4_Widget = tree->FindWidget("MaxHealthStats4_Image");
-	UImage* icon_4_image = (UImage*)icon_4_Widget;
-	UWidget* icon_5_Widget = tree->FindWidget("MaxHealthStats5_Image");
-	UImage* icon_5_image = (UImage*)icon_5_Widget;
-
+	
 	switch (points)
 	{
 	case 1:
 		this->MaxHp = 1000;
-		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
-		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
-		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
-		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		StatusMenuInstance->SetAssignedMaxHealthPoints(1);
 		break;
 	case 2:
 		this->MaxHp = 2000;
-		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
-		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
-		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		StatusMenuInstance->SetAssignedMaxHealthPoints(2);
 		break;
 	case 3:
 		this->MaxHp = 3000;
-		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
-		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		StatusMenuInstance->SetAssignedMaxHealthPoints(3);
 		break;
 	case 4:
 		this->MaxHp = 4000;
-		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.35f));
+		StatusMenuInstance->SetAssignedMaxHealthPoints(4);
 		break;
 	case 5:
 		this->MaxHp = 5000;
-		icon_1_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_2_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_3_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_4_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
-		icon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
+		StatusMenuInstance->SetAssignedMaxHealthPoints(5);
 		break;
 	}
 }
-//void AProjectMMWCharacter::SetMaxEnergyStats(float points)
-//{
-//	this->MaxEnergy = energyPoints;
-//}
+void AProjectMMWCharacter::SetMaxEnergyStats(int points)
+{
+	//MaxEnergy = energyPoints;
+
+	switch (points)
+	{
+	case 1:
+		MaxEnergy = 1000;
+		StatusMenuInstance->SetAssignedMaxEnergyPoints(1);
+		break;
+	case 2:
+		MaxEnergy = 2000;
+		StatusMenuInstance->SetAssignedMaxEnergyPoints(2);
+		break;
+	case 3:
+		MaxEnergy = 3000;
+		StatusMenuInstance->SetAssignedMaxEnergyPoints(3);
+		break;
+	case 4:
+		MaxEnergy = 4000;
+		StatusMenuInstance->SetAssignedMaxEnergyPoints(4);
+		break;
+	case 5:
+		MaxEnergy = 5000;
+		StatusMenuInstance->SetAssignedMaxEnergyPoints(5);
+		break;
+	}
+}
 //void AProjectMMWCharacter::SetEnergyRegenStats(float points)
 //{
 //	this->EnergyRegen = energyRegenPoints;
