@@ -412,7 +412,8 @@ void AProjectMMWCharacter::characterRotateCheck()
 }
 
 #pragma endregion
-
+#pragma endregion
+#pragma region weapons
 void AProjectMMWCharacter::ActivateMainWeapon()
 {
 	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
@@ -841,24 +842,24 @@ void AProjectMMWCharacter::CheckStats()
 	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(GetCharacterMovement());
 	if (!IsOverheat && IsBoosting)
 	{
-		if (MovementPtr->MaxWalkSpeed != 2000)
+		if (MovementPtr->MaxWalkSpeed != MaxGroundSpeed * 2)
 		{
-			MovementPtr->MaxWalkSpeed = 2000;
+			MovementPtr->MaxWalkSpeed = MaxGroundSpeed * 2;
 		}
-		if (MovementPtr->MaxFlySpeed != 2000)
+		if (MovementPtr->MaxFlySpeed != MaxFlightSpeed * 2)
 		{
-			MovementPtr->MaxFlySpeed = 2000;
+			MovementPtr->MaxFlySpeed = MaxFlightSpeed * 2;
 		}
 	}
 	else
 	{
-		if (MovementPtr->MaxWalkSpeed != 1000)
+		if (MovementPtr->MaxWalkSpeed != MaxFlightSpeed)
 		{
-			MovementPtr->MaxWalkSpeed = 1000;
+			MovementPtr->MaxWalkSpeed = MaxFlightSpeed;
 		}
-		if (MovementPtr->MaxFlySpeed != 1000)
+		if (MovementPtr->MaxFlySpeed != MaxFlightSpeed)
 		{
-			MovementPtr->MaxFlySpeed = 1000;
+			MovementPtr->MaxFlySpeed = MaxFlightSpeed;
 		}
 	}
 }
@@ -973,8 +974,8 @@ FText AProjectMMWCharacter::GetHealthIntText()
 }
 float AProjectMMWCharacter::GetHealthPercentage()
 {
-	float HealthPercentage = CurrentHp / MaxHp;
-	return HealthPercentage;
+	float healthPercentage = CurrentHp / MaxHp;
+	return healthPercentage;
 }
 FText AProjectMMWCharacter::GetCurrentEnergy()
 {
@@ -1122,30 +1123,154 @@ void AProjectMMWCharacter::SetMaxEnergyStats(int points)
 		break;
 	}
 }
-//void AProjectMMWCharacter::SetEnergyRegenStats(float points)
-//{
-//	this->EnergyRegen = energyRegenPoints;
-//}
-//void AProjectMMWCharacter::SetMassStats(float massPoints)
+void AProjectMMWCharacter::SetEnergyRegenStats(int points)
+{
+	switch (points)
+	{
+	case 1:
+		EnergyRegen = 1;
+		StatusMenuInstance->SetAssignedEnergyRegenPoints(1);
+		break;
+	case 2:
+		EnergyRegen = 2;
+		StatusMenuInstance->SetAssignedEnergyRegenPoints(2);
+		break;
+	case 3:
+		EnergyRegen = 3;
+		StatusMenuInstance->SetAssignedEnergyRegenPoints(3);
+		break;
+	case 4:
+		EnergyRegen = 4;
+		StatusMenuInstance->SetAssignedEnergyRegenPoints(4);
+		break;
+	case 5:
+		EnergyRegen = 5;
+		StatusMenuInstance->SetAssignedEnergyRegenPoints(5);
+		break;
+	}
+}
+//void AProjectMMWCharacter::SetMassStats(int points)
 //{
 //	//playerController-> = massPoints;
+//	//playerController->InitialLifeSpan
+//
+//	UCharacterMovementComponent* MovementPtr = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+//	if (!IsOverheat && IsBoosting)
+//	{
+//		if (MovementPtr->MaxGroundSpeed != 2000)
+//		{
+//			MovementPtr->MaxGroundSpeed = 2000;
+//		}
+//		if (MovementPtr->MaxFlightSpeed != 2000)
+//		{
+//			MovementPtr->MaxFlightSpeed = 2000;
+//		}
+//	}
 //}
-//void AProjectMMWCharacter::SetMaxAccelerationStats(float points)
-//{
-//	//MaxHp = maxAccelerationPoints;
-//}
-//void AProjectMMWCharacter::SetMaxGroundSpeedStats(float points)
-//{
-//	this->MaxWalkSpeed = maxGroundSpeedPoints;
-//}
-//void AProjectMMWCharacter::SetMaxFlightSpeedStats(float points)
-//{
-//	this->MaxFlySpeed = maxFlightSpeedPoints;
-//}
-//void AProjectMMWCharacter::SetMaxFlightPowerStats(float maxFlightPowerPoints)
-//{
-//	this->FlightPower = maxFlightPowerPoints;
-//}
+void AProjectMMWCharacter::SetAccelerationStats(int points)
+{
+	switch (points)
+	{
+	case 1:
+		AccelerationPower = 1;
+		StatusMenuInstance->SetAssignedAccelerationPoints(1);
+		break;
+	case 2:
+		AccelerationPower = 2;
+		StatusMenuInstance->SetAssignedAccelerationPoints(2);
+		break;
+	case 3:
+		AccelerationPower = 3;
+		StatusMenuInstance->SetAssignedAccelerationPoints(3);
+		break;
+	case 4:
+		AccelerationPower = 4;
+		StatusMenuInstance->SetAssignedAccelerationPoints(4);
+		break;
+	case 5:
+		AccelerationPower = 5;
+		StatusMenuInstance->SetAssignedAccelerationPoints(5);
+		break;
+	}
+}
+void AProjectMMWCharacter::SetMaxGroundSpeedStats(int points)
+{
+	switch (points)
+	{
+	case 1:
+		MaxGroundSpeed = 1000;
+		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(1);
+		break;
+	case 2:
+		MaxGroundSpeed = 1200;
+		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(2);
+		break;
+	case 3:
+		MaxGroundSpeed = 1400;
+		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(3);
+		break;
+	case 4:
+		MaxGroundSpeed = 1600;
+		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(4);
+		break;
+	case 5:
+		MaxGroundSpeed = 1800;
+		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(5);
+		break;
+	}
+}
+void AProjectMMWCharacter::SetMaxFlightSpeedStats(int points)
+{
+	switch (points)
+	{
+	case 1:
+		MaxFlightSpeed = 1600;
+		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(1);
+		break;
+	case 2:
+		MaxFlightSpeed = 1800;
+		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(2);
+		break;
+	case 3:
+		MaxFlightSpeed = 2000;
+		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(3);
+		break;
+	case 4:
+		MaxFlightSpeed = 2200;
+		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(4);
+		break;
+	case 5:
+		MaxFlightSpeed = 2400;
+		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(5);
+		break;
+	}
+}
+void AProjectMMWCharacter::SetMaxFlightPowerStats(int points)
+{
+	switch (points)
+	{
+	case 1:
+		FlightPower = 0.5f;
+		StatusMenuInstance->SetAssignedFlightPowerPoints(1);
+		break;
+	case 2:
+		FlightPower = 1;
+		StatusMenuInstance->SetAssignedFlightPowerPoints(2);
+		break;
+	case 3:
+		FlightPower = 1.5f;
+		StatusMenuInstance->SetAssignedFlightPowerPoints(3);
+		break;
+	case 4:
+		FlightPower = 2;
+		StatusMenuInstance->SetAssignedFlightPowerPoints(4);
+		break;
+	case 5:
+		FlightPower = 2.5f;
+		StatusMenuInstance->SetAssignedFlightPowerPoints(5);
+		break;
+	}
+}
 
 
 void AProjectMMWCharacter::SetMechRotateOnGround(bool enable)

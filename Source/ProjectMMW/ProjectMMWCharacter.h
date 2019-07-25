@@ -102,18 +102,18 @@ public:
 		void SetMaxHpStats(int points);
 	UFUNCTION(BlueprintCallable, Category = Stats)
 		void SetMaxEnergyStats(int points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetEnergyRegenStats(float points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetMassStats(float points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetMaxAccelerationStats(float points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetMaxGroundSpeedStats(float points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetMaxFlightSpeedStats(float points);
-	//UFUNCTION(BlueprintCallable, Category = Stats)
-	//	void SetMaxFlightPowerStats(float points); // default 0.5f
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetEnergyRegenStats(int points);
+	/*UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMassStats(int points);*/
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetAccelerationStats(int points);
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMaxGroundSpeedStats(int points);
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMaxFlightSpeedStats(int points);
+	UFUNCTION(BlueprintCallable, Category = Stats)
+		void SetMaxFlightPowerStats(int points);
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 		void SetMechRotateOnGround(bool enable);
@@ -133,20 +133,24 @@ public:
 	UFUNCTION(BlueprintPure, Category = Stats)
 		float GetWeaponRight_ReloadPercentage();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-		float FlightPower; //Default: 0.5f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-		float MaxWalkSpeed; //Default: 600
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-		float MaxFlySpeed; //Default: 600
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-		float OverheatMaxWalkSpeed; //Default: 1000
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-		float OverheatMaxFlySpeed; //Default: 1000
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float FlightPower; //Default: 0.5f; This is the vertical flight height capability
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float BoostPower; //This will modify the base speed x BoostPower
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float AccelerationPower; 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float MaxGroundSpeed; //Default: 1000
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float MaxFlightSpeed; //Default: 1000
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	//	float OverheatMaxWalkSpeed; //Default: 500
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	//	float OverheatMaxFlySpeed; //Default: 500
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = States)
 		bool IsVerticalBoost;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 		float acceptableTargeRange = 0.6; //Default: 0.3
 
 	//use to determine when to check stats
