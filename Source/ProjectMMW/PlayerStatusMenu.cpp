@@ -2,6 +2,7 @@
 
 
 #include "PlayerStatusMenu.h"
+#include "PlayerEquipmentMenu.h"
 
 UPlayerStatusMenu::UPlayerStatusMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -10,6 +11,17 @@ UPlayerStatusMenu::UPlayerStatusMenu(const FObjectInitializer& ObjectInitializer
 
 void UPlayerStatusMenu::InitialiseData()
 {
+	/*if (PlayerEquipmentMenuWidgetInstance == nullptr)
+	{
+		PlayerEquipmentMenuWidgetInstance = CreateWidget(GetWorld(), PlayerEquipmentMenuWidget);
+
+		if (EquipmentMenuInstance == nullptr)
+		{
+			EquipmentMenuInstance = (UPlayerEquipmentMenu*)PlayerEquipmentMenuWidgetInstance;
+			EquipmentMenuInstance->InitialiseData();
+		}
+	}*/
+
 	tree = this->WidgetTree;
 	UWidget* MaxHealthIcon_1_Widget = tree->FindWidget("MaxHealthStats1_Image");
 	MaxHealthIcon_1_image = (UImage*)MaxHealthIcon_1_Widget;
@@ -381,4 +393,28 @@ void UPlayerStatusMenu::SetAssignedMaxFlightSpeedPoints(int points)
 		MaxFlightSpeedIcon_5_image->SetColorAndOpacity(FLinearColor(1, 1, 1, 1.0f));
 		break;
 	}
+}
+
+void UPlayerStatusMenu::ToggleEquipmentInventory()
+{
+	//if (PlayerEquipmentMenuWidget) {
+
+		if (PlayerEquipmentMenuWidgetInstance != nullptr)
+		{
+			
+			if (!PlayerEquipmentMenuWidgetInstance->GetIsVisible())
+			{
+				PlayerEquipmentMenuWidgetInstance->AddToViewport();
+			}
+
+			if (GetIsVisible())
+			{
+				RemoveFromViewport();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerEquipmentMenuWidgetInstance does not exists!!"));
+		}
+	//}
 }

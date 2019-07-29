@@ -111,7 +111,23 @@ void AProjectMMWCharacter::BeginPlay()
 			StatusMenuInstance->InitialiseData();
 		}
 	}
-	
+
+	if (PlayerEquipmentMenuWidgetInstance == nullptr)
+	{
+		PlayerEquipmentMenuWidgetInstance = CreateWidget(GetWorld(), PlayerEquipmentMenuWidget);
+
+		if (EquipmentMenuInstance == nullptr)
+		{
+			EquipmentMenuInstance = (UPlayerEquipmentMenu*)PlayerEquipmentMenuWidgetInstance;
+			EquipmentMenuInstance->InitialiseData();
+		}
+	}
+
+	if (StatusMenuInstance != nullptr && EquipmentMenuInstance != nullptr)
+	{
+		StatusMenuInstance->PlayerEquipmentMenuWidgetInstance = PlayerEquipmentMenuWidgetInstance;
+		EquipmentMenuInstance->PlayerStatusMenuWidgetInstance = PlayerStatusMenuWidgetInstance;
+	}
 }
 
 
@@ -711,7 +727,7 @@ void AProjectMMWCharacter::Reload()
 //}
 #pragma endregion
 
-#pragma region Character Status Functions
+#pragma region Character Stats Functions
 void AProjectMMWCharacter::SetDefaultStats()
 {
 	inMenu = false;
@@ -811,6 +827,7 @@ void AProjectMMWCharacter::ToggleInventory()
 
 		if (PlayerStatusMenuWidgetInstance != nullptr)
 		{
+
 			if (!PlayerStatusMenuWidgetInstance->GetIsVisible())
 			{
 				PlayerStatusMenuWidgetInstance->AddToViewport();
@@ -818,8 +835,6 @@ void AProjectMMWCharacter::ToggleInventory()
 				playerController->bEnableClickEvents = true;
 				playerController->bEnableMouseOverEvents = true;
 				playerController->SetIgnoreLookInput(true);
-				//PlayerStatusMenuWidgetInstance->bStopAction = true;
-				//playerController->SetInputMode(FInputModeUIOnly());
 				inMenu = true;
 			}
 			else
@@ -829,8 +844,6 @@ void AProjectMMWCharacter::ToggleInventory()
 				playerController->bEnableClickEvents = false;
 				playerController->bEnableMouseOverEvents = false;
 				playerController->SetIgnoreLookInput(false);
-				//PlayerStatusMenuWidgetInstance->bStopAction = false;
-				//playerController->SetInputMode(FInputModeGameAndUI());
 				inMenu = false;
 			}
 		}

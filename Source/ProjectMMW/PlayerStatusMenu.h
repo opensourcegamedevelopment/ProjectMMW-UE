@@ -8,6 +8,7 @@
 #include "Image.h"
 #include "PlayerStatusMenu.generated.h"
 
+class UPlayerEquipmentMenu;
 /**
  * 
  */
@@ -27,6 +28,15 @@ public:
 	void SetAssignedAccelerationPoints(int points);
 	void SetAssignedMaxGroundSpeedPoints(int points);
 	void SetAssignedMaxFlightSpeedPoints(int points);
+
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+	void ToggleEquipmentInventory();
+
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
+	//	TSubclassOf<UUserWidget> PlayerEquipmentMenuWidget;
+
+	UUserWidget* PlayerEquipmentMenuWidgetInstance;
+	//UPlayerEquipmentMenu* EquipmentMenuInstance;
 protected:
 
 private:

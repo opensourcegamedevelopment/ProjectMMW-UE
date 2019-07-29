@@ -7,6 +7,7 @@
 #include "CannonRifle.h"
 #include "BeamRifle.h"
 #include "PlayerStatusMenu.h"
+#include "PlayerEquipmentMenu.h"
 #include "AimCursorHUDWidget.h"
 #include "GlobalSettings.h"
 #include "GameFramework/Actor.h"
@@ -187,6 +188,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
 		TSubclassOf<UUserWidget> PlayerStatusMenuWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
+		TSubclassOf<UUserWidget> PlayerEquipmentMenuWidget;
 	
 private:
 	FVector2D previousMouseLocation;
@@ -212,8 +215,6 @@ private:
 	bool bEnableAimRange = false;
 
 protected:
-	UUserWidget* PlayerStatusMenuWidgetInstance;
-	UPlayerStatusMenu* StatusMenuInstance;
 	
 	//Character Status Functions
 	void SetDefaultStats();
@@ -245,6 +246,12 @@ protected:
 	void SwitchToWeapon3();
 
 	void ToggleInventory();
+
+	UUserWidget* PlayerStatusMenuWidgetInstance;
+	UPlayerStatusMenu* StatusMenuInstance;
+
+	UUserWidget* PlayerEquipmentMenuWidgetInstance;
+	UPlayerEquipmentMenu* EquipmentMenuInstance;
 
 	/** 
 	 * Called via input to turn at a given rate. 
