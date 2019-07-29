@@ -44,7 +44,7 @@ void UPlayerStatusMenu::InitialiseData()
 	UWidget* EnergyRegenIcon_5_Widget = tree->FindWidget("EnergyRegenStats5_Image");
 	EnergyRegenIcon_5_image = (UImage*)EnergyRegenIcon_5_Widget;
 
-	/*UWidget* FlightPowerIcon_1_Widget = tree->FindWidget("FlightPowerStats1_Image");
+	UWidget* FlightPowerIcon_1_Widget = tree->FindWidget("FlightPowerStats1_Image");
 	FlightPowerIcon_1_image = (UImage*)FlightPowerIcon_1_Widget;
 	UWidget* FlightPowerIcon_2_Widget = tree->FindWidget("FlightPowerStats2_Image");
 	FlightPowerIcon_2_image = (UImage*)FlightPowerIcon_2_Widget;
@@ -53,7 +53,40 @@ void UPlayerStatusMenu::InitialiseData()
 	UWidget* FlightPowerIcon_4_Widget = tree->FindWidget("FlightPowerStats4_Image");
 	FlightPowerIcon_4_image = (UImage*)FlightPowerIcon_4_Widget;
 	UWidget* FlightPowerIcon_5_Widget = tree->FindWidget("FlightPowerStats5_Image");
-	FlightPowerIcon_5_image = (UImage*)FlightPowerIcon_5_Widget;*/
+	FlightPowerIcon_5_image = (UImage*)FlightPowerIcon_5_Widget;
+
+	UWidget* AccelerationIcon_1_Widget = tree->FindWidget("AccelerationStats1_Image");
+	AccelerationIcon_1_image = (UImage*)AccelerationIcon_1_Widget;
+	UWidget* AccelerationIcon_2_Widget = tree->FindWidget("AccelerationStats2_Image");
+	AccelerationIcon_2_image = (UImage*)AccelerationIcon_2_Widget;
+	UWidget* AccelerationIcon_3_Widget = tree->FindWidget("AccelerationStats3_Image");
+	AccelerationIcon_3_image = (UImage*)AccelerationIcon_3_Widget;
+	UWidget* AccelerationIcon_4_Widget = tree->FindWidget("AccelerationStats4_Image");
+	AccelerationIcon_4_image = (UImage*)AccelerationIcon_4_Widget;
+	UWidget* AccelerationIcon_5_Widget = tree->FindWidget("AccelerationStats5_Image");
+	AccelerationIcon_5_image = (UImage*)AccelerationIcon_5_Widget;
+
+	UWidget* MaxGroundSpeedIcon_1_Widget = tree->FindWidget("MaxGroundSpeedStats1_Image");
+	MaxGroundSpeedIcon_1_image = (UImage*)MaxGroundSpeedIcon_1_Widget;
+	UWidget* MaxGroundSpeedIcon_2_Widget = tree->FindWidget("MaxGroundSpeedStats2_Image");
+	MaxGroundSpeedIcon_2_image = (UImage*)MaxGroundSpeedIcon_2_Widget;
+	UWidget* MaxGroundSpeedIcon_3_Widget = tree->FindWidget("MaxGroundSpeedStats3_Image");
+	MaxGroundSpeedIcon_3_image = (UImage*)MaxGroundSpeedIcon_3_Widget;
+	UWidget* MaxGroundSpeedIcon_4_Widget = tree->FindWidget("MaxGroundSpeedStats4_Image");
+	MaxGroundSpeedIcon_4_image = (UImage*)MaxGroundSpeedIcon_4_Widget;
+	UWidget* MaxGroundSpeedIcon_5_Widget = tree->FindWidget("MaxGroundSpeedStats5_Image");
+	MaxGroundSpeedIcon_5_image = (UImage*)MaxGroundSpeedIcon_5_Widget;
+
+	UWidget* MaxFlightSpeedIcon_1_Widget = tree->FindWidget("MaxFlightSpeedStats1_Image");
+	MaxFlightSpeedIcon_1_image = (UImage*)MaxFlightSpeedIcon_1_Widget;
+	UWidget* MaxFlightSpeedIcon_2_Widget = tree->FindWidget("MaxFlightSpeedStats2_Image");
+	MaxFlightSpeedIcon_2_image = (UImage*)MaxFlightSpeedIcon_2_Widget;
+	UWidget* MaxFlightSpeedIcon_3_Widget = tree->FindWidget("MaxFlightSpeedStats3_Image");
+	MaxFlightSpeedIcon_3_image = (UImage*)MaxFlightSpeedIcon_3_Widget;
+	UWidget* MaxFlightSpeedIcon_4_Widget = tree->FindWidget("MaxFlightSpeedStats4_Image");
+	MaxFlightSpeedIcon_4_image = (UImage*)MaxFlightSpeedIcon_4_Widget;
+	UWidget* MaxFlightSpeedIcon_5_Widget = tree->FindWidget("MaxFlightSpeedStats5_Image");
+	MaxFlightSpeedIcon_5_image = (UImage*)MaxFlightSpeedIcon_5_Widget;
 }
 
 void UPlayerStatusMenu::SetAssignedMaxHealthPoints(int points)

@@ -719,6 +719,10 @@ void AProjectMMWCharacter::SetDefaultStats()
 	IsVerticalBoost = false;
 	IsBoosting = false;
 	CurrentHp = MaxHp;
+	MaxGroundSpeed = 400;
+	MaxFlightSpeed = 400;
+	AccelerationPower = 1.0f;
+	BoostPower = 2;
 	HealthPercentage = 1.0f;
 	CurrentEnergy = MaxEnergy;
 	EnergyPercentage = 1.0f;
@@ -842,13 +846,13 @@ void AProjectMMWCharacter::CheckStats()
 	UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(GetCharacterMovement());
 	if (!IsOverheat && IsBoosting)
 	{
-		if (MovementPtr->MaxWalkSpeed != MaxGroundSpeed * 2)
+		if (MovementPtr->MaxWalkSpeed != MaxGroundSpeed * BoostPower)
 		{
-			MovementPtr->MaxWalkSpeed = MaxGroundSpeed * 2;
+			MovementPtr->MaxWalkSpeed = MaxGroundSpeed * BoostPower;
 		}
-		if (MovementPtr->MaxFlySpeed != MaxFlightSpeed * 2)
+		if (MovementPtr->MaxFlySpeed != MaxFlightSpeed * BoostPower)
 		{
-			MovementPtr->MaxFlySpeed = MaxFlightSpeed * 2;
+			MovementPtr->MaxFlySpeed = MaxFlightSpeed * BoostPower;
 		}
 	}
 	else
@@ -1151,20 +1155,30 @@ void AProjectMMWCharacter::SetEnergyRegenStats(int points)
 }
 //void AProjectMMWCharacter::SetMassStats(int points)
 //{
-//	//playerController-> = massPoints;
-//	//playerController->InitialLifeSpan
-//
 //	UCharacterMovementComponent* MovementPtr = Cast<UCharacterMovementComponent>(GetCharacterMovement());
-//	if (!IsOverheat && IsBoosting)
+//
+//	switch (points)
 //	{
-//		if (MovementPtr->MaxGroundSpeed != 2000)
-//		{
-//			MovementPtr->MaxGroundSpeed = 2000;
-//		}
-//		if (MovementPtr->MaxFlightSpeed != 2000)
-//		{
-//			MovementPtr->MaxFlightSpeed = 2000;
-//		}
+//	case 1:
+//		MovementPtr->Mass = 100;
+//		StatusMenuInstance->SetAssignedAccelerationPoints(1);
+//		break;
+//	case 2:
+//		MovementPtr->Mass = 150;
+//		StatusMenuInstance->SetAssignedAccelerationPoints(2);
+//		break;
+//	case 3:
+//		MovementPtr->Mass = 200;
+//		StatusMenuInstance->SetAssignedAccelerationPoints(3);
+//		break;
+//	case 4:
+//		MovementPtr->Mass = 250;
+//		StatusMenuInstance->SetAssignedAccelerationPoints(4);
+//		break;
+//	case 5:
+//		MovementPtr->Mass = 300;
+//		StatusMenuInstance->SetAssignedAccelerationPoints(5);
+//		break;
 //	}
 //}
 void AProjectMMWCharacter::SetAccelerationStats(int points)
@@ -1198,23 +1212,23 @@ void AProjectMMWCharacter::SetMaxGroundSpeedStats(int points)
 	switch (points)
 	{
 	case 1:
-		MaxGroundSpeed = 1000;
+		MaxGroundSpeed = 400;
 		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(1);
 		break;
 	case 2:
-		MaxGroundSpeed = 1200;
+		MaxGroundSpeed = 600;
 		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(2);
 		break;
 	case 3:
-		MaxGroundSpeed = 1400;
+		MaxGroundSpeed = 800;
 		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(3);
 		break;
 	case 4:
-		MaxGroundSpeed = 1600;
+		MaxGroundSpeed = 1000;
 		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(4);
 		break;
 	case 5:
-		MaxGroundSpeed = 1800;
+		MaxGroundSpeed = 1200;
 		StatusMenuInstance->SetAssignedMaxGroundSpeedPoints(5);
 		break;
 	}
@@ -1224,23 +1238,23 @@ void AProjectMMWCharacter::SetMaxFlightSpeedStats(int points)
 	switch (points)
 	{
 	case 1:
-		MaxFlightSpeed = 1600;
+		MaxFlightSpeed = 400;
 		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(1);
 		break;
 	case 2:
-		MaxFlightSpeed = 1800;
+		MaxFlightSpeed = 600;
 		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(2);
 		break;
 	case 3:
-		MaxFlightSpeed = 2000;
+		MaxFlightSpeed = 800;
 		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(3);
 		break;
 	case 4:
-		MaxFlightSpeed = 2200;
+		MaxFlightSpeed = 1000;
 		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(4);
 		break;
 	case 5:
-		MaxFlightSpeed = 2400;
+		MaxFlightSpeed = 1200;
 		StatusMenuInstance->SetAssignedMaxFlightSpeedPoints(5);
 		break;
 	}
