@@ -186,10 +186,10 @@ public:
 		AWeapon* EquippedWeapon_Right;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
-		TSubclassOf<UUserWidget> PlayerStatusMenuWidget;
+		TSubclassOf<UPlayerStatusMenu> PlayerStatusMenuWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
-		TSubclassOf<UUserWidget> PlayerEquipmentMenuWidget;
+		TSubclassOf<UPlayerEquipmentMenu> PlayerEquipmentMenuWidget;
 	
 private:
 	FVector2D previousMouseLocation;
@@ -247,10 +247,10 @@ protected:
 
 	void ToggleInventory();
 
-	UUserWidget* PlayerStatusMenuWidgetInstance;
+	//UUserWidget* PlayerStatusMenuWidgetInstance;
 	UPlayerStatusMenu* StatusMenuInstance;
 
-	UUserWidget* PlayerEquipmentMenuWidgetInstance;
+	//UUserWidget* PlayerEquipmentMenuWidgetInstance;
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
 
 	/** 

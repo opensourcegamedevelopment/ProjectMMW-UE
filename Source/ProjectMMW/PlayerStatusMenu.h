@@ -35,8 +35,8 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
 	//	TSubclassOf<UUserWidget> PlayerEquipmentMenuWidget;
 
-	UUserWidget* PlayerEquipmentMenuWidgetInstance;
-	//UPlayerEquipmentMenu* EquipmentMenuInstance;
+	//UUserWidget* PlayerEquipmentMenuWidgetInstance;
+	UPlayerEquipmentMenu* EquipmentMenuInstance;
 protected:
 
 private:

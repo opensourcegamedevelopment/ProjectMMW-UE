@@ -101,32 +101,34 @@ void AProjectMMWCharacter::BeginPlay()
 		AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
 	}
 
-	if (PlayerStatusMenuWidgetInstance == nullptr)
+	if (StatusMenuInstance == nullptr)
 	{
-		PlayerStatusMenuWidgetInstance = CreateWidget(GetWorld(), PlayerStatusMenuWidget);
+		StatusMenuInstance = (UPlayerStatusMenu*) CreateWidget(GetWorld(), PlayerStatusMenuWidget);
+		StatusMenuInstance->InitialiseData();
 
-		if (StatusMenuInstance == nullptr)
+		/*if (StatusMenuInstance == nullptr)
 		{
 			StatusMenuInstance = (UPlayerStatusMenu*)PlayerStatusMenuWidgetInstance;
 			StatusMenuInstance->InitialiseData();
-		}
+		}*/
 	}
 
-	if (PlayerEquipmentMenuWidgetInstance == nullptr)
+	if (EquipmentMenuInstance == nullptr)
 	{
-		PlayerEquipmentMenuWidgetInstance = CreateWidget(GetWorld(), PlayerEquipmentMenuWidget);
+		EquipmentMenuInstance = (UPlayerEquipmentMenu*) CreateWidget(GetWorld(), PlayerEquipmentMenuWidget);
+		EquipmentMenuInstance->InitialiseData();
 
-		if (EquipmentMenuInstance == nullptr)
+		/*if (EquipmentMenuInstance == nullptr)
 		{
 			EquipmentMenuInstance = (UPlayerEquipmentMenu*)PlayerEquipmentMenuWidgetInstance;
 			EquipmentMenuInstance->InitialiseData();
-		}
+		}*/
 	}
 
 	if (StatusMenuInstance != nullptr && EquipmentMenuInstance != nullptr)
 	{
-		StatusMenuInstance->PlayerEquipmentMenuWidgetInstance = PlayerEquipmentMenuWidgetInstance;
-		EquipmentMenuInstance->PlayerStatusMenuWidgetInstance = PlayerStatusMenuWidgetInstance;
+		StatusMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
+		EquipmentMenuInstance->StatusMenuInstance = StatusMenuInstance;
 	}
 }
 
@@ -825,12 +827,12 @@ void AProjectMMWCharacter::ToggleInventory()
 	UE_LOG(LogTemp, Warning, TEXT("ToggleInventory"));
 	if (PlayerStatusMenuWidget) {
 
-		if (PlayerStatusMenuWidgetInstance != nullptr)
+		if (StatusMenuInstance != nullptr)
 		{
 
-			if (!PlayerStatusMenuWidgetInstance->GetIsVisible())
+			if (!StatusMenuInstance->GetIsVisible())
 			{
-				PlayerStatusMenuWidgetInstance->AddToViewport();
+				StatusMenuInstance->AddToViewport();
 				playerController->bShowMouseCursor = true;
 				playerController->bEnableClickEvents = true;
 				playerController->bEnableMouseOverEvents = true;
@@ -839,7 +841,7 @@ void AProjectMMWCharacter::ToggleInventory()
 			}
 			else
 			{
-				PlayerStatusMenuWidgetInstance->RemoveFromViewport();
+				StatusMenuInstance->RemoveFromViewport();
 				playerController->bShowMouseCursor = false;
 				playerController->bEnableClickEvents = false;
 				playerController->bEnableMouseOverEvents = false;

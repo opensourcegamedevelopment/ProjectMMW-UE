@@ -27,12 +27,12 @@ void UPlayerEquipmentMenu::ToggleStatusInventory()
 {
 	//if (PlayerStatusMenuWidget) {
 
-		if (PlayerStatusMenuWidgetInstance != nullptr)
+		if (StatusMenuInstance != nullptr)
 		{
 
-			if (!PlayerStatusMenuWidgetInstance->GetIsVisible())
+			if (!StatusMenuInstance->GetIsVisible())
 			{
-				PlayerStatusMenuWidgetInstance->AddToViewport();
+				StatusMenuInstance->AddToViewport();
 			}
 
 			if (GetIsVisible())

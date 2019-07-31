@@ -27,8 +27,8 @@ public:
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
 		TSubclassOf<UUserWidget> PlayerStatusMenuWidget;*/
 
-	//UPlayerStatusMenu* StatusMenuInstance;
-	UUserWidget* PlayerStatusMenuWidgetInstance;
+	UPlayerStatusMenu* StatusMenuInstance;
+	//UUserWidget* PlayerStatusMenuWidgetInstance;
 private:
 	
 };

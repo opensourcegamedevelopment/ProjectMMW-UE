@@ -399,12 +399,12 @@ void UPlayerStatusMenu::ToggleEquipmentInventory()
 {
 	//if (PlayerEquipmentMenuWidget) {
 
-		if (PlayerEquipmentMenuWidgetInstance != nullptr)
+		if (EquipmentMenuInstance != nullptr)
 		{
-			
-			if (!PlayerEquipmentMenuWidgetInstance->GetIsVisible())
+
+			if (!EquipmentMenuInstance->GetIsVisible())
 			{
-				PlayerEquipmentMenuWidgetInstance->AddToViewport();
+				EquipmentMenuInstance->AddToViewport();
 			}
 
 			if (GetIsVisible())
