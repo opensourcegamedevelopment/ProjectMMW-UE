@@ -8,6 +8,7 @@
 #include "BeamRifle.h"
 #include "PlayerStatusMenu.h"
 #include "PlayerEquipmentMenu.h"
+#include "PlayerEquipmentSelectMenu.h"
 #include "AimCursorHUDWidget.h"
 #include "GlobalSettings.h"
 #include "GameFramework/Actor.h"
@@ -190,6 +191,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
 		TSubclassOf<UPlayerEquipmentMenu> PlayerEquipmentMenuWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
+		TSubclassOf<UPlayerEquipmentSelectMenu> PlayerEquipmentSelectMenuWidget;
 	
 private:
 	FVector2D previousMouseLocation;
@@ -200,8 +204,6 @@ private:
 	UWidgetTree* AimCursorHudWidgetTree;
 	UWidget* AimCursorWidget;
 	UWidget* AimAreaWidget;
-	//UCanvasPanelSlot* AimCursorPanelSlot;
-	//UCanvasPanelSlot* AimAreaPanelSlot;
 
 	bool inMenu;
 	bool stunned;
@@ -247,11 +249,9 @@ protected:
 
 	void ToggleInventory();
 
-	//UUserWidget* PlayerStatusMenuWidgetInstance;
 	UPlayerStatusMenu* StatusMenuInstance;
-
-	//UUserWidget* PlayerEquipmentMenuWidgetInstance;
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
+	UPlayerEquipmentSelectMenu* EquipmentSelectMenuInstance;
 
 	/** 
 	 * Called via input to turn at a given rate. 

@@ -32,10 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 	void ToggleEquipmentInventory();
 
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
-	//	TSubclassOf<UUserWidget> PlayerEquipmentMenuWidget;
-
-	//UUserWidget* PlayerEquipmentMenuWidgetInstance;
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
 protected:
 

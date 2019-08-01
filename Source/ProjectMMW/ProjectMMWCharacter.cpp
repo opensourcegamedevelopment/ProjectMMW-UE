@@ -105,30 +105,25 @@ void AProjectMMWCharacter::BeginPlay()
 	{
 		StatusMenuInstance = (UPlayerStatusMenu*) CreateWidget(GetWorld(), PlayerStatusMenuWidget);
 		StatusMenuInstance->InitialiseData();
-
-		/*if (StatusMenuInstance == nullptr)
-		{
-			StatusMenuInstance = (UPlayerStatusMenu*)PlayerStatusMenuWidgetInstance;
-			StatusMenuInstance->InitialiseData();
-		}*/
 	}
 
 	if (EquipmentMenuInstance == nullptr)
 	{
 		EquipmentMenuInstance = (UPlayerEquipmentMenu*) CreateWidget(GetWorld(), PlayerEquipmentMenuWidget);
 		EquipmentMenuInstance->InitialiseData();
-
-		/*if (EquipmentMenuInstance == nullptr)
-		{
-			EquipmentMenuInstance = (UPlayerEquipmentMenu*)PlayerEquipmentMenuWidgetInstance;
-			EquipmentMenuInstance->InitialiseData();
-		}*/
 	}
 
-	if (StatusMenuInstance != nullptr && EquipmentMenuInstance != nullptr)
+	if (EquipmentSelectMenuInstance == nullptr)
+	{
+		EquipmentSelectMenuInstance = (UPlayerEquipmentSelectMenu*)CreateWidget(GetWorld(), PlayerEquipmentSelectMenuWidget);
+		EquipmentSelectMenuInstance->InitialiseData();
+	}
+
+	if (StatusMenuInstance != nullptr && EquipmentMenuInstance != nullptr && EquipmentSelectMenuInstance != nullptr)
 	{
 		StatusMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
 		EquipmentMenuInstance->StatusMenuInstance = StatusMenuInstance;
+		EquipmentMenuInstance->EquipmentSelectMenuInstance = EquipmentSelectMenuInstance;
 	}
 }
 
@@ -830,9 +825,10 @@ void AProjectMMWCharacter::ToggleInventory()
 		if (StatusMenuInstance != nullptr)
 		{
 
-			if (!StatusMenuInstance->GetIsVisible())
+			if (!StatusMenuInstance->IsVisible())
 			{
-				StatusMenuInstance->AddToViewport();
+				UE_LOG(LogTemp, Warning, TEXT("ToggleInventory - turn on"));
+				StatusMenuInstance->SetVisibility(ESlateVisibility::Visible);
 				playerController->bShowMouseCursor = true;
 				playerController->bEnableClickEvents = true;
 				playerController->bEnableMouseOverEvents = true;
@@ -841,7 +837,8 @@ void AProjectMMWCharacter::ToggleInventory()
 			}
 			else
 			{
-				StatusMenuInstance->RemoveFromViewport();
+				UE_LOG(LogTemp, Warning, TEXT("ToggleInventory - turn off"));
+				StatusMenuInstance->SetVisibility(ESlateVisibility::Hidden);
 				playerController->bShowMouseCursor = false;
 				playerController->bEnableClickEvents = false;
 				playerController->bEnableMouseOverEvents = false;

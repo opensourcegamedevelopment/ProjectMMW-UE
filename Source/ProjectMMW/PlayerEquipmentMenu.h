@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "PlayerStatusMenu.h"
 #include "Blueprint/UserWidget.h"
 #include "PlayerEquipmentMenu.generated.h"
 
 class UPlayerStatusMenu;
+class UPlayerEquipmentSelectMenu;
 
 /**
  * 
@@ -24,11 +24,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void ToggleStatusInventory();
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
-		TSubclassOf<UUserWidget> PlayerStatusMenuWidget;*/
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void ToggleEquipmentSelectMenu();
 
 	UPlayerStatusMenu* StatusMenuInstance;
-	//UUserWidget* PlayerStatusMenuWidgetInstance;
+	UPlayerEquipmentSelectMenu* EquipmentSelectMenuInstance;
 private:
 	
 };

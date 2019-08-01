@@ -99,6 +99,9 @@ void UPlayerStatusMenu::InitialiseData()
 	MaxFlightSpeedIcon_4_image = (UImage*)MaxFlightSpeedIcon_4_Widget;
 	UWidget* MaxFlightSpeedIcon_5_Widget = tree->FindWidget("MaxFlightSpeedStats5_Image");
 	MaxFlightSpeedIcon_5_image = (UImage*)MaxFlightSpeedIcon_5_Widget;
+
+	this->AddToViewport();
+	this->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerStatusMenu::SetAssignedMaxHealthPoints(int points)
@@ -397,24 +400,21 @@ void UPlayerStatusMenu::SetAssignedMaxFlightSpeedPoints(int points)
 
 void UPlayerStatusMenu::ToggleEquipmentInventory()
 {
-	//if (PlayerEquipmentMenuWidget) {
+	if (EquipmentMenuInstance != nullptr)
+	{
 
-		if (EquipmentMenuInstance != nullptr)
+		if (!EquipmentMenuInstance->IsVisible())
 		{
-
-			if (!EquipmentMenuInstance->GetIsVisible())
-			{
-				EquipmentMenuInstance->AddToViewport();
-			}
-
-			if (GetIsVisible())
-			{
-				RemoveFromViewport();
-			}
+			EquipmentMenuInstance->SetVisibility(ESlateVisibility::Visible);
 		}
-		else
+
+		if (IsVisible())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayerEquipmentMenuWidgetInstance does not exists!!"));
+			this->SetVisibility(ESlateVisibility::Hidden);
 		}
-	//}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerEquipmentMenuWidgetInstance does not exists!!"));
+	}
 }

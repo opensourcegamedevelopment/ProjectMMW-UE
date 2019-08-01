@@ -3,6 +3,7 @@
 
 #include "PlayerEquipmentMenu.h"
 #include "PlayerStatusMenu.h"
+#include "PlayerEquipmentSelectMenu.h"
 
 UPlayerEquipmentMenu::UPlayerEquipmentMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -11,38 +12,50 @@ UPlayerEquipmentMenu::UPlayerEquipmentMenu(const FObjectInitializer& ObjectIniti
 
 void UPlayerEquipmentMenu::InitialiseData()
 {
-	//if (PlayerStatusMenuWidgetInstance == nullptr)
-	//{
-	//	PlayerStatusMenuWidgetInstance = CreateWidget(GetWorld(), PlayerStatusMenuWidget);
-
-	//	if (StatusMenuInstance == nullptr)
-	//	{
-	//		StatusMenuInstance = (UPlayerStatusMenu*)PlayerStatusMenuWidgetInstance;
-	//		//StatusMenuInstance->InitialiseData();
-	//	}
-	//}
+	AddToViewport();
+	this->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerEquipmentMenu::ToggleStatusInventory()
 {
-	//if (PlayerStatusMenuWidget) {
+	if (StatusMenuInstance != nullptr)
+	{
 
-		if (StatusMenuInstance != nullptr)
+		if (!StatusMenuInstance->IsVisible())
 		{
-
-			if (!StatusMenuInstance->GetIsVisible())
-			{
-				StatusMenuInstance->AddToViewport();
-			}
-
-			if (GetIsVisible())
-			{
-				RemoveFromViewport();
-			}
+			StatusMenuInstance->SetVisibility(ESlateVisibility::Visible);
+			//StatusMenuInstance->AddToViewport();
 		}
-		else
+
+		if (IsVisible())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayerStatusMenuWidgetInstance does not exists!!"));
+			//RemoveFromViewport();
+			this->SetVisibility(ESlateVisibility::Hidden);
 		}
-	//}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerStatusMenuWidgetInstance does not exists!!"));
+	}
+}
+
+void UPlayerEquipmentMenu::ToggleEquipmentSelectMenu()
+{
+	if (EquipmentSelectMenuInstance != nullptr)
+	{
+
+		if (!EquipmentSelectMenuInstance->IsVisible())
+		{
+			EquipmentSelectMenuInstance->SetVisibility(ESlateVisibility::Visible);
+		}
+
+		if (IsVisible())
+		{
+			this->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerStatusMenuWidgetInstance does not exists!!"));
+	}
 }
