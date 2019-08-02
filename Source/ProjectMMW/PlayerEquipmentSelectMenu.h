@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerEquipmentSelectMenu.generated.h"
 
+class UPlayerEquipmentMenu;
+
 /**
  * 
  */
@@ -17,4 +19,12 @@ class PROJECTMMW_API UPlayerEquipmentSelectMenu : public UUserWidget
 public:
 	UPlayerEquipmentSelectMenu(const FObjectInitializer& ObjectInitializer);
 	void InitialiseData();
+
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void BackButton_Clicked();
+
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void CloseButton_Clicked();
+
+	UPlayerEquipmentMenu* EquipmentMenuInstance;
 };

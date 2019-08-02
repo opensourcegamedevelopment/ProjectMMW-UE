@@ -124,6 +124,7 @@ void AProjectMMWCharacter::BeginPlay()
 		StatusMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
 		EquipmentMenuInstance->StatusMenuInstance = StatusMenuInstance;
 		EquipmentMenuInstance->EquipmentSelectMenuInstance = EquipmentSelectMenuInstance;
+		EquipmentSelectMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
 	}
 }
 
