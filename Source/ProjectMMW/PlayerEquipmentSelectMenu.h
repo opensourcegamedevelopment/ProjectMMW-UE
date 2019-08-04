@@ -7,7 +7,7 @@
 #include "PlayerEquipmentSelectMenu.generated.h"
 
 class UPlayerEquipmentMenu;
-
+class AProjectMMWCharacter;
 /**
  * 
  */
@@ -27,4 +27,5 @@ public:
 		void CloseButton_Clicked();
 
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
+	AProjectMMWCharacter* AProjectMMWCharacterInstance;
 };

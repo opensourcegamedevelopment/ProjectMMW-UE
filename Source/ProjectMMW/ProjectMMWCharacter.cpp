@@ -125,6 +125,10 @@ void AProjectMMWCharacter::BeginPlay()
 		EquipmentMenuInstance->StatusMenuInstance = StatusMenuInstance;
 		EquipmentMenuInstance->EquipmentSelectMenuInstance = EquipmentSelectMenuInstance;
 		EquipmentSelectMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
+
+		/*StatusMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*) this->GetClass();
+		EquipmentMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*)this->GetClass();
+		EquipmentSelectMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*)this->GetClass();*/
 	}
 }
 
@@ -1319,6 +1323,12 @@ void AProjectMMWCharacter::SetEnableAimRange(bool enable)
 		AimAreaWidgetImage->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.0f));
 		bEnableAimRange = false;
 	}
+}
+
+void AProjectMMWCharacter::SetInMenu(bool inMenu)
+{
+	if (inMenu) this->inMenu = true;
+	else this->inMenu = false;
 }
 
 #pragma endregion

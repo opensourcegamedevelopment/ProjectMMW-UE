@@ -9,6 +9,8 @@
 #include "PlayerStatusMenu.generated.h"
 
 class UPlayerEquipmentMenu;
+class AProjectMMWCharacter;
+
 /**
  * 
  */
@@ -32,7 +34,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 	void ToggleEquipmentInventory();
 
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void CloseButton_Clicked();
+
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
+	AProjectMMWCharacter* AProjectMMWCharacterInstance;
 protected:
 
 private:

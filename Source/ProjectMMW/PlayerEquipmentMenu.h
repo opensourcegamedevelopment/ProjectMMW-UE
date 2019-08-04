@@ -8,7 +8,7 @@
 
 class UPlayerStatusMenu;
 class UPlayerEquipmentSelectMenu;
-
+class AProjectMMWCharacter;
 /**
  * 
  */
@@ -27,8 +27,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void ToggleEquipmentSelectMenu();
 
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void CloseButton_Clicked();
+
 	UPlayerStatusMenu* StatusMenuInstance;
 	UPlayerEquipmentSelectMenu* EquipmentSelectMenuInstance;
+	AProjectMMWCharacter* AProjectMMWCharacterInstance;
 private:
 	
 };

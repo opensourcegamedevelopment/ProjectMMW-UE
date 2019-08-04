@@ -4,6 +4,7 @@
 #include "PlayerEquipmentMenu.h"
 #include "PlayerStatusMenu.h"
 #include "PlayerEquipmentSelectMenu.h"
+#include "ProjectMMWCharacter.h"
 
 UPlayerEquipmentMenu::UPlayerEquipmentMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -57,5 +58,21 @@ void UPlayerEquipmentMenu::ToggleEquipmentSelectMenu()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerStatusMenuWidgetInstance does not exists!!"));
+	}
+}
+
+void UPlayerEquipmentMenu::CloseButton_Clicked()
+{
+	if (IsVisible())
+	{
+		this->SetVisibility(ESlateVisibility::Hidden);
+		APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+		playerController->bShowMouseCursor = false;
+		playerController->bEnableClickEvents = false;
+		playerController->bEnableMouseOverEvents = false;
+		playerController->SetIgnoreLookInput(false);
+		
+		AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
+		AProjectMMWCharacterInstance->SetInMenu(false);
 	}
 }

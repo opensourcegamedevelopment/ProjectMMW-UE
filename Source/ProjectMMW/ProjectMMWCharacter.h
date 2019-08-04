@@ -194,7 +194,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
 		TSubclassOf<UPlayerEquipmentSelectMenu> PlayerEquipmentSelectMenuWidget;
-	
+
+	void SetInMenu(bool inMenu);
+
 private:
 	FVector2D previousMouseLocation;
 	FVector2D currentMouseLocation;
@@ -205,6 +207,7 @@ private:
 	UWidget* AimCursorWidget;
 	UWidget* AimAreaWidget;
 
+	UPROPERTY(VisibleAnywhere, Category = Settings)
 	bool inMenu;
 	bool stunned;
 	bool disabledMovement;

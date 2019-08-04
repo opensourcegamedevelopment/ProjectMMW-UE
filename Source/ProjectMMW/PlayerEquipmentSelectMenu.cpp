@@ -3,6 +3,7 @@
 
 #include "PlayerEquipmentSelectMenu.h"
 #include "PlayerEquipmentMenu.h"
+#include "ProjectMMWCharacter.h"
 
 UPlayerEquipmentSelectMenu::UPlayerEquipmentSelectMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -37,5 +38,13 @@ void UPlayerEquipmentSelectMenu::CloseButton_Clicked()
 	if (IsVisible())
 	{
 		this->SetVisibility(ESlateVisibility::Hidden);
+		APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+		
+		playerController->bShowMouseCursor = false;
+		playerController->bEnableClickEvents = false;
+		playerController->bEnableMouseOverEvents = false;
+		playerController->SetIgnoreLookInput(false);
+		AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
+		AProjectMMWCharacterInstance->SetInMenu(false);
 	}
 }
