@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void CloseButton_Clicked();
 
+		void SelectWeapon1Left();
+
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
+	APlayerController* playerController;
 	AProjectMMWCharacter* AProjectMMWCharacterInstance;
 };

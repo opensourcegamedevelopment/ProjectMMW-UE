@@ -4,6 +4,7 @@
 #include "PlayerEquipmentSelectMenu.h"
 #include "PlayerEquipmentMenu.h"
 #include "ProjectMMWCharacter.h"
+#include "TextBlock.h"
 
 UPlayerEquipmentSelectMenu::UPlayerEquipmentSelectMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -12,8 +13,10 @@ UPlayerEquipmentSelectMenu::UPlayerEquipmentSelectMenu(const FObjectInitializer&
 
 void UPlayerEquipmentSelectMenu::InitialiseData()
 {
-	this->AddToViewport();
+	this->AddToViewport(1);
 	this->SetVisibility(ESlateVisibility::Hidden);
+	playerController = GetWorld()->GetFirstPlayerController();
+	AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
 }
 
 void UPlayerEquipmentSelectMenu::BackButton_Clicked()
@@ -32,7 +35,6 @@ void UPlayerEquipmentSelectMenu::BackButton_Clicked()
 		}
 	}
 }
-
 void UPlayerEquipmentSelectMenu::CloseButton_Clicked()
 {
 	if (IsVisible())
@@ -46,5 +48,15 @@ void UPlayerEquipmentSelectMenu::CloseButton_Clicked()
 		playerController->SetIgnoreLookInput(false);
 		AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
 		AProjectMMWCharacterInstance->SetInMenu(false);
+	}
+}
+
+void UPlayerEquipmentSelectMenu::SelectWeapon1Left()
+{
+	if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
+	{
+		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
+		FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
+		textBlock->SetText(FText::FromString(weaponName));
 	}
 }

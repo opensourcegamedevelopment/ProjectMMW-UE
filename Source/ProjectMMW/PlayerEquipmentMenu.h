@@ -30,8 +30,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void CloseButton_Clicked();
 
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void SelectWeapon1Left();
+
 	UPlayerStatusMenu* StatusMenuInstance;
 	UPlayerEquipmentSelectMenu* EquipmentSelectMenuInstance;
+	APlayerController* playerController;
 	AProjectMMWCharacter* AProjectMMWCharacterInstance;
 private:
 	

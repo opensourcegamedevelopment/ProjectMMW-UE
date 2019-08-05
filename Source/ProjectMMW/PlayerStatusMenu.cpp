@@ -100,7 +100,7 @@ void UPlayerStatusMenu::InitialiseData()
 	UWidget* MaxFlightSpeedIcon_5_Widget = tree->FindWidget("MaxFlightSpeedStats5_Image");
 	MaxFlightSpeedIcon_5_image = (UImage*)MaxFlightSpeedIcon_5_Widget;
 
-	this->AddToViewport();
+	this->AddToViewport(1);
 	this->SetVisibility(ESlateVisibility::Hidden);
 }
 
