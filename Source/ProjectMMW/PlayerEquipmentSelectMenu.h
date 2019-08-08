@@ -8,6 +8,8 @@
 
 class UPlayerEquipmentMenu;
 class AProjectMMWCharacter;
+class AWeapon;
+class AGlobalSettings;
 /**
  * 
  */
@@ -26,9 +28,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void CloseButton_Clicked();
 
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void EquipButton_Clicked();
+
 		void SelectWeapon1Left();
+
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void SelectedWeapon1();
 
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
 	APlayerController* playerController;
 	AProjectMMWCharacter* AProjectMMWCharacterInstance;
+	AWeapon* SelectedWeapon;
+	//AGlobalSettings* GlobalSettings;
+	TSubclassOf<AGlobalSettings> GlobalSettings;
+	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons;
 };

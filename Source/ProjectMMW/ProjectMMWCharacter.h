@@ -21,6 +21,8 @@
 
 using namespace std;
 
+class AGlobalSettings;
+
 UCLASS(config=Game)
 class AProjectMMWCharacter : public ACharacter
 {
@@ -158,8 +160,13 @@ public:
 	//use to determine when to check stats
 	float CurrentDeltaTime;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 		UBlueprint* GlobalSettings;
+
+	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons;
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		TSubclassOf<AGlobalSettings> GlobalSettings;*/
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
 		AWeapon* Weapon1_Left;

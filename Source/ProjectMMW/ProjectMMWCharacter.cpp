@@ -12,6 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 #include "image.h"
+#include "GlobalSettings.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -52,17 +53,17 @@ AProjectMMWCharacter::AProjectMMWCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	//find GlobalSettings Blueprint 
-	ConstructorHelpers::FObjectFinder<UBlueprint> GlobalSettingsRef(TEXT("Blueprint'/Game/Blueprints/BP_GlobalSettings.BP_GlobalSettings'"));
+	//ConstructorHelpers::FObjectFinder<UBlueprint> GlobalSettingsRef(TEXT("Blueprint'/Game/Blueprints/BP_GlobalSettings.BP_GlobalSettings'"));
 
-	if (GlobalSettingsRef.Succeeded() == true)
-	{
-		//UE_LOG(LogConfig, Log, TEXT(" Successful Getting GlobalSettingsRef"));
-		GlobalSettings = GlobalSettingsRef.Object;
-	}
-	else
-	{
-		UE_LOG(LogConfig, Error, TEXT("Failed Getting GlobalSettingsRef"));
-	}
+	//if (GlobalSettingsRef.Succeeded() == true)
+	//{
+	//	//UE_LOG(LogConfig, Log, TEXT(" Successful Getting GlobalSettingsRef"));
+	//	GlobalSettings = GlobalSettingsRef.Object;
+	//}
+	//else
+	//{
+	//	UE_LOG(LogConfig, Error, TEXT("Failed Getting GlobalSettingsRef"));
+	//}
 }
 
 void AProjectMMWCharacter::BeginPlay()
@@ -125,6 +126,8 @@ void AProjectMMWCharacter::BeginPlay()
 		EquipmentMenuInstance->StatusMenuInstance = StatusMenuInstance;
 		EquipmentMenuInstance->EquipmentSelectMenuInstance = EquipmentSelectMenuInstance;
 		EquipmentSelectMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
+		//EquipmentSelectMenuInstance->GlobalSettings = GlobalSettings;
+		EquipmentSelectMenuInstance->EquipableWeapons = EquipableWeapons;
 
 		/*StatusMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*) this->GetClass();
 		EquipmentMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*)this->GetClass();
@@ -760,7 +763,9 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	//Get EquiableWeapons from globalSettings
 	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
 	GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
-	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
+	EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
+	//TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettings->GetEquipableWeapons();
+
 
 	/*int32 Count = EquipableWeapons.Num();
 	UE_LOG(LogTemp, Warning, TEXT("GlobalSettings itemsTotal: %d"), Count);*/

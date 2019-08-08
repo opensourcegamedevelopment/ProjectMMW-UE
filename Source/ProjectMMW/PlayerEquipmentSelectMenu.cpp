@@ -17,6 +17,10 @@ void UPlayerEquipmentSelectMenu::InitialiseData()
 	this->SetVisibility(ESlateVisibility::Hidden);
 	playerController = GetWorld()->GetFirstPlayerController();
 	AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
+	//TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
+	//GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
+	//EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
+	//EquipableWeapons = GlobalSettings->GetEquipableWeapons();
 }
 
 void UPlayerEquipmentSelectMenu::BackButton_Clicked()
@@ -51,6 +55,11 @@ void UPlayerEquipmentSelectMenu::CloseButton_Clicked()
 	}
 }
 
+void UPlayerEquipmentSelectMenu::EquipButton_Clicked()
+{
+
+}
+
 void UPlayerEquipmentSelectMenu::SelectWeapon1Left()
 {
 	if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
@@ -59,4 +68,14 @@ void UPlayerEquipmentSelectMenu::SelectWeapon1Left()
 		FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
 		textBlock->SetText(FText::FromString(weaponName));
 	}
+}
+
+void UPlayerEquipmentSelectMenu::SelectedWeapon1()
+{
+	UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtSelected"));
+	//FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
+	textBlock->SetText(FText::FromString("BeamRifle"));
+	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
+	TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
+	SelectedWeapon = BeamRifle->GetDefaultObject<ABeamRifle>();
 }
