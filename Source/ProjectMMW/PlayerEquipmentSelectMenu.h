@@ -36,10 +36,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void SelectedWeapon1();
 
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void SelectedWeapon2();
+
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+		void SelectedWeapon3();
+
 	UPlayerEquipmentMenu* EquipmentMenuInstance;
 	APlayerController* playerController;
 	AProjectMMWCharacter* AProjectMMWCharacterInstance;
-	AWeapon* SelectedWeapon;
+	FString SelectedWeapon;
+	FString equippedWeapon;
+	FString selectedSlot;
 	//AGlobalSettings* GlobalSettings;
 	TSubclassOf<AGlobalSettings> GlobalSettings;
 	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons;

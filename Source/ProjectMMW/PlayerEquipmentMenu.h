@@ -33,10 +33,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
 		void SelectWeapon1Left();
 
+	void PopulateUIData();
+
 	UPlayerStatusMenu* StatusMenuInstance;
 	UPlayerEquipmentSelectMenu* EquipmentSelectMenuInstance;
 	APlayerController* playerController;
 	AProjectMMWCharacter* AProjectMMWCharacterInstance;
 private:
-	
 };

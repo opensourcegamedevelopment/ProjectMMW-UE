@@ -18,7 +18,11 @@ void UPlayerEquipmentMenu::InitialiseData()
 	this->SetVisibility(ESlateVisibility::Hidden);
 	playerController = GetWorld()->GetFirstPlayerController();
 	AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
+	PopulateUIData();
+}
 
+void UPlayerEquipmentMenu::PopulateUIData()
+{
 	if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
 	{
 		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtWeapon1Left"));

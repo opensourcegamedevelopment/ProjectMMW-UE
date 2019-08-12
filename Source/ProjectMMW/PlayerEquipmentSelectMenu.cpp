@@ -30,6 +30,7 @@ void UPlayerEquipmentSelectMenu::BackButton_Clicked()
 
 		if (!EquipmentMenuInstance->IsVisible())
 		{
+			EquipmentMenuInstance->PopulateUIData();
 			EquipmentMenuInstance->SetVisibility(ESlateVisibility::Visible);
 		}
 
@@ -57,7 +58,24 @@ void UPlayerEquipmentSelectMenu::CloseButton_Clicked()
 
 void UPlayerEquipmentSelectMenu::EquipButton_Clicked()
 {
-
+	if (SelectedWeapon == "None")
+	{
+		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
+		textBlock->SetText(FText::FromString("None"));
+		AProjectMMWCharacterInstance->ReEquipWeapon("None", "Weapon1_Left");
+	}
+	if (SelectedWeapon == "BeamRifle")
+	{
+		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
+		textBlock->SetText(FText::FromString("BeamRifle"));
+		AProjectMMWCharacterInstance->ReEquipWeapon("BeamRifle", "Weapon1_Left");
+	}
+	if (SelectedWeapon == "CannonRifle")
+	{
+		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
+		textBlock->SetText(FText::FromString("CannonRifle"));
+		AProjectMMWCharacterInstance->ReEquipWeapon("CannonRifle", "Weapon1_Left");
+	}
 }
 
 void UPlayerEquipmentSelectMenu::SelectWeapon1Left()
@@ -67,15 +85,27 @@ void UPlayerEquipmentSelectMenu::SelectWeapon1Left()
 		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
 		FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
 		textBlock->SetText(FText::FromString(weaponName));
+		selectedSlot = "Weapon1_Left";
 	}
 }
 
 void UPlayerEquipmentSelectMenu::SelectedWeapon1()
 {
 	UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtSelected"));
-	//FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
+	textBlock->SetText(FText::FromString("None"));
+	SelectedWeapon = "None";
+}
+
+void UPlayerEquipmentSelectMenu::SelectedWeapon2()
+{
+	UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtSelected"));
 	textBlock->SetText(FText::FromString("BeamRifle"));
-	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
-	TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
-	SelectedWeapon = BeamRifle->GetDefaultObject<ABeamRifle>();
+	SelectedWeapon = "BeamRifle";
+}
+
+void UPlayerEquipmentSelectMenu::SelectedWeapon3()
+{
+	UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtSelected"));
+	textBlock->SetText(FText::FromString("CannonRifle"));
+	SelectedWeapon = "CannonRifle";
 }

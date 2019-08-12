@@ -679,6 +679,7 @@ void AProjectMMWCharacter::SwitchToWeapon1()
 		EquippedWeapon_Right = Weapon1_Right;
 		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(true);
 	}
+	currentSelectedWeaponSlot = 1;
 }
 
 void AProjectMMWCharacter::SwitchToWeapon2()
@@ -698,6 +699,7 @@ void AProjectMMWCharacter::SwitchToWeapon2()
 		EquippedWeapon_Right = Weapon2_Right;
 		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(true);
 	}
+	currentSelectedWeaponSlot = 2;
 }
 
 void AProjectMMWCharacter::SwitchToWeapon3()
@@ -717,6 +719,7 @@ void AProjectMMWCharacter::SwitchToWeapon3()
 		EquippedWeapon_Right = Weapon3_Right;
 		if (EquippedWeapon_Right != nullptr) EquippedWeapon_Right->SetActive(true);
 	}
+	currentSelectedWeaponSlot = 3;
 }
 
 
@@ -824,6 +827,53 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
+	}
+	currentSelectedWeaponSlot = 1;
+}
+void AProjectMMWCharacter::ReEquipWeapon(string weapon, string weaponLocation)
+{
+
+	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
+	//TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
+	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
+	//TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
+
+	if (weaponLocation == "Weapon1_Left")
+	{
+		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		if (Weapon1_Left) Weapon1_Left->K2_DestroyActor();
+
+		if (weapon == "None")
+		{
+			Weapon1_Left = nullptr;
+		}
+		else if (weapon == "BeamRifle")
+		{
+			Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+		else if (weapon == "CannonRifle")
+		{
+			Weapon1_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+
+		if (Weapon1_Left != nullptr)
+		{
+			LeftWeaponSocket->AttachActor(Weapon1_Left, GetMesh());
+			Weapon1_Left->SetActive(false);
+		}
+	}
+
+	if (currentSelectedWeaponSlot == 1)
+	{
+		SwitchToWeapon1();
+	}
+	else if (currentSelectedWeaponSlot == 2)
+	{
+		SwitchToWeapon2();
+	}
+	else if (currentSelectedWeaponSlot == 3)
+	{
+		SwitchToWeapon3();
 	}
 }
 

@@ -137,6 +137,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = Stats)
 		float GetWeaponRight_ReloadPercentage();
 
+	void ReEquipWeapon(string weapon, string weaponLocation);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 		float FlightPower; //Default: 0.5f; This is the vertical flight height capability
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
@@ -256,6 +258,7 @@ protected:
 	void SwitchToWeapon1();
 	void SwitchToWeapon2();
 	void SwitchToWeapon3();
+	int currentSelectedWeaponSlot;
 
 	void ToggleInventory();
 

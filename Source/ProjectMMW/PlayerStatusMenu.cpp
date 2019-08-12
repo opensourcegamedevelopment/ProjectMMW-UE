@@ -405,6 +405,7 @@ void UPlayerStatusMenu::ToggleEquipmentInventory()
 
 		if (!EquipmentMenuInstance->IsVisible())
 		{
+			EquipmentMenuInstance->PopulateUIData();
 			EquipmentMenuInstance->SetVisibility(ESlateVisibility::Visible);
 		}
 
