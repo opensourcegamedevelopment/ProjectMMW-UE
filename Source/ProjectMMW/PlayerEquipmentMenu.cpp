@@ -120,10 +120,19 @@ void UPlayerEquipmentMenu::CloseButton_Clicked()
 	}
 }
 
-void UPlayerEquipmentMenu::SelectWeapon1Left()
+void UPlayerEquipmentMenu::SelectWeapon(WeaponSlot weaponSlot)
 {
 	if (EquipmentSelectMenuInstance != nullptr)
 	{
-		EquipmentSelectMenuInstance->SelectWeapon1Left();
+		switch (weaponSlot) 
+		{
+			case WeaponSlot::Weapon1Left : EquipmentSelectMenuInstance->SelectWeapon1Left();  break;
+			case WeaponSlot::Weapon1Right: EquipmentSelectMenuInstance->SelectWeapon1Left();  break;
+			case WeaponSlot::Weapon2Left: EquipmentSelectMenuInstance->SelectWeapon1Left();  break;
+			case WeaponSlot::Weapon2Right: EquipmentSelectMenuInstance->SelectWeapon1Left();  break;
+			case WeaponSlot::Weapon3Left: EquipmentSelectMenuInstance->SelectWeapon1Left();  break;
+			case WeaponSlot::Weapon3Right: EquipmentSelectMenuInstance->SelectWeapon1Left();  break;
+		}
+
 	}
 }

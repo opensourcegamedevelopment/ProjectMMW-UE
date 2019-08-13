@@ -12,6 +12,16 @@ class AProjectMMWCharacter;
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class WeaponSlot : uint8
+{
+	Weapon1Left UMETA(DisplayName = "Weapon 1 Left"),
+	Weapon1Right UMETA(DisplayName = "Weapon 1 Right"),
+	Weapon2Left UMETA(DisplayName = "Weapon 2 Left"),
+	Weapon2Right UMETA(DisplayName = "Weapon 2 Right"),
+	Weapon3Left UMETA(DisplayName = "Weapon 3 Left"),
+	Weapon3Right UMETA(DisplayName = "Weapon 3 Right")
+};
 UCLASS()
 class PROJECTMMW_API UPlayerEquipmentMenu : public UUserWidget
 {
@@ -31,7 +41,7 @@ public:
 		void CloseButton_Clicked();
 
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
-		void SelectWeapon1Left();
+		void SelectWeapon(WeaponSlot weaponSlot);
 
 	void PopulateUIData();
 
