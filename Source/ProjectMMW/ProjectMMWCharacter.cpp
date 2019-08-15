@@ -830,13 +830,14 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	}
 	currentSelectedWeaponSlot = 1;
 }
-void AProjectMMWCharacter::ReEquipWeapon(string weapon, string weaponLocation)
+void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 {
 
 	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
 	//TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
 	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
 	//TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
+
 
 	if (weaponLocation == "Weapon1_Left")
 	{
@@ -860,6 +861,126 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, string weaponLocation)
 		{
 			LeftWeaponSocket->AttachActor(Weapon1_Left, GetMesh());
 			Weapon1_Left->SetActive(false);
+		}
+	}
+	else if (weaponLocation == "Weapon1_Right")
+	{
+		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		if (Weapon1_Right) Weapon1_Right->K2_DestroyActor();
+
+		if (weapon == "None")
+		{
+			Weapon1_Right = nullptr;
+		}
+		else if (weapon == "BeamRifle")
+		{
+			Weapon1_Right = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+		else if (weapon == "CannonRifle")
+		{
+			Weapon1_Right = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+
+		if (Weapon1_Right != nullptr)
+		{
+			RightWeaponSocket->AttachActor(Weapon1_Right, GetMesh());
+			Weapon1_Right->SetActive(false);
+		}
+	}
+	else if (weaponLocation == "Weapon2_Left")
+	{
+		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		if (Weapon2_Left) Weapon2_Left->K2_DestroyActor();
+
+		if (weapon == "None")
+		{
+			Weapon2_Left = nullptr;
+		}
+		else if (weapon == "BeamRifle")
+		{
+			Weapon2_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+		else if (weapon == "CannonRifle")
+		{
+			Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+
+		if (Weapon2_Left != nullptr)
+		{
+			LeftWeaponSocket->AttachActor(Weapon2_Left, GetMesh());
+			Weapon2_Left->SetActive(false);
+		}
+	}
+	else if (weaponLocation == "Weapon2_Right")
+	{
+		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		if (Weapon2_Right) Weapon2_Right->K2_DestroyActor();
+
+		if (weapon == "None")
+		{
+			Weapon2_Right = nullptr;
+		}
+		else if (weapon == "BeamRifle")
+		{
+			Weapon2_Right = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+		else if (weapon == "CannonRifle")
+		{
+			Weapon2_Right = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+
+		if (Weapon2_Right != nullptr)
+		{
+			RightWeaponSocket->AttachActor(Weapon2_Right, GetMesh());
+			Weapon2_Right->SetActive(false);
+		}
+	}
+	else if (weaponLocation == "Weapon3_Left")
+	{
+		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		if (Weapon3_Left) Weapon3_Left->K2_DestroyActor();
+
+		if (weapon == "None")
+		{
+			Weapon3_Left = nullptr;
+		}
+		else if (weapon == "BeamRifle")
+		{
+			Weapon3_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+		else if (weapon == "CannonRifle")
+		{
+			Weapon3_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+
+		if (Weapon3_Left != nullptr)
+		{
+			LeftWeaponSocket->AttachActor(Weapon3_Left, GetMesh());
+			Weapon3_Left->SetActive(false);
+		}
+	}
+	else if (weaponLocation == "Weapon3_Right")
+	{
+		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		if (Weapon3_Right) Weapon3_Right->K2_DestroyActor();
+
+		if (weapon == "None")
+		{
+			Weapon3_Right = nullptr;
+		}
+		else if (weapon == "BeamRifle")
+		{
+			Weapon3_Right = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+		else if (weapon == "CannonRifle")
+		{
+			Weapon3_Right = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+		}
+
+		if (Weapon3_Right != nullptr)
+		{
+			RightWeaponSocket->AttachActor(Weapon3_Right, GetMesh());
+			Weapon3_Right->SetActive(false);
 		}
 	}
 

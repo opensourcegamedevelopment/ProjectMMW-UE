@@ -17,10 +17,6 @@ void UPlayerEquipmentSelectMenu::InitialiseData()
 	this->SetVisibility(ESlateVisibility::Hidden);
 	playerController = GetWorld()->GetFirstPlayerController();
 	AProjectMMWCharacterInstance = (AProjectMMWCharacter*)(playerController->GetCharacter());
-	//TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
-	//GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
-	//EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
-	//EquipableWeapons = GlobalSettings->GetEquipableWeapons();
 }
 
 void UPlayerEquipmentSelectMenu::BackButton_Clicked()
@@ -62,98 +58,102 @@ void UPlayerEquipmentSelectMenu::EquipButton_Clicked()
 	{
 		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
 		textBlock->SetText(FText::FromString("None"));
-		AProjectMMWCharacterInstance->ReEquipWeapon("None", "Weapon1_Left");
+		AProjectMMWCharacterInstance->ReEquipWeapon("None", selectedSlot);
 	}
 	if (SelectedWeapon == "BeamRifle")
 	{
 		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
 		textBlock->SetText(FText::FromString("BeamRifle"));
-		AProjectMMWCharacterInstance->ReEquipWeapon("BeamRifle", "Weapon1_Left");
+		AProjectMMWCharacterInstance->ReEquipWeapon("BeamRifle", selectedSlot);
 	}
 	if (SelectedWeapon == "CannonRifle")
 	{
 		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
 		textBlock->SetText(FText::FromString("CannonRifle"));
-		AProjectMMWCharacterInstance->ReEquipWeapon("CannonRifle", "Weapon1_Left");
+		AProjectMMWCharacterInstance->ReEquipWeapon("CannonRifle", selectedSlot);
 	}
 }
 
-void UPlayerEquipmentSelectMenu::SelectWeapon1Left()
+void UPlayerEquipmentSelectMenu::SelectWeapon(EWeaponSlot weaponSlot)
 {
+	UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
 
-	if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
+	switch (weaponSlot)
 	{
-		UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
-		FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
-		textBlock->SetText(FText::FromString(weaponName));
-		selectedSlot = "Weapon1_Left";
+		case EWeaponSlot::Weapon1Left:
+			if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
+			{
+				FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetClass()->GetDisplayNameText().ToString();
+				textBlock->SetText(FText::FromString(weaponName));
+			}
+			else
+			{
+				textBlock->SetText(FText::FromString("None"));
+			}
+			selectedSlot = "Weapon1_Left";
+			break;
+		case EWeaponSlot::Weapon1Right:
+			if (AProjectMMWCharacterInstance->Weapon1_Right != nullptr)
+			{
+				FString weaponName = AProjectMMWCharacterInstance->Weapon1_Right->GetClass()->GetDisplayNameText().ToString();
+				textBlock->SetText(FText::FromString(weaponName));
+			}
+			else
+			{
+				textBlock->SetText(FText::FromString("None"));
+			}
+			selectedSlot = "Weapon1_Right";
+			break;
+		case EWeaponSlot::Weapon2Left:
+			if (AProjectMMWCharacterInstance->Weapon2_Left != nullptr)
+			{
+				FString weaponName = AProjectMMWCharacterInstance->Weapon2_Left->GetClass()->GetDisplayNameText().ToString();
+				textBlock->SetText(FText::FromString(weaponName));
+			}
+			else
+			{
+				textBlock->SetText(FText::FromString("None"));
+			}
+			selectedSlot = "Weapon2_Left";
+			break;
+		case EWeaponSlot::Weapon2Right:
+			if (AProjectMMWCharacterInstance->Weapon2_Right != nullptr)
+			{
+				FString weaponName = AProjectMMWCharacterInstance->Weapon2_Right->GetClass()->GetDisplayNameText().ToString();
+				textBlock->SetText(FText::FromString(weaponName));
+			}
+			else
+			{
+				textBlock->SetText(FText::FromString("None"));
+			}
+			selectedSlot = "Weapon2_Right";
+			break;
+		case EWeaponSlot::Weapon3Left:
+			if (AProjectMMWCharacterInstance->Weapon3_Left != nullptr)
+			{
+				FString weaponName = AProjectMMWCharacterInstance->Weapon3_Left->GetClass()->GetDisplayNameText().ToString();
+				textBlock->SetText(FText::FromString(weaponName));
+			}
+			else
+			{
+				textBlock->SetText(FText::FromString("None"));
+			}
+			selectedSlot = "Weapon3_Left";
+			break;
+		case EWeaponSlot::Weapon3Right:
+			if (AProjectMMWCharacterInstance->Weapon3_Right != nullptr)
+			{
+				FString weaponName = AProjectMMWCharacterInstance->Weapon3_Right->GetClass()->GetDisplayNameText().ToString();
+				textBlock->SetText(FText::FromString(weaponName));
+			}
+			else
+			{
+				textBlock->SetText(FText::FromString("None"));
+			}
+			selectedSlot = "Weapon3_Right";
+			break;
 	}
 }
-
-//void UPlayerEquipmentSelectMenu::SelectWeapon(WeaponSlot weaponSlot)
-//{
-//	UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
-//
-//	switch (weaponSlot)
-//	{
-//		case WeaponSlot::Weapon1Left:
-//			if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
-//			{
-//				FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
-//				textBlock->SetText(FText::FromString(weaponName));
-//				selectedSlot = "Weapon1_Left";
-//			}
-//			break;
-//		case WeaponSlot::Weapon1Right:
-//			if (AProjectMMWCharacterInstance->Weapon1_Right != nullptr)
-//			{
-//				FString weaponName = AProjectMMWCharacterInstance->Weapon1_Right->GetActorLabel();
-//				textBlock->SetText(FText::FromString(weaponName));
-//				selectedSlot = "Weapon1_Right";
-//			}
-//			break;
-//		case WeaponSlot::Weapon2Left:
-//			if (AProjectMMWCharacterInstance->Weapon2_Left != nullptr)
-//			{
-//				FString weaponName = AProjectMMWCharacterInstance->Weapon2_Left->GetActorLabel();
-//				textBlock->SetText(FText::FromString(weaponName));
-//				selectedSlot = "Weapon2_Left";
-//			}
-//			break;
-//		case WeaponSlot::Weapon2Right:
-//			if (AProjectMMWCharacterInstance->Weapon2_Right != nullptr)
-//			{
-//				FString weaponName = AProjectMMWCharacterInstance->Weapon2_Right->GetActorLabel();
-//				textBlock->SetText(FText::FromString(weaponName));
-//				selectedSlot = "Weapon2_Right";
-//			}
-//			break;
-//		case WeaponSlot::Weapon3Left:
-//			if (AProjectMMWCharacterInstance->Weapon3_Left != nullptr)
-//			{
-//				FString weaponName = AProjectMMWCharacterInstance->Weapon3_Left->GetActorLabel();
-//				textBlock->SetText(FText::FromString(weaponName));
-//				selectedSlot = "Weapon3_Left";
-//			}
-//			break;
-//		case WeaponSlot::Weapon3Right:
-//			if (AProjectMMWCharacterInstance->Weapon3_Right != nullptr)
-//			{
-//				FString weaponName = AProjectMMWCharacterInstance->Weapon3_Right->GetActorLabel();
-//				textBlock->SetText(FText::FromString(weaponName));
-//				selectedSlot = "Weapon3_Right";
-//			}
-//			break;
-//	}
-//
-//		/*if (AProjectMMWCharacterInstance->Weapon1_Left != nullptr)
-//		{
-//			UTextBlock* textBlock = (UTextBlock*)this->GetWidgetFromName(FName("TxtEquipped"));
-//			FString weaponName = AProjectMMWCharacterInstance->Weapon1_Left->GetActorLabel();
-//			textBlock->SetText(FText::FromString(weaponName));
-//			selectedSlot = "Weapon1_Left";
-//		}*/
-//}
 
 void UPlayerEquipmentSelectMenu::SelectedWeapon1()
 {

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "EWeaponSlot.h"
 #include "PlayerEquipmentMenu.generated.h"
 
 class UPlayerStatusMenu;
@@ -41,7 +42,7 @@ public:
 		void CloseButton_Clicked();
 
 	UFUNCTION(BlueprintCallable, Category = "Widgets")
-		void SelectWeapon(WeaponSlot weaponSlot);
+		void SelectWeapon(EWeaponSlot weaponSlot);
 
 	void PopulateUIData();
 
