@@ -29,7 +29,7 @@ void AStaticEnemyObject::BeginPlay()
 	if (GEngine) 
 	{
 		CameraLocation = GEngine->GetFirstLocalPlayerController(GetWorld())->PlayerCameraManager->GetCameraLocation();
-		statusBarlocation = statusBarComponent->RelativeLocation;
+		statusBarlocation = statusBarComponent->GetRelativeLocation();
 		statusBarComponent->SetRelativeRotation(FRotationMatrix::MakeFromXZ(CameraLocation - statusBarlocation, CameraLocation - statusBarlocation).Rotator());
 	}
 }
@@ -60,7 +60,7 @@ void AStaticEnemyObject::Tick(float DeltaTime)
 	if (GEngine)
 	{
 		CameraLocation = GEngine->GetFirstLocalPlayerController(GetWorld())->PlayerCameraManager->GetCameraLocation();
-		statusBarlocation = statusBarComponent->RelativeLocation;
+		statusBarlocation = statusBarComponent->GetRelativeLocation();
 		statusBarComponent->SetRelativeRotation(FRotationMatrix::MakeFromXZ(CameraLocation - statusBarlocation, CameraLocation - statusBarlocation).Rotator());
 	}
 }
