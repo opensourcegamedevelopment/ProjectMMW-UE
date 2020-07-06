@@ -250,10 +250,10 @@ protected:
 	void MoveRight(float Value);
 
 	// Character Movment Action Functions
-	void ActivateMainWeapon();
-	void DeActivateMainWeapon();
-	void ActivateSubWeapon();
-	void DeActivateSubWeapon();
+	void ActivateLeftWeapon();
+	void DeActivateLeftWeapon();
+	void ActivateRightWeapon();
+	void DeActivateRightWeapon();
 	void Reload();
 	void SwitchToWeapon1();
 	void SwitchToWeapon2();

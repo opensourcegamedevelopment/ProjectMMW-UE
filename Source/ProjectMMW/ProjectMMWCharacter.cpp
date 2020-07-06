@@ -254,11 +254,11 @@ void AProjectMMWCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAction("Boost", IE_Pressed, this, &AProjectMMWCharacter::ActivateBoost);
 	PlayerInputComponent->BindAction("Boost", IE_Released, this, &AProjectMMWCharacter::DeActivateBoost);
 
-	PlayerInputComponent->BindAction("MainWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateMainWeapon);
-	PlayerInputComponent->BindAction("MainWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateMainWeapon);
+	PlayerInputComponent->BindAction("MainWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateLeftWeapon);
+	PlayerInputComponent->BindAction("MainWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateLeftWeapon);
 
-	PlayerInputComponent->BindAction("SubWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateSubWeapon);
-	PlayerInputComponent->BindAction("SubWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateSubWeapon);
+	PlayerInputComponent->BindAction("SubWeaponAction", IE_Pressed, this, &AProjectMMWCharacter::ActivateRightWeapon);
+	PlayerInputComponent->BindAction("SubWeaponAction", IE_Released, this, &AProjectMMWCharacter::DeActivateRightWeapon);
 
 	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon1);
 	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &AProjectMMWCharacter::SwitchToWeapon2);
@@ -435,25 +435,15 @@ void AProjectMMWCharacter::characterRotateCheck()
 #pragma endregion
 #pragma endregion
 #pragma region weapons
-void AProjectMMWCharacter::ActivateMainWeapon()
+void AProjectMMWCharacter::ActivateLeftWeapon()
 {
-	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
 	if (EquippedWeapon_Left != nullptr && !inMenu)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
+		//Check Aim Panel ------------------------------------------------------------------------------------
 
-		//Check shoot location
-		//if (AimCursorHudWidgetTree == nullptr)
-		//{
-		//	AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
-		//	AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
-		//	AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
-		//}
 		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
 		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
 		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
-		FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
-		FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
 
 		FVector HitLocation = FVector(0);
 		FString ObjectHit = "Nothing";
@@ -483,36 +473,21 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 			ObjectHit = HitResult.GetActor()->GetName();
 		}
 
-		// Draws a red line for debugging purposes
-		//DrawDebugLine(GetWorld(), HitResult.TraceStart, HitResult.TraceEnd, FColor::Red,false,1.0f,0,1);
-
-		UE_LOG(LogTemp, Warning, TEXT("Targeting: %s  Location: %s"), *ObjectHit, *HitLocation.ToString());
-
-		//Shoot
 		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
 		{
-			//const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-
 			FVector socketLocation;
 			FQuat socketRotation;
 			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
 
-			//DrawDebugLine(GetWorld(), socketLocation, socketRotation, FColor::Red, false, 1.0f, 0, 1);
+			//DrawDebugLine(GetWorld(), socketLocation, HitLocation, FColor::Red, false, 5.0f, 0, 2);
 
 			if (!disabledTuring)
 			{
-				
-
 				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
 				FVector newVector = newRotator.Vector();
 
 				//no change to z - So that player model will look up or down while bullet will fire up or down
 				FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
-
-				//UE_LOG(LogTemp, Warning, TEXT("newVector x: %f y: %f"), newVector.X, newVector.Y);
-				 
-				//UE_LOG(LogTemp, Warning, TEXT("ForwardVector x: %f y: %f"), this->GetActorRotation().Vector().X, this->GetActorRotation().Vector().Y);
-				//UE_LOG(LogTemp, Warning, TEXT("ForwardVector x: %f y: %f"), socketRotation.GetForwardVector().X, socketRotation.GetForwardVector().Y);
 
 				if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
 					newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
@@ -531,28 +506,28 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 				//reset and get new aim location after character turned.
 				TArray<UStaticMeshComponent*> weaponMeshComponents;
 
-
 				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
-
 				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("EquippedWeapon_Left->GetComponents-> %s"), *weaponMeshComponent->GetName());
-
 					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
 					{
 						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
 
 						for (UStaticMeshSocket* socket : sockets)
 						{
-							UE_LOG(LogTemp, Warning, TEXT("EquippedWeapon_Left->socket-> %s"), *socket->SocketName.ToString());
+							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+							{
+								socketLocation = EquippedWeapon_Left->GetActorLocation() +
+									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
+
+							}
 						}
-						
+
 					}
 				}
-				
 
+				//DrawDebugLine(GetWorld(), this->GetActorLocation(), socketLocation, FColor::Green, false, 5.0f, 0, 2);
 
-				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
 				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
 				newRotation = newRotator.Quaternion();
 
@@ -561,36 +536,52 @@ void AProjectMMWCharacter::ActivateMainWeapon()
 			}
 			else
 			{
+				TArray<UStaticMeshComponent*> weaponMeshComponents;
+
+				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+				{
+					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+					{
+						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+
+						for (UStaticMeshSocket* socket : sockets)
+						{
+							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+							{
+								socketLocation = EquippedWeapon_Left->GetActorLocation() +
+									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
+
+							}
+						}
+
+					}
+				}
+
+				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+				FQuat newRotation = newRotator.Quaternion();
+
 				//shoot bullet
-				EquippedWeapon_Left->Shoot(socketLocation, socketRotation);
+				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
 			}
 		}
 	}
 }
-void AProjectMMWCharacter::DeActivateMainWeapon()
+void AProjectMMWCharacter::DeActivateLeftWeapon()
 {
 
 }
 
-void AProjectMMWCharacter::ActivateSubWeapon()
+void AProjectMMWCharacter::ActivateRightWeapon()
 {
-	//ABeamRifle* BeamRifle = weapon1->GeneratedClass->GetDefaultObject<ABeamRifle>();
-	if (EquippedWeapon_Right != nullptr && !inMenu)
+	if (EquippedWeapon_Left != nullptr && !inMenu)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp6 - Shoot!!"));
+		//Check Aim Panel ------------------------------------------------------------------------------------
 
-		//Check shoot location
-		if (AimCursorHudWidgetTree == nullptr)
-		{
-			AimCursorHudWidgetTree = AimCursorHudWidget->WidgetTree; //Retrieve widgetTree in the HUD
-			AimAreaWidget = AimCursorHudWidgetTree->FindWidget("AimArea");
-			AimCursorWidget = AimCursorHudWidgetTree->FindWidget("AimCursor");
-		}
 		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
 		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
 		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
-		FVector2D AimAreaPosition = AimAreaPanelSlot->GetPosition();
-		FVector2D AimAreaSize = AimAreaPanelSlot->GetSize();
 
 		FVector HitLocation = FVector(0);
 		FString ObjectHit = "Nothing";
@@ -599,7 +590,17 @@ void AProjectMMWCharacter::ActivateSubWeapon()
 		playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
 
 		bool bHit;
-		FVector2D CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+		FVector2D CrosshairPosition;
+		if (bEnableAimRange)
+		{
+			// aim cursor at cursor location <--- NOTE (ZEROKIRI): position not correct atm.
+			CrosshairPosition = currentAimLocation;
+		}
+		else
+		{
+			// aim cursor at center of the screen
+			CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+		}
 		FHitResult HitResult;
 
 		bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
@@ -610,14 +611,13 @@ void AProjectMMWCharacter::ActivateSubWeapon()
 			ObjectHit = HitResult.GetActor()->GetName();
 		}
 
-		//Shoot
 		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
 		{
-			//const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("RightWeaponSocket");
-
 			FVector socketLocation;
 			FQuat socketRotation;
 			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+
+			//DrawDebugLine(GetWorld(), socketLocation, HitLocation, FColor::Red, false, 5.0f, 0, 2);
 
 			if (!disabledTuring)
 			{
@@ -627,8 +627,8 @@ void AProjectMMWCharacter::ActivateSubWeapon()
 				//no change to z - So that player model will look up or down while bullet will fire up or down
 				FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
 
-				if (newVector.X > socketRotation.GetForwardVector().X + 0.3 || newVector.X < socketRotation.GetForwardVector().X - 0.3 ||
-					newVector.Y > socketRotation.GetForwardVector().Y + 0.3 || newVector.Y < socketRotation.GetForwardVector().Y - 0.3)
+				if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
+					newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
 				{
 					//turn character at aim location
 					this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
@@ -642,22 +642,71 @@ void AProjectMMWCharacter::ActivateSubWeapon()
 				}
 
 				//reset and get new aim location after character turned.
-				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+				TArray<UStaticMeshComponent*> weaponMeshComponents;
+
+				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+				{
+					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+					{
+						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+
+						for (UStaticMeshSocket* socket : sockets)
+						{
+							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+							{
+								socketLocation = EquippedWeapon_Left->GetActorLocation() +
+									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
+
+							}
+						}
+
+					}
+				}
+
+				//DrawDebugLine(GetWorld(), this->GetActorLocation(), socketLocation, FColor::Green, false, 5.0f, 0, 2);
+
 				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
 				newRotation = newRotator.Quaternion();
 
 				//shoot bullet
-				EquippedWeapon_Right->Shoot(socketLocation, newRotation);
+				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
 			}
 			else
 			{
+				TArray<UStaticMeshComponent*> weaponMeshComponents;
+
+				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+				{
+					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+					{
+						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+
+						for (UStaticMeshSocket* socket : sockets)
+						{
+							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+							{
+								socketLocation = EquippedWeapon_Left->GetActorLocation() +
+									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
+
+							}
+						}
+
+					}
+				}
+
+				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+				FQuat newRotation = newRotator.Quaternion();
+
 				//shoot bullet
-				EquippedWeapon_Right->Shoot(socketLocation, socketRotation);
+				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
 			}
 		}
 	}
 }
-void AProjectMMWCharacter::DeActivateSubWeapon()
+void AProjectMMWCharacter::DeActivateRightWeapon()
 {
 
 }
