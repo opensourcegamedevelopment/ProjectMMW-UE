@@ -9,7 +9,7 @@
 
 class UPlayerEquipmentMenu;
 class AProjectMMWCharacter;
-class AWeapon;
+class AShootingWeapon;
 class AGlobalSettings;
 /**
  * 
@@ -51,5 +51,5 @@ public:
 	FString equippedWeapon;
 	FString selectedSlot;
 	TSubclassOf<AGlobalSettings> GlobalSettings;
-	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons;
+	TMap<FString, TSubclassOf<AShootingWeapon>> EquipableShootingWeapons;
 };

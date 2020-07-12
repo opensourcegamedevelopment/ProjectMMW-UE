@@ -127,7 +127,7 @@ void AProjectMMWCharacter::BeginPlay()
 		EquipmentMenuInstance->EquipmentSelectMenuInstance = EquipmentSelectMenuInstance;
 		EquipmentSelectMenuInstance->EquipmentMenuInstance = EquipmentMenuInstance;
 		//EquipmentSelectMenuInstance->GlobalSettings = GlobalSettings;
-		EquipmentSelectMenuInstance->EquipableWeapons = EquipableWeapons;
+		EquipmentSelectMenuInstance->EquipableShootingWeapons = EquipableShootingWeapons;
 
 		/*StatusMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*) this->GetClass();
 		EquipmentMenuInstance->AProjectMMWCharacterInstance = (AProjectMMWCharacter*)this->GetClass();
@@ -160,7 +160,7 @@ void AProjectMMWCharacter::Tick(float DeltaTime)
 
 			bUseControllerRotationYaw = true;
 			//set player character face forward
-			APlayerCameraManager *camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
+			APlayerCameraManager* camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
 			FVector camForward = camManager->GetCameraRotation().Vector();
 
 			FRotator rotator = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, camForward.Z);
@@ -342,7 +342,7 @@ void AProjectMMWCharacter::JumpKeyAction()
 		}
 		if (IsVerticalBoost == false) IsVerticalBoost = true;
 	}
-	else 
+	else
 	{
 		AProjectMMWCharacter::Jump();
 	}
@@ -366,8 +366,8 @@ void AProjectMMWCharacter::ActivateBoost()
 {
 	if (IsOverheat)
 	{
-		if( GetCharacterMovement()->IsFlying() == true )  
-		{  
+		if (GetCharacterMovement()->IsFlying() == true)
+		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		}
 		IsBoosting = false;
@@ -375,21 +375,21 @@ void AProjectMMWCharacter::ActivateBoost()
 	else if (CurrentEnergy > 0)
 	{
 		IsBoosting = true;
-		if( GetCharacterMovement()->IsFlying() == false )  
-		{  
+		if (GetCharacterMovement()->IsFlying() == false)
+		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-		}  
-		
+		}
+
 	}
 	characterRotateCheck();
 }
 
 void AProjectMMWCharacter::DeActivateBoost()
 {
-	if( GetCharacterMovement()->IsFlying() == true )  
-	{  
+	if (GetCharacterMovement()->IsFlying() == true)
+	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	}  
+	}
 	IsBoosting = false;
 	characterRotateCheck();
 }
@@ -405,7 +405,7 @@ void AProjectMMWCharacter::characterRotateCheck()
 
 		bUseControllerRotationYaw = true;
 		//set player character face forward
-		APlayerCameraManager *camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
+		APlayerCameraManager* camManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
 		FVector camForward = camManager->GetCameraRotation().Vector();
 
 		FRotator rotator = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, camForward.Z);
@@ -439,131 +439,136 @@ void AProjectMMWCharacter::ActivateLeftWeapon()
 {
 	if (EquippedWeapon_Left != nullptr && !inMenu)
 	{
-		//Check Aim Panel ------------------------------------------------------------------------------------
-
-		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
-		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
-		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
-
-		FVector HitLocation = FVector(0);
-		FString ObjectHit = "Nothing";
-
-		int32 ViewportSizeX, ViewportSizeY;
-		playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
-
-		bool bHit;
-		FVector2D CrosshairPosition;
-		if (bEnableAimRange)
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
 		{
-			// aim cursor at cursor location <--- NOTE (ZEROKIRI): position not correct atm.
-			CrosshairPosition = currentAimLocation;
-		}
-		else
-		{
-			// aim cursor at center of the screen
-			CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
-		}
-		FHitResult HitResult;
 
-		bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
+			//Check Aim Panel ------------------------------------------------------------------------------------
 
-		if (bHit)
-		{
-			HitLocation = HitResult.ImpactPoint;
-			ObjectHit = HitResult.GetActor()->GetName();
-		}
+			UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
+			UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
+			FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
 
-		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
-		{
-			FVector socketLocation;
-			FQuat socketRotation;
-			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+			FVector HitLocation = FVector(0);
+			FString ObjectHit = "Nothing";
 
-			//DrawDebugLine(GetWorld(), socketLocation, HitLocation, FColor::Red, false, 5.0f, 0, 2);
+			int32 ViewportSizeX, ViewportSizeY;
+			playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
 
-			if (!disabledTuring)
+			bool bHit;
+			FVector2D CrosshairPosition;
+			if (bEnableAimRange)
 			{
-				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-				FVector newVector = newRotator.Vector();
-
-				//no change to z - So that player model will look up or down while bullet will fire up or down
-				FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
-
-				if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
-					newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
-				{
-					//turn character at aim location
-					this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
-
-					//disable movement for 0.2 second
-					disabledMovement = true;
-					disabledMovementCountDown = 0.2;
-					//disabledTuring = true;
-					//disabledTuringCountDown = 1;
-
-				}
-
-				//reset and get new aim location after character turned.
-				TArray<UStaticMeshComponent*> weaponMeshComponents;
-
-				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
-				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
-				{
-					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
-					{
-						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
-
-						for (UStaticMeshSocket* socket : sockets)
-						{
-							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
-							{
-								socketLocation = EquippedWeapon_Left->GetActorLocation() +
-									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
-
-							}
-						}
-
-					}
-				}
-
-				//DrawDebugLine(GetWorld(), this->GetActorLocation(), socketLocation, FColor::Green, false, 5.0f, 0, 2);
-
-				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-				newRotation = newRotator.Quaternion();
-
-				//shoot bullet
-				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
+				// aim cursor at cursor location <--- NOTE (ZEROKIRI): position not correct atm.
+				CrosshairPosition = currentAimLocation;
 			}
 			else
 			{
-				TArray<UStaticMeshComponent*> weaponMeshComponents;
+				// aim cursor at center of the screen
+				CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+			}
+			FHitResult HitResult;
 
-				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
-				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+			bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
+
+			if (bHit)
+			{
+				HitLocation = HitResult.ImpactPoint;
+				ObjectHit = HitResult.GetActor()->GetName();
+			}
+
+			if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
+			{
+				FVector socketLocation;
+				FQuat socketRotation;
+				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+
+				//DrawDebugLine(GetWorld(), socketLocation, HitLocation, FColor::Red, false, 5.0f, 0, 2);
+
+				if (!disabledTuring)
 				{
-					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+					FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+					FVector newVector = newRotator.Vector();
+
+					//no change to z - So that player model will look up or down while bullet will fire up or down
+					FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
+
+					if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
+						newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
 					{
-						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+						//turn character at aim location
+						this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
 
-						for (UStaticMeshSocket* socket : sockets)
-						{
-							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
-							{
-								socketLocation = EquippedWeapon_Left->GetActorLocation() +
-									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
-
-							}
-						}
+						//disable movement for 0.2 second
+						disabledMovement = true;
+						disabledMovementCountDown = 0.2;
+						//disabledTuring = true;
+						//disabledTuringCountDown = 1;
 
 					}
+
+					//reset and get new aim location after character turned.
+					TArray<UStaticMeshComponent*> weaponMeshComponents;
+
+					shootingWeaponPtr->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+					for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+					{
+						if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+						{
+							TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+
+							for (UStaticMeshSocket* socket : sockets)
+							{
+								if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+								{
+									socketLocation = shootingWeaponPtr->GetActorLocation() +
+										UKismetMathLibrary::Multiply_VectorFloat(shootingWeaponPtr->GetActorForwardVector(), socket->RelativeLocation.X);
+
+								}
+							}
+
+						}
+					}
+
+					//DrawDebugLine(GetWorld(), this->GetActorLocation(), socketLocation, FColor::Green, false, 5.0f, 0, 2);
+
+					newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+					newRotation = newRotator.Quaternion();
+
+					//shoot bullet
+					shootingWeaponPtr->Shoot(socketLocation, newRotation);
 				}
+				else
+				{
+					TArray<UStaticMeshComponent*> weaponMeshComponents;
 
-				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
-				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-				FQuat newRotation = newRotator.Quaternion();
+					shootingWeaponPtr->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+					for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+					{
+						if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+						{
+							TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
 
-				//shoot bullet
-				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
+							for (UStaticMeshSocket* socket : sockets)
+							{
+								if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+								{
+									socketLocation = shootingWeaponPtr->GetActorLocation() +
+										UKismetMathLibrary::Multiply_VectorFloat(shootingWeaponPtr->GetActorForwardVector(), socket->RelativeLocation.X);
+
+								}
+							}
+
+						}
+					}
+
+					this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+					FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+					FQuat newRotation = newRotator.Quaternion();
+
+					//shoot bullet
+					shootingWeaponPtr->Shoot(socketLocation, newRotation);
+				}
 			}
 		}
 	}
@@ -575,133 +580,138 @@ void AProjectMMWCharacter::DeActivateLeftWeapon()
 
 void AProjectMMWCharacter::ActivateRightWeapon()
 {
-	if (EquippedWeapon_Left != nullptr && !inMenu)
+	if (EquippedWeapon_Right != nullptr && !inMenu)
 	{
-		//Check Aim Panel ------------------------------------------------------------------------------------
-
-		UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
-		UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
-		FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
-
-		FVector HitLocation = FVector(0);
-		FString ObjectHit = "Nothing";
-
-		int32 ViewportSizeX, ViewportSizeY;
-		playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
-
-		bool bHit;
-		FVector2D CrosshairPosition;
-		if (bEnableAimRange)
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Right);
+		if (shootingWeaponPtr)
 		{
-			// aim cursor at cursor location <--- NOTE (ZEROKIRI): position not correct atm.
-			CrosshairPosition = currentAimLocation;
-		}
-		else
-		{
-			// aim cursor at center of the screen
-			CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
-		}
-		FHitResult HitResult;
 
-		bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
+			//Check Aim Panel ------------------------------------------------------------------------------------
 
-		if (bHit)
-		{
-			HitLocation = HitResult.ImpactPoint;
-			ObjectHit = HitResult.GetActor()->GetName();
-		}
+			UCanvasPanelSlot* AimCursorPanelSlot = (UCanvasPanelSlot*)AimCursorWidget->Slot;
+			UCanvasPanelSlot* AimAreaPanelSlot = (UCanvasPanelSlot*)AimAreaWidget->Slot;
+			FVector2D currentAimLocation = AimCursorPanelSlot->GetPosition();
 
-		if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
-		{
-			FVector socketLocation;
-			FQuat socketRotation;
-			this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+			FVector HitLocation = FVector(0);
+			FString ObjectHit = "Nothing";
 
-			//DrawDebugLine(GetWorld(), socketLocation, HitLocation, FColor::Red, false, 5.0f, 0, 2);
+			int32 ViewportSizeX, ViewportSizeY;
+			playerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
 
-			if (!disabledTuring)
+			bool bHit;
+			FVector2D CrosshairPosition;
+			if (bEnableAimRange)
 			{
-				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-				FVector newVector = newRotator.Vector();
-
-				//no change to z - So that player model will look up or down while bullet will fire up or down
-				FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
-
-				if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
-					newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
-				{
-					//turn character at aim location
-					this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
-
-					//disable movement for 0.2 second
-					disabledMovement = true;
-					disabledMovementCountDown = 0.2;
-					//disabledTuring = true;
-					//disabledTuringCountDown = 1;
-
-				}
-
-				//reset and get new aim location after character turned.
-				TArray<UStaticMeshComponent*> weaponMeshComponents;
-
-				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
-				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
-				{
-					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
-					{
-						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
-
-						for (UStaticMeshSocket* socket : sockets)
-						{
-							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
-							{
-								socketLocation = EquippedWeapon_Left->GetActorLocation() +
-									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
-
-							}
-						}
-
-					}
-				}
-
-				//DrawDebugLine(GetWorld(), this->GetActorLocation(), socketLocation, FColor::Green, false, 5.0f, 0, 2);
-
-				newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-				newRotation = newRotator.Quaternion();
-
-				//shoot bullet
-				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
+				// aim cursor at cursor location <--- NOTE (ZEROKIRI): position not correct atm.
+				CrosshairPosition = currentAimLocation;
 			}
 			else
 			{
-				TArray<UStaticMeshComponent*> weaponMeshComponents;
+				// aim cursor at center of the screen
+				CrosshairPosition = FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+			}
+			FHitResult HitResult;
 
-				this->EquippedWeapon_Left->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
-				for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+			bHit = playerController->GetHitResultAtScreenPosition(CrosshairPosition, ECollisionChannel::ECC_WorldStatic, false, HitResult);
+
+			if (bHit)
+			{
+				HitLocation = HitResult.ImpactPoint;
+				ObjectHit = HitResult.GetActor()->GetName();
+			}
+
+			if (this->GetMesh()->GetSocketByName(FName("BulletSpawnSocket")) != NULL)
+			{
+				FVector socketLocation;
+				FQuat socketRotation;
+				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+
+				//DrawDebugLine(GetWorld(), socketLocation, HitLocation, FColor::Red, false, 5.0f, 0, 2);
+
+				if (!disabledTuring)
 				{
-					if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+					FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+					FVector newVector = newRotator.Vector();
+
+					//no change to z - So that player model will look up or down while bullet will fire up or down
+					FQuat newRotation = FVector(newVector.X, newVector.Y, 0).ToOrientationQuat();
+
+					if (newVector.X > socketRotation.GetForwardVector().X + acceptableTargeRange || newVector.X < socketRotation.GetForwardVector().X - acceptableTargeRange ||
+						newVector.Y > socketRotation.GetForwardVector().Y + acceptableTargeRange || newVector.Y < socketRotation.GetForwardVector().Y - acceptableTargeRange)
 					{
-						TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+						//turn character at aim location
+						this->SetActorRotation(newRotation, ETeleportType::TeleportPhysics);
 
-						for (UStaticMeshSocket* socket : sockets)
-						{
-							if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
-							{
-								socketLocation = EquippedWeapon_Left->GetActorLocation() +
-									UKismetMathLibrary::Multiply_VectorFloat(EquippedWeapon_Left->GetActorForwardVector(), socket->RelativeLocation.X);
-
-							}
-						}
+						//disable movement for 0.2 second
+						disabledMovement = true;
+						disabledMovementCountDown = 0.2;
+						//disabledTuring = true;
+						//disabledTuringCountDown = 1;
 
 					}
+
+					//reset and get new aim location after character turned.
+					TArray<UStaticMeshComponent*> weaponMeshComponents;
+
+					shootingWeaponPtr->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+					for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+					{
+						if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+						{
+							TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
+
+							for (UStaticMeshSocket* socket : sockets)
+							{
+								if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+								{
+									socketLocation = shootingWeaponPtr->GetActorLocation() +
+										UKismetMathLibrary::Multiply_VectorFloat(shootingWeaponPtr->GetActorForwardVector(), socket->RelativeLocation.X);
+
+								}
+							}
+
+						}
+					}
+
+					//DrawDebugLine(GetWorld(), this->GetActorLocation(), socketLocation, FColor::Green, false, 5.0f, 0, 2);
+
+					newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+					newRotation = newRotator.Quaternion();
+
+					//shoot bullet
+					shootingWeaponPtr->Shoot(socketLocation, newRotation);
 				}
+				else
+				{
+					TArray<UStaticMeshComponent*> weaponMeshComponents;
 
-				this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
-				FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
-				FQuat newRotation = newRotator.Quaternion();
+					shootingWeaponPtr->GetComponents<UStaticMeshComponent>(weaponMeshComponents);
+					for (UStaticMeshComponent* weaponMeshComponent : weaponMeshComponents)
+					{
+						if (weaponMeshComponent->GetName() == "BeamRifleMesh")
+						{
+							TArray<UStaticMeshSocket*> sockets = weaponMeshComponent->GetStaticMesh()->Sockets;
 
-				//shoot bullet
-				EquippedWeapon_Left->Shoot(socketLocation, newRotation);
+							for (UStaticMeshSocket* socket : sockets)
+							{
+								if (socket->SocketName.ToString() == FString("BulletSpawnSocket"))
+								{
+									socketLocation = shootingWeaponPtr->GetActorLocation() +
+										UKismetMathLibrary::Multiply_VectorFloat(shootingWeaponPtr->GetActorForwardVector(), socket->RelativeLocation.X);
+
+								}
+							}
+
+						}
+					}
+
+					this->GetMesh()->GetSocketWorldLocationAndRotation(FName("BulletSpawnSocket"), socketLocation, socketRotation);
+					FRotator newRotator = UKismetMathLibrary::FindLookAtRotation(socketLocation, HitLocation);
+					FQuat newRotation = newRotator.Quaternion();
+
+					//shoot bullet
+					shootingWeaponPtr->Shoot(socketLocation, newRotation);
+				}
 			}
 		}
 	}
@@ -774,7 +784,11 @@ void AProjectMMWCharacter::SwitchToWeapon3()
 
 void AProjectMMWCharacter::Reload()
 {
-	EquippedWeapon_Left->Reload();
+	AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Right);
+	if (shootingWeaponPtr)
+	{
+		shootingWeaponPtr->Reload();
+	}
 }
 //void AProjectMMWCharacter::CreateBulletPool(int howMany) {
 //	for (int i = 0; i < howMany; i++) {
@@ -815,31 +829,32 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	//Get EquiableWeapons from globalSettings
 	TSubclassOf<AGlobalSettings> GlobalSettingsActorClass;
 	GlobalSettingsActorClass = GlobalSettings->GeneratedClass;
-	EquipableWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableWeapons();
-	//TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons = GlobalSettings->GetEquipableWeapons();
+	EquipableMeleeWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableMeleeWeapons();
+	EquipableShootingWeapons = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableShootingWeapons();
+	EquipableShields = GlobalSettingsActorClass.GetDefaultObject()->GetEquipableShields();
 
-
-	/*int32 Count = EquipableWeapons.Num();
+	/*int32 Count = EquipableShootingWeapons.Num();
 	UE_LOG(LogTemp, Warning, TEXT("GlobalSettings itemsTotal: %d"), Count);*/
-	for (auto& Elem : EquipableWeapons)
-	{
-		/*Elem.Key,
-		* Elem.Value*/
-		UE_LOG(LogTemp, Warning, TEXT("GlobalSettingsItems"));
-		UE_LOG(LogTemp, Warning, TEXT("GlobalSettings: %s"), *Elem.Key);
-
-	}
+	//for (auto& Elem : EquipableShootingWeapons)
+	//{
+	//	/*Elem.Key,
+	//	* Elem.Value*/
+	//	UE_LOG(LogTemp, Warning, TEXT("GlobalSettingsItems"));
+	//	UE_LOG(LogTemp, Warning, TEXT("GlobalSettings: %s"), *Elem.Key);
+	//}
 
 	//look for Beam Rifle
-	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
-	TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
-	Weapon1_Left = BeamRifle->GetDefaultObject<ABeamRifle>();
+	TSubclassOf<AShootingWeapon>* BeamRiflePtr = EquipableShootingWeapons.Find("BeamRifle");
+	TSubclassOf<AShootingWeapon> BeamRifle = BeamRiflePtr->Get();
+	//Weapon1_Left = BeamRifle->GetDefaultObject<ABeamRifle>();
 
 
-	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
-	TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
-	Weapon2_Left = CannonRifle->GetDefaultObject<ACannonRifle>();
+	TSubclassOf<AShootingWeapon>* CannonRiflePtr = EquipableShootingWeapons.Find("CannonRifle");
+	TSubclassOf<AShootingWeapon> CannonRifle = CannonRiflePtr->Get();
+	//Weapon2_Left = CannonRifle->GetDefaultObject<ACannonRifle>();
 
+	TSubclassOf<AShield>* ShieldPtr = EquipableShields.Find("Shield");
+	TSubclassOf<AShield> Shield = ShieldPtr->Get();
 
 	//Equip BeamRifle to current Equipped Weapon_Left
 	FVector actorLocation = GetActorLocation();
@@ -847,50 +862,90 @@ void AProjectMMWCharacter::SetDefaultEquipment()
 	FVector NewLocation = actorForwardVector + actorLocation;
 
 
-	if (this->GetMesh()->GetSocketByName(FName("LeftWeaponSocket")) != NULL)
+	if (this->GetMesh()->GetSocketByName(FName("LeftHandSocket")) != NULL)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Character.cpp - Socket Found!!"));
-		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
-		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - LeftHandSocket Found!!"));
+		const USkeletalMeshSocket* LeftHandSocket = GetMesh()->GetSocketByName("LeftHandSocket");
 
 		//Spawn Weapons
-		Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		LeftWeaponSocket->AttachActor(Weapon1_Left, GetMesh());
-		Weapon1_Left->SetActive(false);
+		if (BeamRiflePtr)
+		{
+			Weapon1_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+			LeftHandSocket->AttachActor(Weapon1_Left, GetMesh());
+			Weapon1_Left->SetActive(false);
+		}
 
-		Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		LeftWeaponSocket->AttachActor(Weapon2_Left, GetMesh());
-		Weapon2_Left->SetActive(false);
+		if (CannonRiflePtr)
+		{
+			Weapon2_Left = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+			LeftHandSocket->AttachActor(Weapon2_Left, GetMesh());
+			Weapon2_Left->SetActive(false);
+		}
 
-		Weapon3_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		LeftWeaponSocket->AttachActor(Weapon3_Left, GetMesh());
-		Weapon3_Left->SetActive(false);
-
-		Weapon3_Right = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
-		RightWeaponSocket->AttachActor(Weapon3_Right, GetMesh());
-		Weapon3_Right->SetActive(false);
+		if (BeamRiflePtr)
+		{
+			Weapon3_Left = GetWorld()->SpawnActor<ABeamRifle>(BeamRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+			LeftHandSocket->AttachActor(Weapon3_Left, GetMesh());
+			Weapon3_Left->SetActive(false);
+		}
 
 		EquippedWeapon_Left = Weapon1_Left;
 		EquippedWeapon_Left->SetActive(true);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - Socket Not Found!!"));
+		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - LeftHandSocket Not Found!!"));
+	}
+
+	if (this->GetMesh()->GetSocketByName(FName("RightHandSocket")) != NULL)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - RightHandSocket Found!!"));
+		const USkeletalMeshSocket* RightHandSocket = GetMesh()->GetSocketByName("RightHandSocket");
+
+		//Spawn Weapons
+		if (CannonRiflePtr)
+		{
+			Weapon3_Right = GetWorld()->SpawnActor<ACannonRifle>(CannonRiflePtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+			RightHandSocket->AttachActor(Weapon3_Right, GetMesh());
+			Weapon3_Right->SetActive(false);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - RightHandSocket Not Found!!"));
+	}
+
+	if (this->GetMesh()->GetSocketByName(FName("LeftForeArmSocket")) != NULL)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Character.cpp - LeftForeArmSocket Found!!"));
+		const USkeletalMeshSocket* LeftForeArmSocket = GetMesh()->GetSocketByName("LeftForeArmSocket");
+
+		//Spawn Weapons
+		if (ShieldPtr)
+		{
+			Equipped_LeftForeArm = GetWorld()->SpawnActor<AShield>(ShieldPtr->Get(), GetActorLocation(), FRotator::ZeroRotator);
+			LeftForeArmSocket->AttachActor(Equipped_LeftForeArm, GetMesh());
+			Equipped_LeftForeArm->SetActive(true);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character.cpp - RightHandSocket Not Found!!"));
 	}
 	currentSelectedWeaponSlot = 1;
 }
 void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 {
 
-	TSubclassOf<AWeapon>* BeamRiflePtr = EquipableWeapons.Find("BeamRifle");
+	TSubclassOf<AShootingWeapon>* BeamRiflePtr = EquipableShootingWeapons.Find("BeamRifle");
 	//TSubclassOf<AWeapon> BeamRifle = BeamRiflePtr->Get();
-	TSubclassOf<AWeapon>* CannonRiflePtr = EquipableWeapons.Find("CannonRifle");
+	TSubclassOf<AShootingWeapon>* CannonRiflePtr = EquipableShootingWeapons.Find("CannonRifle");
 	//TSubclassOf<AWeapon> CannonRifle = CannonRiflePtr->Get();
 
 
 	if (weaponLocation == "Weapon1_Left")
 	{
-		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		const USkeletalMeshSocket* LeftHandSocket = GetMesh()->GetSocketByName("LeftHandSocket");
 		if (Weapon1_Left) Weapon1_Left->K2_DestroyActor();
 
 		if (weapon == "None")
@@ -908,13 +963,13 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 
 		if (Weapon1_Left != nullptr)
 		{
-			LeftWeaponSocket->AttachActor(Weapon1_Left, GetMesh());
+			LeftHandSocket->AttachActor(Weapon1_Left, GetMesh());
 			Weapon1_Left->SetActive(false);
 		}
 	}
 	else if (weaponLocation == "Weapon1_Right")
 	{
-		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		const USkeletalMeshSocket* RightHandSocket = GetMesh()->GetSocketByName("RightHandSocket");
 		if (Weapon1_Right) Weapon1_Right->K2_DestroyActor();
 
 		if (weapon == "None")
@@ -932,13 +987,13 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 
 		if (Weapon1_Right != nullptr)
 		{
-			RightWeaponSocket->AttachActor(Weapon1_Right, GetMesh());
+			RightHandSocket->AttachActor(Weapon1_Right, GetMesh());
 			Weapon1_Right->SetActive(false);
 		}
 	}
 	else if (weaponLocation == "Weapon2_Left")
 	{
-		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		const USkeletalMeshSocket* LeftHandSocket = GetMesh()->GetSocketByName("LeftHandSocket");
 		if (Weapon2_Left) Weapon2_Left->K2_DestroyActor();
 
 		if (weapon == "None")
@@ -956,13 +1011,13 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 
 		if (Weapon2_Left != nullptr)
 		{
-			LeftWeaponSocket->AttachActor(Weapon2_Left, GetMesh());
+			LeftHandSocket->AttachActor(Weapon2_Left, GetMesh());
 			Weapon2_Left->SetActive(false);
 		}
 	}
 	else if (weaponLocation == "Weapon2_Right")
 	{
-		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		const USkeletalMeshSocket* RightHandSocket = GetMesh()->GetSocketByName("RightHandSocket");
 		if (Weapon2_Right) Weapon2_Right->K2_DestroyActor();
 
 		if (weapon == "None")
@@ -980,13 +1035,13 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 
 		if (Weapon2_Right != nullptr)
 		{
-			RightWeaponSocket->AttachActor(Weapon2_Right, GetMesh());
+			RightHandSocket->AttachActor(Weapon2_Right, GetMesh());
 			Weapon2_Right->SetActive(false);
 		}
 	}
 	else if (weaponLocation == "Weapon3_Left")
 	{
-		const USkeletalMeshSocket* LeftWeaponSocket = GetMesh()->GetSocketByName("LeftWeaponSocket");
+		const USkeletalMeshSocket* LeftHandSocket = GetMesh()->GetSocketByName("LeftHandSocket");
 		if (Weapon3_Left) Weapon3_Left->K2_DestroyActor();
 
 		if (weapon == "None")
@@ -1004,13 +1059,13 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 
 		if (Weapon3_Left != nullptr)
 		{
-			LeftWeaponSocket->AttachActor(Weapon3_Left, GetMesh());
+			LeftHandSocket->AttachActor(Weapon3_Left, GetMesh());
 			Weapon3_Left->SetActive(false);
 		}
 	}
 	else if (weaponLocation == "Weapon3_Right")
 	{
-		const USkeletalMeshSocket* RightWeaponSocket = GetMesh()->GetSocketByName("RightWeaponSocket");
+		const USkeletalMeshSocket* RightHandSocket = GetMesh()->GetSocketByName("RightHandSocket");
 		if (Weapon3_Right) Weapon3_Right->K2_DestroyActor();
 
 		if (weapon == "None")
@@ -1028,7 +1083,7 @@ void AProjectMMWCharacter::ReEquipWeapon(string weapon, FString weaponLocation)
 
 		if (Weapon3_Right != nullptr)
 		{
-			RightWeaponSocket->AttachActor(Weapon3_Right, GetMesh());
+			RightHandSocket->AttachActor(Weapon3_Right, GetMesh());
 			Weapon3_Right->SetActive(false);
 		}
 	}
@@ -1245,72 +1300,78 @@ FText AProjectMMWCharacter::GetWeaponLeft_CurrentClipSize()
 {
 	if (EquippedWeapon_Left != nullptr)
 	{
-		return FText::AsNumber(EquippedWeapon_Left->GetCurrentClipSize());
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
+		{
+			return FText::AsNumber(shootingWeaponPtr->GetCurrentClipSize());
+		}
 	}
-	else
-	{
-		return FText::FromString("0");
-	}
+	return FText::FromString("0");
 }
 
 FText AProjectMMWCharacter::GetWeaponLeft_CurrentTotalAmmo()
 {
 	if (EquippedWeapon_Left != nullptr)
 	{
-		return FText::AsNumber(EquippedWeapon_Left->GetCurrentTotalAmmo());
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
+		{
+			return FText::AsNumber(shootingWeaponPtr->GetCurrentTotalAmmo());
+		}
 	}
-	else
-	{
-		return FText::FromString("0");
-	}
+	return FText::FromString("0");
 }
 
 FText AProjectMMWCharacter::GetWeaponRight_CurrentClipSize()
 {
 	if (EquippedWeapon_Right != nullptr)
 	{
-		return FText::AsNumber(EquippedWeapon_Right->GetCurrentClipSize());
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
+		{
+			return FText::AsNumber(shootingWeaponPtr->GetCurrentClipSize());
+		}
 	}
-	else
-	{
-		return FText::FromString("0");
-	}
+	return FText::FromString("0");
 }
 
 FText AProjectMMWCharacter::GetWeaponRight_CurrentTotalAmmo()
 {
 	if (EquippedWeapon_Right != nullptr)
 	{
-		return FText::AsNumber(EquippedWeapon_Right->GetCurrentTotalAmmo());
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
+		{
+			return FText::AsNumber(shootingWeaponPtr->GetCurrentTotalAmmo());
+		}
 	}
-	else
-	{
-		return FText::FromString("0");
-	}
+	return FText::FromString("0");
 }
 
 float AProjectMMWCharacter::GetWeaponLeft_ReloadPercentage()
 {
 	if (EquippedWeapon_Left != nullptr)
 	{
-		return EquippedWeapon_Left->GetReloadPercentage();
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
+		{
+			return shootingWeaponPtr->GetReloadPercentage();
+		}
 	}
-	else
-	{
-		return 0;
-	}
+	return 0;
 }
 
 float AProjectMMWCharacter::GetWeaponRight_ReloadPercentage()
 {
 	if (EquippedWeapon_Right != nullptr)
 	{
-		return EquippedWeapon_Right->GetReloadPercentage();
+		AShootingWeapon* shootingWeaponPtr = dynamic_cast<AShootingWeapon*>(EquippedWeapon_Left);
+		if (shootingWeaponPtr)
+		{
+			return shootingWeaponPtr->GetReloadPercentage();
+		}
 	}
-	else
-	{
-		return 0;
-	}
+	return 0;
 }
 
 
@@ -1550,10 +1611,10 @@ void AProjectMMWCharacter::SetEnableAimRange(bool enable)
 	}
 }
 
-void AProjectMMWCharacter::SetInMenu(bool inMenu)
+void AProjectMMWCharacter::SetInMenu(bool isInMenu)
 {
-	if (inMenu) this->inMenu = true;
-	else this->inMenu = false;
+	if (isInMenu) inMenu = true;
+	else inMenu = false;
 }
 
 #pragma endregion

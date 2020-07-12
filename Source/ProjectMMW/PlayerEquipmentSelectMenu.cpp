@@ -41,7 +41,7 @@ void UPlayerEquipmentSelectMenu::CloseButton_Clicked()
 	if (IsVisible())
 	{
 		this->SetVisibility(ESlateVisibility::Hidden);
-		APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+		playerController = GetWorld()->GetFirstPlayerController();
 		
 		playerController->bShowMouseCursor = false;
 		playerController->bEnableClickEvents = false;

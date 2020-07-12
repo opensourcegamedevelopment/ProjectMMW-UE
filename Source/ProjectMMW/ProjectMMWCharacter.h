@@ -3,7 +3,10 @@
 #pragma once
 #include <list>
 #include <iterator> 
+#include "ShootingWeapon.h"
+#include "MeleeWeapon.h"
 #include "Weapon.h"
+#include "Shield.h"
 #include "CannonRifle.h"
 #include "BeamRifle.h"
 #include "PlayerStatusMenu.h"
@@ -165,35 +168,42 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 		UBlueprint* GlobalSettings;
 
-	TMap<FString, TSubclassOf<AWeapon>> EquipableWeapons;
+	TMap<FString, TSubclassOf<AShootingWeapon>> EquipableShootingWeapons;
+	TMap<FString, TSubclassOf<AMeleeWeapon>> EquipableMeleeWeapons;
+	TMap<FString, TSubclassOf<AShield>> EquipableShields;
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 		TSubclassOf<AGlobalSettings> GlobalSettings;*/
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon1_Left;
+		AEquipment* Weapon1_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon1_Right;
+		AEquipment* Weapon1_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon2_Left;
+		AEquipment* Weapon2_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon2_Right;
+		AEquipment* Weapon2_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon3_Left;
+		AEquipment* Weapon3_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon3_Right;
+		AEquipment* Weapon3_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon4_Left;
+		AEquipment* Weapon4_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* Weapon4_Right;
+		AEquipment* Weapon4_Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* EquippedWeapon_Left;
+		AEquipment* EquippedWeapon_Left;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
-		AWeapon* EquippedWeapon_Right;
+		AEquipment* EquippedWeapon_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+		AEquipment* Equipped_LeftForeArm;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipments)
+		AEquipment* Equipped_RightForeArm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets")
 		TSubclassOf<UPlayerStatusMenu> PlayerStatusMenuWidget;

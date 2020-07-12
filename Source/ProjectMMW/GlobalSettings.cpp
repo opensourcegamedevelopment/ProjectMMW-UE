@@ -28,9 +28,17 @@ void AGlobalSettings::Tick(float DeltaTime)
 #pragma region getters/setters
 
 #pragma region getters
-TMap<FString, TSubclassOf<class AWeapon>> AGlobalSettings::GetEquipableWeapons()
+TMap<FString, TSubclassOf<class AShootingWeapon>> AGlobalSettings::GetEquipableShootingWeapons()
 {
-	return EquipableWeapons;
+	return EquipableShootingWeapons;
+}
+TMap<FString, TSubclassOf<class AMeleeWeapon>> AGlobalSettings::GetEquipableMeleeWeapons()
+{
+	return EquipableMeleeWeapons;
+}
+TMap<FString, TSubclassOf<class AShield>> AGlobalSettings::GetEquipableShields()
+{
+	return EquipableShields;
 }
 #pragma endregion
 

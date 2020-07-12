@@ -15,7 +15,9 @@ public:
 	// Sets default values for this actor's properties
 	AGlobalSettings();
 
-	TMap<FString, TSubclassOf<class AWeapon>> GetEquipableWeapons();
+	TMap<FString, TSubclassOf<class AShootingWeapon>> GetEquipableShootingWeapons();
+	TMap<FString, TSubclassOf<class AMeleeWeapon>> GetEquipableMeleeWeapons();
+	TMap<FString, TSubclassOf<class AShield>> GetEquipableShields();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,8 +28,13 @@ protected:
 	TArray<TSubclassOf<class ABeamRifle>> EquipableWeapons;*/
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Equipments)
-	TMap<FString, TSubclassOf<class AWeapon>> EquipableWeapons;
+		TMap<FString, TSubclassOf<class AShootingWeapon>> EquipableShootingWeapons;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Equipments)
+		TMap<FString, TSubclassOf<class AMeleeWeapon>> EquipableMeleeWeapons;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Equipments)
+		TMap<FString, TSubclassOf<class AShield>> EquipableShields;
 
 public:	
 	// Called every frame

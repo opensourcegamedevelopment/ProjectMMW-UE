@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapon.h"
+#include "ShootingWeapon.h"
 #include "UObject/ConstructorHelpers.h"
 #include "BeamRifle.generated.h"
 
 UCLASS()
-class PROJECTMMW_API ABeamRifle : public AWeapon
+class PROJECTMMW_API ABeamRifle : public AShootingWeapon
 {
 	GENERATED_BODY()
 	
